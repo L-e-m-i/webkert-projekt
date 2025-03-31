@@ -1,0 +1,55 @@
+
+
+a[mat-list-item] {
+    text-decoration: none; /* Remove underline from links */
+    color: inherit; /* Inherit color from parent */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align content to the left */
+}
+
+mat-list-item {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align content to the left */
+    text-align: left;
+    padding: 8px 16px; /* Add padding for spacing */
+}
+
+mat-list-item mat-icon {
+    color: white; /* Change icon color to white */
+    font-size: 24px; /* Adjust icon size as needed */
+    margin-right: 10px; /* Add space between the icon and the text */
+}
+
+mat-list-item span[matListItemTitle],
+mat-list-item .mat-mdc-list-item-title {
+    font-size: 16px; /* Adjust font size as needed */
+    color: white; /* Change text color to white */
+    margin-left: 10px; /* Add space between icon and text */
+    text-align: left; /* Ensure text is aligned to the left */
+}
+
+.mdc-list-item__content {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Align content to the left */
+    width: 100%; /* Ensure it spans the full width */
+}
+
+@media (max-width: 1200px) {
+    span[matListItemTitle],
+    .mat-mdc-list-item-title {
+        display: none; /* Hide titles on smaller screens */
+    }
+    mat-nav-list{
+        padding-left: 0px; /* Remove default padding */
+    }
+}
+
+@media (max-width: 768px) {
+    span[matListItemTitle],
+    .mat-mdc-list-item-title {
+        display: block; /* Show titles on very small screens */
+    }
+}

@@ -1,3 +1,8 @@
+$background-color: #0d1114;
+$secondary-color: #3AA8F2;
+$border-color: rgb(129, 129, 129);
+$sidenav-width: calc(50% - 315px);
+
 nav {
     display: flex;
     justify-content: flex-end;
@@ -17,15 +22,35 @@ a {
     text-decoration: none;
     color: white;
     font-size: 25px;
+    text-align: left;
 }
 
-mat-sidenav-container {
-    height: 100%;
+main {
+    width: 630px;
+    background-color: $background-color;
 }
 
+
+app-menu{
+    position: absolute;
+
+    right: 0;
+    @media (max-width: 768px) {
+        position: static; /* Reset position to default */
+        padding: 0; /* Remove padding */
+        width: 100%; /* Make it span the full width */
+    }
+
+}
 
 mat-toolbar{
-    background-color: #005cbb;
+    position: sticky;
+    top: 0;
+    width: 630px;
+    margin: 0;
+    background-color: $background-color;
+    border-bottom: $border-color solid 1px;
+    border-right: $border-color solid 1px;
     color: white;
     mat-icon {
         color: white;
@@ -33,8 +58,37 @@ mat-toolbar{
 }
 
 mat-sidenav {
-    border-radius: 0;
+    border-radius: 0px;
+    position: fixed; /* Use fixed positioning to ensure it stays in place */
+    top: 0; /* Align to the top of the viewport */
+    left: 0; /* Align to the left of the viewport */
+    height: 100%; /* Ensure it spans the full height of the viewport */
+    z-index: 100; /* Higher z-index to appear above bottom-tabs */
+    width: $sidenav-width; /* Default width */
+    background-color: $background-color;
+    border-right: $border-color solid 1px;
+    display: flex; /* Use flexbox for alignment */
+    flex-direction: column; /* Stack items vertically */
+    align-items: flex-start; /* Align items to the left */
+
 }
+
+mat-sidenav-container {
+    height: 100%;
+    width: 100%;
+}
+
+mat-sidenav-content {
+    z-index: 1; /* Ensure it is below mat-sidenav */
+    position: relative; /* Ensure stacking context is respected */
+    padding-bottom: 56px; /* Add padding to prevent content from overlapping the tabs */
+}
+
+
+
+
+
+
 
 
 .menu-toggle-button-icon{
@@ -50,12 +104,104 @@ mat-sidenav {
     
 }
 
+
+
+.bottom-tabs {
+    position: fixed; 
+    bottom: 0; 
+    left: 0;
+    width: 100%; 
+    z-index: 10; /* Ensure it has a lower z-index than mat-sidenav */
+    background-color: $background-color;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    border-top: $border-color solid 1px;
+    display: none; /* Hidden by default */
+;
+}
+
+
+.search-input{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    padding: 10px;
+    border: $border-color 1px solid;
+    border-radius: 20px;
+    color: white;
+    background-color: $background-color;
+}
+.search-input:focus {
+    outline: 2px solid $secondary-color;
+}
+
+
+@media (max-width: 1200px) {
+
+    app-menu{
+        position: static; /* Reset position to default */
+        padding: 0; /* Remove padding */
+        width: 100%; /* Make it span the full width */
+    }
+
+    mat-sidenav {
+        width: 60px;
+    }
+
+    span[matListItemTitle] {
+        display: none;
+    }
+
+    main {
+        width: calc(100% - 60px); /* Matches the width of the sidenav */
+    }
+    
+    nav ul {
+        display: none;
+    } 
+    
+    mat-toolbar{
+        width: 100%;
+
+    }
+}
+
 @media (max-width: 768px) {
+    main {
+        width: 100%;
+    }
     .menu-toggle-button {
         display: block;
     }
     
     nav ul {
+        display: none;
+    }
+
+    .bottom-tabs {
+        bottom: 0; 
+        left: 0;
+        display: block;
+
+    }
+
+    
+
+    mat-sidenav {
+        width: 250px;
+        border: none;
+    }
+    span[matListItemTitle] {
+        display: block;
+    }
+
+    mat-toolbar{
+        width: 100%;
+        margin-right: 0;
+    }
+
+    .search-input {
         display: none;
     }
 }

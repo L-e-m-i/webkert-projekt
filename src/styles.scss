@@ -1,4 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
+$background-color: #0d1114;
+$secondary-color: #3AA8F2;
 
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: $background-color; }
+
+:root {
+    @include mat.tabs-overrides((
+        active-focus-indicator-color $secondary-color,
+        active-hover-indicator-color $secondary-color,
+        active-indicator-color $secondary-color,
+    ));
+  }

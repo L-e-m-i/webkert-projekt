@@ -1,35 +1,51 @@
-<mat-sidenav-container>
+
+
+  <mat-sidenav-container>
   <mat-sidenav 
     #sidenav
     [fixedInViewport]="!isSmallScreen"
     [mode]="isSmallScreen ? 'over' : 'side'"
     [opened]="!isSmallScreen"
   >
-    <app-menu [sidenav]="sidenav"></app-menu>
+    <app-menu [sidenav]="sidenav" [isSmallScreen]="isSmallScreen"></app-menu>
   </mat-sidenav>
   <mat-sidenav-content>
+    <main>
     <mat-toolbar>
+      <input type="text" [placeholder]="'Search...'" class="search-input" (keyup)="onSearch($event)" />
       <button 
         mat-button (click)="onSidenavToggle(sidenav)" 
         class="menu-toggle-button">
         <span class="menu-toggle-button-icon">
-          <mat-icon>menu</mat-icon>
+          <mat-icon>person</mat-icon>
         </span>
       </button>
     </mat-toolbar>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
-    <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta perferendis, non aspernatur molestias voluptatum fugit eius odit culpa temporibus maiores, magni similique rerum fugiat impedit, fuga perspiciatis quisquam facilis. Deleniti.</h1>
+    
+      <router-outlet></router-outlet>
+    </main>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
 
-    <router-outlet></router-outlet>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+<mat-tab-group class="bottom-tabs" (selectedTabChange)="onTabChange($event.index)" animationDuration="0ms">
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>home</mat-icon>
+    </ng-template>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>search</mat-icon>
+    </ng-template>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>mail</mat-icon>
+    </ng-template>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <mat-icon>person</mat-icon>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
