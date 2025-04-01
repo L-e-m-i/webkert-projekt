@@ -21,11 +21,17 @@ export class MenuComponent implements OnInit, AfterViewInit {
   @Input() sidenav!: MatSidenav;
   @Input() isSmallScreen!: boolean;
 
+
+  userHandle: string | null = null;
+
+
+
   constructor() {
     console.log("constructor called");
   }
 
   ngOnInit(): void {
+    this.userHandle = localStorage.getItem('userHandle');
     console.log("ngOnInit called");
   }
 

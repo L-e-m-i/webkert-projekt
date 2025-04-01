@@ -2,6 +2,8 @@ $background-color: #0d1114;
 $secondary-color: #3AA8F2;
 $border-color: rgb(129, 129, 129);
 $sidenav-width: calc(50% - 315px);
+$small-screen: 500px;
+$medium-screen: 1000px;
 
 nav {
     display: flex;
@@ -27,6 +29,7 @@ a {
 
 main {
     width: 630px;
+    max-width: 630px;
     background-color: $background-color;
 }
 
@@ -35,11 +38,6 @@ app-menu{
     position: absolute;
 
     right: 0;
-    @media (max-width: 768px) {
-        position: static; /* Reset position to default */
-        padding: 0; /* Remove padding */
-        width: 100%; /* Make it span the full width */
-    }
 
 }
 
@@ -47,6 +45,7 @@ mat-toolbar{
     position: sticky;
     top: 0;
     width: 630px;
+    z-index: 10 !important;
     margin: 0;
     background-color: $background-color;
     border-bottom: $border-color solid 1px;
@@ -120,6 +119,15 @@ mat-sidenav-content {
 }
 
 
+mat-form-field{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 300px;
+    padding: 10px;
+}
+
 .search-input{
     position: absolute;
     top: 50%;
@@ -136,8 +144,7 @@ mat-sidenav-content {
     outline: 2px solid $secondary-color;
 }
 
-
-@media (max-width: 1200px) {
+@media (max-width: $medium-screen) {
 
     app-menu{
         position: static; /* Reset position to default */
@@ -146,7 +153,7 @@ mat-sidenav-content {
     }
 
     mat-sidenav {
-        width: 60px;
+        width: 80px;
     }
 
     span[matListItemTitle] {
@@ -154,7 +161,7 @@ mat-sidenav-content {
     }
 
     main {
-        width: calc(100% - 60px); /* Matches the width of the sidenav */
+        width: calc(100% - 80px); /* Matches the width of the sidenav */
     }
     
     nav ul {
@@ -167,9 +174,17 @@ mat-sidenav-content {
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $small-screen) {
+
+    app-menu{
+        position: static; /* Reset position to default */
+        padding: 0; /* Remove padding */
+        width: 100%; /* Make it span the full width */
+    }
+
     main {
         width: 100%;
+        margin-bottom:48px;
     }
     .menu-toggle-button {
         display: block;
@@ -185,8 +200,6 @@ mat-sidenav-content {
         display: block;
 
     }
-
-    
 
     mat-sidenav {
         width: 250px;

@@ -1,25 +1,8 @@
+$small-screen: 500px;
+$medium-screen: 1000px;
 
-
-a[mat-list-item] {
-    text-decoration: none; /* Remove underline from links */
-    color: inherit; /* Inherit color from parent */
-    display: flex;
-    align-items: center;
-    justify-content: flex-start; /* Align content to the left */
-}
-
-mat-list-item {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start; /* Align content to the left */
-    text-align: left;
-    padding: 8px 16px; /* Add padding for spacing */
-}
-
-mat-list-item mat-icon {
-    color: white; /* Change icon color to white */
-    font-size: 24px; /* Adjust icon size as needed */
-    margin-right: 10px; /* Add space between the icon and the text */
+mat-nav-list{
+    padding: 10px 10px 0px 10px;
 }
 
 mat-list-item span[matListItemTitle],
@@ -37,17 +20,25 @@ mat-list-item .mat-mdc-list-item-title {
     width: 100%; /* Ensure it spans the full width */
 }
 
-@media (max-width: 1200px) {
+#post-link{
+    background-color: white;
+    
+    span, mat-icon{
+        color: black;
+    }
+}
+
+@media (max-width: $medium-screen) {
     span[matListItemTitle],
     .mat-mdc-list-item-title {
         display: none; /* Hide titles on smaller screens */
     }
-    mat-nav-list{
-        padding-left: 0px; /* Remove default padding */
+    a{
+        padding: 0px;;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $small-screen) {
     span[matListItemTitle],
     .mat-mdc-list-item-title {
         display: block; /* Show titles on very small screens */

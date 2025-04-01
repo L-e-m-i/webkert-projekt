@@ -7,7 +7,7 @@
     <mat-icon matListItemIcon>bookmark</mat-icon>
     <span matListItemTitle>Bookmarks</span>
   </a>
-  <a mat-list-item routerLink="/profile" routerLinkActive="active-list-item" (click)="closeMenu()">
+  <a mat-list-item [routerLink]="'/profile/' + userHandle" routerLinkActive="active-list-item" (click)="closeMenu()">
     <mat-icon matListItemIcon>person</mat-icon>
     <span matListItemTitle>Profile</span>
   </a>
@@ -15,5 +15,13 @@
     <mat-icon matListItemIcon>search</mat-icon>
     <span matListItemTitle>Search</span>
   </a>
+  <a mat-list-item routerLink="/messages" routerLinkActive="active-list-item" (click)="closeMenu()">
+    <mat-icon matListItemIcon>mail</mat-icon>
+    <span matListItemTitle>Messages</span>
+  </a>
+  <a mat-list-item routerLink="/post" routerLinkActive="active-list-item" (click)="closeMenu()" id="post-link">
+    <mat-icon matListItemIcon>edit_note</mat-icon>
+    <span matListItemTitle>Post</span>  
+  </a>  
 </mat-nav-list>
 

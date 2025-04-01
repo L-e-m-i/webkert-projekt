@@ -1,8 +1,8 @@
-import { DatePipe } from './date.pipe';
+import { DateFormatterPipe } from './date.pipe';
 
 describe('DatePipe', () => {
   it('create an instance', () => {
-    const pipe = new DatePipe();
+    const pipe = new DateFormatterPipe();
     expect(pipe).toBeTruthy();
   });
 });

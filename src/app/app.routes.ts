@@ -14,15 +14,29 @@ export const routes: Routes = [
     {path: 'bookmarks',
         loadComponent: () => import('./pages/bookmarks/bookmarks.component').then(m => m.BookmarksComponent)
     },
-    {path: 'profile', component: ProfileComponent},
+    {path: 'profile/:handle',
+        loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
+    },
+
+    {path: 'search/:query', 
+        loadComponent: () => import('./pages/search/search.component').then(m => m.SearchComponent)
+    },
 
     {path: 'search', 
         loadComponent: () => import('./pages/search/search.component').then(m => m.SearchComponent)
     },
 
-    {path: 'search', component: SearchComponent},
-    {path: 'messages', component: MessagesComponent},
+    {path: 'search',
+        loadComponent: () => import('./pages/search/search.component').then(m => m.SearchComponent)
+    },
+    {path: 'messages',
+        loadComponent: () => import('./pages/messages/messages.component').then(m => m.MessagesComponent)
+    },
 
+    {path: 'post',
+        loadComponent: () => import('./pages/post/post.component').then(m => m.PostComponent)
+    },
+    
 
     {path: '', redirectTo: '/home', pathMatch: 'full'},
     {path: '**', component: PageNotFoundComponent}

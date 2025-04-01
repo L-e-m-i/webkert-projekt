@@ -1,1 +1,98 @@
 
+<div class="profile-container">
+    <div class="profile-header">
+        <div class="profile-wrapper">
+            <img [src]="user.bannerPicture ? 
+                '../../../assets/img/banner' + user.bannerPicture : 
+                '../../../assets/img/banner/default.png'" 
+                alt="banner" class="profile-banner">
+            <img [src]="'../../../assets/img/pfp/' + user.profilePicture" class="profile-picture">
+        </div>
+        <div class="profile-data-wrapper">
+            <h1>{{ user.name }}</h1>
+            <p class="profile-handle">{{ '@' + user.handle }}</p>
+            <p class="profile-bio">{{ user.bio }}</p>
+            <div class="profile-stats">
+                <span><strong>{{ user.tweets.length }}</strong> Tweets</span>
+                <span style="margin-left: 10px;"><strong>{{ user.followers.length }}</strong> Followers</span>
+                <span style="margin-left: 10px;"><strong>{{ user.following.length }}</strong> Following</span>
+            </div>
+        </div>
+    </div>
+    <mat-tab-group>
+        <mat-tab label="Tweets">
+            @for($tweet of items; track $tweet.id){
+                @if($tweet.handle === user.handle){
+                    <div class="tweet-container">
+                        <div class="tweet-header">
+                            <mat-icon>person</mat-icon>
+                            <p class="tweet-user-name">{{ $tweet.user }}</p>
+                            <p class="tweet-user-handle">{{ '@'+ $tweet.handle }}</p>
+                            <p class="tweet-date">{{ $tweet.date | dateFormatter }}</p>
+                        </div>
+                        <div class="tweet-content">
+                            <p>{{ $tweet.tweet }}</p>
+                        </div>
+                        <div class="tweet-footer">
+                            <span>
+                                <mat-icon>comment</mat-icon>
+                                {{ $tweet.comments }}
+                            </span>
+                            <span (click)="retweetTweet($tweet)">
+                                <mat-icon [class.retweeted]="$tweet.retweeted">repeat</mat-icon>
+                                {{ $tweet.retweets }}
+                            </span>
+                            <span (click)="likeTweet($tweet)">
+                                <mat-icon [class.liked]="$tweet.liked">favorite</mat-icon>
+                                {{ $tweet.likes }}
+                            </span>
+                            <span (click)="bookmarkTweet($tweet)">
+                                <mat-icon [class.bookmarked]="$tweet.bookmarked">bookmark</mat-icon>
+                                {{ $tweet.bookmarks }}
+                            </span>
+                        </div>
+                    </div>
+                }
+            }
+        </mat-tab>
+        <mat-tab label="Replies"> Content 2 </mat-tab>
+        <mat-tab label="Likes">
+            @for($tweet of items; track $tweet.id){
+                @if(user.likes.includes($tweet.id)){
+                    <div class="tweet-container">
+                        <div class="tweet-header">
+                            <mat-icon>person</mat-icon>
+                            <p class="tweet-user-name">{{ $tweet.user }}</p>
+                            <p class="tweet-user-handle">{{ '@'+ $tweet.handle }}</p>
+                            <p class="tweet-date">{{ $tweet.date | dateFormatter }}</p>
+                        </div>
+                        <div class="tweet-content">
+                            <p>{{ $tweet.tweet }}</p>
+                        </div>
+                        <div class="tweet-footer">
+                            <span>
+                                <mat-icon>comment</mat-icon>
+                                {{ $tweet.comments }}
+                            </span>
+                            <span (click)="retweetTweet($tweet)">
+                                <mat-icon [class.retweeted]="$tweet.retweeted">repeat</mat-icon>
+                                {{ $tweet.retweets }}
+                            </span>
+                            <span (click)="likeTweet($tweet)">
+                                <mat-icon [class.liked]="$tweet.liked">favorite</mat-icon>
+                                {{ $tweet.likes }}
+                            </span>
+                            <span (click)="bookmarkTweet($tweet)">
+                                <mat-icon [class.bookmarked]="$tweet.bookmarked">bookmark</mat-icon>
+                                {{ $tweet.bookmarks }}
+                            </span>
+                        </div>
+                    </div>
+                }
+            }
+        </mat-tab>
+      </mat-tab-group>
+
+
+
+</div>

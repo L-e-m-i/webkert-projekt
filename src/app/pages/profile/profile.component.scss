@@ -1,1 +1,67 @@
 @use '../../shared/styles/tweets.scss';
+
+$small-screen: 500px;
+$medium-screen: 1000px;
+
+
+.profile-wrapper, .profile-banner{
+    position: relative;
+    max-height: 210px;
+    //width: 100%;
+    width: 630px;;
+}
+
+.profile-wrapper{
+    width: 100%;
+    height: auto;
+}
+
+.profile-banner{
+    width: 630px;
+}
+
+.profile-header{
+    z-index: 8 !important;
+}
+
+.profile-picture{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    position: absolute;
+    left: 10px;
+    bottom: -40px;
+    z-index: 9 !important;
+}
+
+
+.profile-data-wrapper{
+    padding-top:30px;
+    padding-left: 10px;
+}
+
+.profile-stats{
+    padding-bottom: 10px;
+}
+
+@media (max-width: $medium-screen) {
+    .profile-picture{
+        width: 60px;
+        height: 60px;
+        bottom: -30px;
+    }
+    .profile-banner{
+        width: 100%;
+    }
+}
+
+@media (max-width: $small-screen) {
+    .profile-picture{
+        width: 50px;
+        height: 50px;
+        bottom: -20px;
+    }
+    .profile-banner{
+        width: 100%;
+    }
+}

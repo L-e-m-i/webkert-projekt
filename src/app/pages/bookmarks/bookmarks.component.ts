@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { UserService } from '../../shared/services/user.service';
 
 @Component({
   selector: 'app-bookmarks',
@@ -7,5 +8,5 @@ import { Component } from '@angular/core';
   styleUrl: './bookmarks.component.scss'
 })
 export class BookmarksComponent {
-
+  constructor(private userService: UserService) { }
 }

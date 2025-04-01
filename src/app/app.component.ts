@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NavigationEnd, RouterOutlet, Router } from '@angular/router';
 import { tweetItem } from './shared/models/tweetItem';
-import { profiles } from './shared/models/profiles';
+
 import { MenuComponent } from "./shared/menu/menu.component";
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatSidenav, MatSidenavModule } from '@angular/material/sidenav';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatTab, MatTabsModule } from '@angular/material/tabs';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-
+import { UserService } from './shared/services/user.service';
 
 @Component({
   selector: 'app-root',
@@ -24,38 +26,52 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
     MatSidenavModule,
     MatTabsModule,
     MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 
 export class AppComponent implements OnInit {
+  @ViewChild('searchInput') searchInput!: ElementRef;
+
 
   title = 'Y';
   page: string = 'home';
   isSmallScreen: boolean = false;
   
+  selectedTabIndex: number = 0;
+
   constructor(
     private breakpointObserver: BreakpointObserver,
-    private router: Router
+    private router: Router,
+    private userService: UserService
   ) {}
 
+  user: any;
   ngOnInit(): void {
-    this.breakpointObserver.observe(['(max-width: 768px)']).subscribe(result => {
+    this.user = this.userService.getUser();
+    localStorage.setItem('userHandle', 'johndoe');
+    this.breakpointObserver.observe(['(max-width: 500px)']).subscribe(result => {
       this.isSmallScreen = result.matches;
     });
   
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        this.updateScreenSize();
+        //this.updateScreenSize();
+        this.updateSelectedTab(event.urlAfterRedirects);
+        if (!event.urlAfterRedirects.startsWith('/search')) {
+          this.clearSearchInput();
+        }
       }
     });
   }
 
 
-  updateScreenSize() {
-    this.isSmallScreen = this.breakpointObserver.isMatched(['(max-width: 768px)']);
-  }
+  /*updateScreenSize() {
+    this.isSmallScreen = this.breakpointObserver.isMatched(['(max-width: 500px)']);
+  }*/
 
   changePage(page: string) {
     this.page = page;
@@ -68,14 +84,37 @@ export class AppComponent implements OnInit {
   }
 
   onTabChange(index: number): void {
-    const routes = ['/home', '/search', '/messages', '/profile'];
+    const routes = ['/home', '/search', '/messages', `/profile/${localStorage.getItem('userHandle')}`];
     if (routes[index]) {
       this.router.navigate([routes[index]]);
     }
   }
 
-  onSearch(event: Event){
-    
+  updateSelectedTab(url: string): void {
+    //console.log('URL:', url);
+    const routes = ['/home', '/search', '/messages', '/profile'];
+    const index = routes.findIndex(route => 
+      route === '/profile' ? url.startsWith('/profile') : route === url
+    );
+    if (index !== -1) {
+      this.selectedTabIndex = index;
+    }
+  }
+
+
+  
+
+  onSearch(event: KeyboardEvent): void {
+    const input = (event.target as HTMLInputElement).value.trim(); 
+    if (event.key === 'Enter' && input) { 
+      this.router.navigate(['/search', input]); 
+    }
+  }
+
+  clearSearchInput(): void {
+    if (this.searchInput) {
+      this.searchInput.nativeElement.value = ''; 
+    }
   }
   
 }

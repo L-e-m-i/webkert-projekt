@@ -6,9 +6,18 @@ html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-color: $background-color; }
 
 :root {
+    @include mat.form-field-overrides((
+        filled-caret-color: $secondary-color,
+        filled-focus-active-indicator-color: $secondary-color,
+        filled-container-color: $background-color,
+
+    ));
+
     @include mat.tabs-overrides((
         active-focus-indicator-color $secondary-color,
         active-hover-indicator-color $secondary-color,
         active-indicator-color $secondary-color,
     ));
-  }
+    --mat-sys-background: $background-color;
+}
+

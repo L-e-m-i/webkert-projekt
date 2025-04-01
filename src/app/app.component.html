@@ -12,7 +12,24 @@
   <mat-sidenav-content>
     <main>
     <mat-toolbar>
-      <input type="text" [placeholder]="'Search...'" class="search-input" (keyup)="onSearch($event)" />
+      <!--<mat-form-field appearance="outline">
+        <mat-label>Search</mat-label>
+        <mat-icon matSuffix>search</mat-icon>
+        <input 
+          #searchInput
+          matInput
+          type="text" 
+          placeholder="Search..." 
+          class="search-input" 
+          (keyup)="onSearch($event)" />
+      </mat-form-field>-->
+
+      <input 
+        #searchInput
+        type="text" 
+        [placeholder]="'Search...'" 
+        class="search-input" 
+        (keyup)="onSearch($event)" />
       <button 
         mat-button (click)="onSidenavToggle(sidenav)" 
         class="menu-toggle-button">
@@ -27,7 +44,11 @@
     </mat-sidenav-content>
   </mat-sidenav-container>
 
-<mat-tab-group class="bottom-tabs" (selectedTabChange)="onTabChange($event.index)" animationDuration="0ms">
+<mat-tab-group 
+  class="bottom-tabs"
+  [(selectedIndex)]="selectedTabIndex"
+  (selectedTabChange)="onTabChange($event.index)"
+  animationDuration="0ms">
   <mat-tab>
     <ng-template mat-tab-label>
       <mat-icon>home</mat-icon>
