@@ -5,7 +5,11 @@ import { profiles } from '../models/profiles';
   providedIn: 'root', 
 })
 export class UserService {
-  private user = profiles[0]; 
+  private user: any; 
+
+  getUsers(): any[] {
+    return profiles;
+  }
 
   getUser(): any {
     return this.user;
@@ -13,5 +17,9 @@ export class UserService {
 
   setUser(newUser: any): void {
     this.user = newUser;
+  }
+
+  createUser(user: any): void {
+    profiles.push(user);
   }
 }

@@ -1,4 +1,4 @@
-@for($tweet of items; track $tweet.id){
+@for($tweet of items.slice().reverse(); track $tweet.id){
     <div class="tweet-container">
         <div class="tweet-header">
             <mat-icon>person</mat-icon>
@@ -7,7 +7,7 @@
             <p class="tweet-date">{{ $tweet.date | dateFormatter }}</p>
         </div>
         <div class="tweet-content">
-            <p>{{ $tweet.tweet }}</p>
+            <p>{{ $tweet.content }}</p>
         </div>
         <div class="tweet-footer">
             <span>
@@ -15,15 +15,15 @@
                 {{ $tweet.comments }}
             </span>
             <span (click)="retweetTweet($tweet)">
-                <mat-icon [class.retweeted]="$tweet.retweeted">repeat</mat-icon>
+                <mat-icon [class.retweeted]="$tweet.isRetweeted">repeat</mat-icon>
                 {{ $tweet.retweets }}
             </span>
             <span (click)="likeTweet($tweet)">
-                <mat-icon [class.liked]="$tweet.liked">favorite</mat-icon>
+                <mat-icon [class.liked]="$tweet.isLiked">favorite</mat-icon>
                 {{ $tweet.likes }}
             </span>
             <span (click)="bookmarkTweet($tweet)">
-                <mat-icon [class.bookmarked]="$tweet.bookmarked">bookmark</mat-icon>
+                <mat-icon [class.bookmarked]="$tweet.isBookmarked">bookmark</mat-icon>
                 {{ $tweet.bookmarks }}
             </span>
         </div>

@@ -1,7 +1,7 @@
 export class tweetItem{
     id: number;
-    parentId: number = 0;
-    tweet: string;
+    parentId?: number = 0;
+    content: string;
     user: string;
     handle: string;
     date: string;
@@ -9,12 +9,12 @@ export class tweetItem{
     retweets: number;
     comments: number;
     bookmarks: number;
-    liked: boolean = false;
-    bookmarked: boolean = false;
-    retweeted: boolean = false;
+    isLiked?: boolean = false;
+    isBookmarked?: boolean = false;
+    isRetweeted?: boolean = false;
     constructor(id: number, tweet: string, handle: string, user: string, date: string, likes: number, bookmarks: number, retweets: number, comments: number){
         this.id = id;
-        this.tweet = tweet;
+        this.content = tweet;
         this.user = user;
         this.handle = handle;
         this.date = date;
@@ -23,18 +23,18 @@ export class tweetItem{
         this.comments = comments;
         this.bookmarks = bookmarks;
     }
-    setParentId(id: number){
-        this.parentId = id;
-    }
-    setLiked(liked: boolean){
-        this.liked = liked;
-    }
-    setBookmarked(bookmarked: boolean){
-        this.bookmarked = bookmarked;
-    }
-    setLikes(likes: number){
-        this.likes = likes;
-    }
+    // setParentId(id: number){
+    //     this.parentId = id;
+    // }
+    // setLiked(liked: boolean){
+    //     this.isLiked = liked;
+    // }
+    // setBookmarked(bookmarked: boolean){
+    //     this.isBookmarked = bookmarked;
+    // }
+    // setLikes(likes: number){
+    //     this.likes = likes;
+    // }
 }
 
 export const tweetItems: tweetItem[] = [

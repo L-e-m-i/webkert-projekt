@@ -28,6 +28,7 @@ import { UserService } from './shared/services/user.service';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    //RouterLink,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -36,7 +37,7 @@ import { UserService } from './shared/services/user.service';
 export class AppComponent implements OnInit {
   @ViewChild('searchInput') searchInput!: ElementRef;
 
-
+  isLoggedIn: boolean = false;
   title = 'Y';
   page: string = 'home';
   isSmallScreen: boolean = false;
@@ -51,8 +52,9 @@ export class AppComponent implements OnInit {
 
   user: any;
   ngOnInit(): void {
-    this.user = this.userService.getUser();
-    localStorage.setItem('userHandle', 'johndoe');
+    this.checkLoginStatus() ? this.user = this.userService.getUser() : this.user = null;
+   
+    //localStorage.setItem('userHandle', 'johndoe');
     this.breakpointObserver.observe(['(max-width: 500px)']).subscribe(result => {
       this.isSmallScreen = result.matches;
     });
@@ -68,6 +70,9 @@ export class AppComponent implements OnInit {
     });
   }
 
+  checkLoginStatus(): boolean {
+    return this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  }
 
   /*updateScreenSize() {
     this.isSmallScreen = this.breakpointObserver.isMatched(['(max-width: 500px)']);
@@ -115,6 +120,14 @@ export class AppComponent implements OnInit {
     if (this.searchInput) {
       this.searchInput.nativeElement.value = ''; 
     }
+  }
+
+  
+  logout(): void {
+    localStorage.setItem('isLoggedIn', 'false');
+    localStorage.removeItem('userHandle');
+    this.isLoggedIn = false;
+    window.location.href = '/home';
   }
   
 }

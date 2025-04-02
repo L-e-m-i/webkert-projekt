@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { profiles } from '../../shared/models/profiles';
 import { tweetItem, tweetItems } from '../../shared/models/tweetItem';
 import { MatIcon } from '@angular/material/icon';
@@ -7,7 +8,7 @@ import { DateFormatterPipe } from '../../shared/pipes/date.pipe';
 import { MatTabGroup } from '@angular/material/tabs';
 import { MatTabsModule } from '@angular/material/tabs';
 import { UserService } from '../../shared/services/user.service';
-
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-profile',
@@ -22,7 +23,10 @@ import { UserService } from '../../shared/services/user.service';
   
 })
 export class ProfileComponent {
-  constructor(private tweetService: TweetService, private userService: UserService) { }
+  constructor(
+    private tweetService: TweetService,
+    private userService: UserService, 
+    private router: Router) { }
   
   /*items: tweetItem[] = [
     new tweetItem(1, 'WHO UP JORKING THEY PEANITS RN?', 'johndoe', 'peanitsjorker', '2025-01-01T12:34:56', 69, 12, 420, 666),
@@ -33,14 +37,28 @@ export class ProfileComponent {
   ];
 */
   items = tweetItems;
-
+  likes: tweetItem[] = [];
   user: any;
   ngOnInit(): void {
-    this.user = this.userService.getUser(); // Access the global user
+    this.user = this.userService.getUser();
+    this.loadUserData();
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe(() => {
+        this.loadUserData();
+      });
+  }
+
+  loadUserData(): void {
+    this.likes = this.user.likes
+      .map((id: number) => this.items.find((tweet: tweetItem) => tweet.id === id))
+      .filter((tweet: tweetItem | undefined): tweet is tweetItem => !!tweet);
   }
 
   likeTweet(tweet: tweetItem): void {
     this.tweetService.toggleLike(tweet);
+    this.loadUserData();
+
   }
 
   bookmarkTweet(tweet: tweetItem): void {

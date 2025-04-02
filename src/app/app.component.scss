@@ -30,7 +30,12 @@ a {
 main {
     width: 630px;
     max-width: 630px;
+    
     background-color: $background-color;
+    border: 1px solid $border-color;
+    border-top: none;
+    border-bottom:none;
+    
 }
 
 
@@ -50,6 +55,7 @@ mat-toolbar{
     background-color: $background-color;
     border-bottom: $border-color solid 1px;
     border-right: $border-color solid 1px;
+    border-top: $border-color solid 1px;
     color: white;
     mat-icon {
         color: white;

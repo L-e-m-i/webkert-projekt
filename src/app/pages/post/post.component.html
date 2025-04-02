@@ -1,5 +1,23 @@
-<mat-form-field>
- 
-    <textarea matInput placeholder="What are you thinking about?"></textarea>
-</mat-form-field>
-<button mat-button>Click me</button>
+<div class="form-wrapper">
+    <form (ngSubmit)="postTweet()" class="post-form">
+        <mat-form-field>
+          <div class="textarea-wrapper">
+            <textarea
+              matInput
+              placeholder="What are you thinking about?"
+              (input)="adjustTextareaHeight($event)"
+              [formControl]="post"
+            ></textarea>
+          </div>
+        </mat-form-field>
+
+        @if (error) {
+            <div class="error-message">
+              {{ error }}
+            </div>
+        }
+        <div class="button-wrapper">
+            <button mat-button type="submit">Post</button>
+        </div>
+    </form>
+</div>

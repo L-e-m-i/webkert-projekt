@@ -21,7 +21,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
   @Input() sidenav!: MatSidenav;
   @Input() isSmallScreen!: boolean;
 
-
+  isLoggedIn: boolean = false;
   userHandle: string | null = null;
 
 
@@ -31,7 +31,8 @@ export class MenuComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.userHandle = localStorage.getItem('userHandle');
+    //this.userHandle = localStorage.getItem('userHandle');
+    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     console.log("ngOnInit called");
   }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { tweetItem } from '../models/tweetItem';
+import { tweetItem, tweetItems } from '../models/tweetItem';
 import { profiles } from '../models/profiles';
 
 @Injectable({
@@ -9,10 +9,19 @@ export class TweetService {
   profiles = profiles;
   user: any = profiles[0];
   constructor() { }
+  private tweets: tweetItem[] = tweetItems;
+
+  getTweets(): tweetItem[] {
+    return this.tweets;
+  }
+
+  addTweet(tweet: tweetItem): void {
+    this.tweets.push(tweet);
+  }
 
   toggleLike(tweet: tweetItem): void {
-    tweet.liked = !tweet.liked;
-    if (tweet.liked) {
+    tweet.isLiked = !tweet.isLiked;
+    if (tweet.isLiked) {
       tweet.likes++;
       this.user.likes.push(tweet.id);
       console.log(this.user.likes);
@@ -23,8 +32,8 @@ export class TweetService {
   }
 
   toggleBookmark(tweet: tweetItem): void {
-    tweet.bookmarked = !tweet.bookmarked;
-    if(tweet.bookmarked){
+    tweet.isBookmarked = !tweet.isBookmarked;
+    if(tweet.isBookmarked){
       tweet.bookmarks++;
     }
     else{
@@ -33,8 +42,8 @@ export class TweetService {
   }
 
   toggleRetweet(tweet: tweetItem): void {
-    tweet.retweeted = !tweet.retweeted;
-    if(tweet.retweeted){
+    tweet.isRetweeted = !tweet.isRetweeted;
+    if(tweet.isRetweeted){
       tweet.retweets++;
     }
     else{

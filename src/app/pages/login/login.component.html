@@ -1,1 +1,17 @@
-<p>login works!</p>
+<div class="form-wrapper">
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
+        <mat-form-field>
+            <mat-label>Handle:</mat-label>
+            <input matInput type="text"
+                formControlName="handle"
+            />
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Password:</mat-label>
+            <input matInput type="password"
+                formControlName="password"
+            />
+        </mat-form-field>
+        <button mat-button>Login</button>
+    </form>
+</div>

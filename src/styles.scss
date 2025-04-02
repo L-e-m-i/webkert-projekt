@@ -8,9 +8,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-
 :root {
     @include mat.form-field-overrides((
         filled-caret-color: $secondary-color,
-        filled-focus-active-indicator-color: $secondary-color,
+        filled-focus-active-indicator-color: transparent,
+        filled-active-indicator-color: $background-color,
         filled-container-color: $background-color,
-
+        filled-hover-active-indicator-color: $background-color,
+        
+        
     ));
 
     @include mat.tabs-overrides((
@@ -19,5 +22,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; background-
         active-indicator-color $secondary-color,
     ));
     --mat-sys-background: $background-color;
-}
+}  
+
+
 
