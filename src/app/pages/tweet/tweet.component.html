@@ -1,1 +1,7 @@
-<p>tweet works!</p>
+<ng-container *ngFor="let tweet of items.slice().reverse()">
+    <app-tweet-shared 
+        *ngIf="tweet.handle === handle && tweet.id === id" 
+        [tweet]="tweet" 
+        >
+    </app-tweet-shared>
+</ng-container>

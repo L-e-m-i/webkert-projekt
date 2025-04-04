@@ -1,0 +1,29 @@
+<div class="tweet-container" (click)="navigateToPost(tweet)">
+    <div class="tweet-header">
+        <mat-icon>person</mat-icon>
+        <p class="tweet-user-name">{{ tweet.user }}</p>
+        <p class="tweet-user-handle">{{ '@'+ tweet.handle }}</p>
+        <p class="tweet-date">{{ tweet.date | dateFormatter }}</p>
+    </div>
+    <div class="tweet-content">
+        <p>{{ tweet.content }}</p>
+    </div>
+    <div class="tweet-footer">
+        <span>
+            <mat-icon>comment</mat-icon>
+            {{ tweet.comments }}
+        </span>
+        <span (click)="retweetTweet(tweet)">
+            <mat-icon [class.retweeted]="tweet.isRetweeted">repeat</mat-icon>
+            {{ tweet.retweets }}
+        </span>
+        <span (click)="likeTweet(tweet)">
+            <mat-icon [class.liked]="tweet.isLiked">favorite</mat-icon>
+            {{ tweet.likes }}
+        </span>
+        <span (click)="bookmarkTweet(tweet)">
+            <mat-icon [class.bookmarked]="tweet.isBookmarked">bookmark</mat-icon>
+            {{ tweet.bookmarks }}
+        </span>
+    </div>
+</div>

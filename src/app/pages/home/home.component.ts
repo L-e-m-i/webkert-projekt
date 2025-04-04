@@ -1,21 +1,30 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { tweetItem, tweetItems } from '../../shared/models/tweetItem';
 import { MatIcon } from '@angular/material/icon';
 import { TweetService } from '../../shared/services/tweet.service';
+import { Router } from '@angular/router';
 import { DateFormatterPipe } from '../../shared/pipes/date.pipe';
 import { UserService } from '../../shared/services/user.service';
+import { TweetComponentShared } from '../../shared/tweet/tweet.component';
 
 @Component({
   selector: 'app-home',
   imports: [
-    MatIcon,
-    DateFormatterPipe
+    //MatIcon,
+    //DateFormatterPipe,
+    TweetComponentShared,
+    CommonModule,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
 export class HomeComponent {
-  constructor(private tweetService: TweetService, private userService: UserService) { }  
+  constructor(
+    private tweetService: TweetService,
+    private userService: UserService,
+    private router: Router
+  ) { }  
 
   user: any; 
 
@@ -25,16 +34,8 @@ export class HomeComponent {
 
   items = tweetItems;
 
-  likeTweet(tweet: tweetItem): void {
-    this.tweetService.toggleLike(tweet);
-  }
 
-  bookmarkTweet(tweet: tweetItem): void {
-    this.tweetService.toggleBookmark(tweet);
+  navigateToPost(tweet: tweetItem): void {
+    this.router.navigate([tweet.handle, tweet.id]);
   }
-
-  retweetTweet(tweet: tweetItem): void {
-    this.tweetService.toggleRetweet(tweet);
-  }
-
 }

@@ -1,5 +1,8 @@
-@for($tweet of items.slice().reverse(); track $tweet.id){
-    <div class="tweet-container">
+
+<ng-container *ngFor="let tweet of items.slice().reverse()">
+    <app-tweet-shared [tweet]="tweet" (click)="navigateToPost(tweet)"></app-tweet-shared>
+</ng-container>
+    <!-- <div class="tweet-container">
         <div class="tweet-header">
             <mat-icon>person</mat-icon>
             <p class="tweet-user-name">{{ $tweet.user }}</p>
@@ -27,5 +30,4 @@
                 {{ $tweet.bookmarks }}
             </span>
         </div>
-    </div>
-}
+    </div> -->

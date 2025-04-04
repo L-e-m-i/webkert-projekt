@@ -21,7 +21,11 @@
     </div>
     <mat-tab-group>
         <mat-tab label="Tweets">
-            @for($tweet of items.slice().reverse(); track $tweet.id){
+            <ng-container *ngFor="let tweet of items.slice().reverse()">
+                <app-tweet-shared *ngIf="tweet.handle === user.handle" [tweet]="tweet" (likeChange)="loadUserData()"></app-tweet-shared>
+            </ng-container>
+
+            <!-- @for($tweet of items.slice().reverse(); track $tweet.id){
                 @if($tweet.handle === user.handle){
                     <div class="tweet-container">
                         <div class="tweet-header">
@@ -53,14 +57,17 @@
                         </div>
                     </div>
                 }
-            }
+            } -->
         </mat-tab>
         <mat-tab label="Replies">
 
         </mat-tab>
         <mat-tab label="Likes">
+            <ng-container *ngFor="let tweet of likes.slice().reverse()">
+                <app-tweet-shared [tweet]="tweet" (likeChange)="loadUserData()"></app-tweet-shared>
+            </ng-container>
             
-            @for($tweet of likes.slice().reverse(); track $tweet.id){
+            <!-- @for($tweet of likes.slice().reverse(); track $tweet.id){
                 
                     <div class="tweet-container">
                         <div class="tweet-header">
@@ -92,7 +99,7 @@
                         </div>
                     </div>
                 
-            }
+            } -->
         </mat-tab>
       </mat-tab-group>
 

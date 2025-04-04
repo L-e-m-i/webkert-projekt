@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
 import { profiles } from '../../shared/models/profiles';
 import { tweetItem, tweetItems } from '../../shared/models/tweetItem';
@@ -9,14 +10,16 @@ import { MatTabGroup } from '@angular/material/tabs';
 import { MatTabsModule } from '@angular/material/tabs';
 import { UserService } from '../../shared/services/user.service';
 import { filter } from 'rxjs/operators';
+import { TweetComponentShared } from '../../shared/tweet/tweet.component';
+
 
 @Component({
   selector: 'app-profile',
   imports: [
-    MatIcon,
-    DateFormatterPipe,
     MatTabGroup,
     MatTabsModule,
+    CommonModule,
+    TweetComponentShared,
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.scss',
@@ -39,6 +42,7 @@ export class ProfileComponent {
   items = tweetItems;
   likes: tweetItem[] = [];
   user: any;
+  tweet: any;
   ngOnInit(): void {
     this.user = this.userService.getUser();
     this.loadUserData();
@@ -55,17 +59,9 @@ export class ProfileComponent {
       .filter((tweet: tweetItem | undefined): tweet is tweetItem => !!tweet);
   }
 
-  likeTweet(tweet: tweetItem): void {
-    this.tweetService.toggleLike(tweet);
-    this.loadUserData();
 
+  trackById(index: number, tweet: tweetItem): number {
+    return tweet.id;
   }
 
-  bookmarkTweet(tweet: tweetItem): void {
-    this.tweetService.toggleBookmark(tweet);
-  }
-
-  retweetTweet(tweet: tweetItem): void {
-    this.tweetService.toggleRetweet(tweet);
-  }
 }

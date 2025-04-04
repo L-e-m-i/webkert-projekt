@@ -9,6 +9,21 @@ export class UserService {
   private isLoggedIn: boolean = false;
 
 
+  constructor() {
+    this.loadUserFromLocalStorage();
+  }
+
+  private loadUserFromLocalStorage(): void {
+    const userHandle = localStorage.getItem('userHandle');
+    if (userHandle) {
+      const storedUser = profiles.find(profile => profile.handle === userHandle);
+      if (storedUser) {
+        this.user = storedUser;
+        this.isLoggedIn = true;
+      }
+    }
+  }
+
   getUsers(): any[] {
     return profiles;
   }
@@ -20,6 +35,8 @@ export class UserService {
 
   setUser(newUser: any): void {
     this.user = newUser;
+    localStorage.setItem('userHandle', newUser.handle);
+    localStorage.setItem('isLoggedIn', 'true');
   }
 
   createUser(user: any): void {
