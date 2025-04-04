@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
 
   user: any;
   ngOnInit(): void {
-    this.checkLoginStatus() ? this.user = this.userService.getUser() : this.user = null;
+    this.userService.checkLoginStatus() ? this.user = this.userService.getUser() : this.user = null;
    
     //localStorage.setItem('userHandle', 'johndoe');
     this.breakpointObserver.observe(['(max-width: 500px)']).subscribe(result => {
@@ -63,6 +63,7 @@ export class AppComponent implements OnInit {
       if (event instanceof NavigationEnd) {
         //this.updateScreenSize();
         this.updateSelectedTab(event.urlAfterRedirects);
+        this.isLoggedIn = this.userService.checkLoginStatus();
         if (!event.urlAfterRedirects.startsWith('/search')) {
           this.clearSearchInput();
         }
@@ -70,9 +71,7 @@ export class AppComponent implements OnInit {
     });
   }
 
-  checkLoginStatus(): boolean {
-    return this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  }
+  
 
   /*updateScreenSize() {
     this.isSmallScreen = this.breakpointObserver.isMatched(['(max-width: 500px)']);
@@ -123,11 +122,6 @@ export class AppComponent implements OnInit {
   }
 
   
-  logout(): void {
-    localStorage.setItem('isLoggedIn', 'false');
-    localStorage.removeItem('userHandle');
-    this.isLoggedIn = false;
-    window.location.href = '/home';
-  }
+
   
 }

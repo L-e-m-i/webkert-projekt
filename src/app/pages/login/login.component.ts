@@ -23,7 +23,11 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
   loginForm!: FormGroup;
-  constructor(private fb: FormBuilder, private userService: UserService){}
+  constructor(
+    private fb: FormBuilder, 
+    private userService: UserService,
+    private router: Router
+  ){}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -41,11 +45,12 @@ export class LoginComponent {
       const { handle, password } = this.loginForm.value;   
       for(let i = 0; i < this.userService.getUsers().length; i++){
         if(this.userService.getUsers()[i].handle == handle && this.userService.getUsers()[i].password == password){
-          //console.log('User found:', this.userService.getUsers()[i]);
+          console.log('User found:', this.userService.getUsers()[i]);
           localStorage.setItem('userHandle', handle);
           localStorage.setItem('isLoggedIn', 'true');
           this.userService.setUser(this.userService.getUsers()[i]);
           this.loginForm.reset();
+          this.router.navigate(['/home']);
           break;
         }else{
           console.error('Invalid credentials');

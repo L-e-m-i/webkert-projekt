@@ -1,34 +1,44 @@
-<mat-nav-list>
-  <a mat-list-item routerLink="/home" routerLinkActive="active-list-item" (click)="closeMenu()">
-    <mat-icon matListItemIcon>home</mat-icon>
-    <span matListItemTitle>Home</span>
-  </a>
-  <a mat-list-item routerLink="/bookmarks" routerLinkActive="active-list-item" (click)="closeMenu()">
-    <mat-icon matListItemIcon>bookmark</mat-icon>
-    <span matListItemTitle>Bookmarks</span>
-  </a>
-  @if(isLoggedIn){ 
-    <a mat-list-item [routerLink]="'/profile/' + userHandle" routerLinkActive="active-list-item" (click)="closeMenu()">
-      <mat-icon matListItemIcon>person</mat-icon>
-      <span matListItemTitle>Profile</span>
+<mat-nav-list class="menu-list">
+  <div class="top-wrapper">
+    <a mat-list-item routerLink="/home" routerLinkActive="active-list-item" (click)="closeMenu()">
+      <mat-icon matListItemIcon>home</mat-icon>
+      <span matListItemTitle>Home</span>
     </a>
-  }@else{
-    <a mat-list-item routerLink="/login" routerLinkActive="active-list-item" (click)="closeMenu()">
-      <mat-icon matListItemIcon>person</mat-icon>
-      <span matListItemTitle>Profile</span>
+    <a mat-list-item routerLink="/bookmarks" routerLinkActive="active-list-item" (click)="closeMenu()">
+      <mat-icon matListItemIcon>bookmark</mat-icon>
+      <span matListItemTitle>Bookmarks</span>
     </a>
+    @if(isLoggedIn){ 
+      <a mat-list-item [routerLink]="'/profile/' + userHandle" routerLinkActive="active-list-item" (click)="closeMenu()">
+        <mat-icon matListItemIcon>person</mat-icon>
+        <span matListItemTitle>Profile</span>
+      </a>
+    }@else{
+      <a mat-list-item routerLink="/login" routerLinkActive="active-list-item" (click)="closeMenu()">
+        <mat-icon matListItemIcon>person</mat-icon>
+        <span matListItemTitle>Profile</span>
+      </a>
+    }
+    <a mat-list-item routerLink="/search" routerLinkActive="activate-list-item" (click)="closeMenu()">
+      <mat-icon matListItemIcon>search</mat-icon>
+      <span matListItemTitle>Search</span>
+    </a>
+    <a mat-list-item routerLink="/messages" routerLinkActive="active-list-item" (click)="closeMenu()">
+      <mat-icon matListItemIcon>mail</mat-icon>
+      <span matListItemTitle>Messages</span>
+    </a>
+    <a mat-list-item routerLink="/post" routerLinkActive="active-list-item" (click)="closeMenu()" id="post-link">
+      <mat-icon matListItemIcon>edit_note</mat-icon>
+      <span matListItemTitle>Post</span>  
+    </a>
+  </div>
+  @if(isLoggedIn){
+    <div class="bottom-wrapper">
+      <a mat-list-item (click)="logout()" class="logout-button">
+        <mat-icon matListItemIcon>logout</mat-icon>
+        <span matListItemTitle>Logout</span>
+      </a>
+    </div>
   }
-  <a mat-list-item routerLink="/search" routerLinkActive="activate-list-item" (click)="closeMenu()">
-    <mat-icon matListItemIcon>search</mat-icon>
-    <span matListItemTitle>Search</span>
-  </a>
-  <a mat-list-item routerLink="/messages" routerLinkActive="active-list-item" (click)="closeMenu()">
-    <mat-icon matListItemIcon>mail</mat-icon>
-    <span matListItemTitle>Messages</span>
-  </a>
-  <a mat-list-item routerLink="/post" routerLinkActive="active-list-item" (click)="closeMenu()" id="post-link">
-    <mat-icon matListItemIcon>edit_note</mat-icon>
-    <span matListItemTitle>Post</span>  
-  </a>  
 </mat-nav-list>
 

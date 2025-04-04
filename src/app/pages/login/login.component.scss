@@ -1,0 +1,27 @@
+$background-color: #0d1114;
+$secondary-color: #3AA8F2;
+$border-color: rgb(129, 129, 129);
+
+.form-wrapper{
+    border: $border-color 1px solid;
+    padding-bottom: 20px;
+}
+
+.form-wrapper form{
+    display: flex;
+    flex-direction: column;
+    gap:10px;
+    margin: 0 auto;
+    width:50%;
+    height: 100%;
+
+}
+
+.form-wrapper button{
+    background-color: $secondary-color;
+    color: white;
+}
+
+.form-wrapper button:hover{
+    background-color: #52b2f3;
+}

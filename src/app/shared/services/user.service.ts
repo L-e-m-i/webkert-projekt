@@ -6,12 +6,15 @@ import { profiles } from '../models/profiles';
 })
 export class UserService {
   private user: any; 
+  private isLoggedIn: boolean = false;
+
 
   getUsers(): any[] {
     return profiles;
   }
 
   getUser(): any {
+    console.log('getUser called:', this.user);
     return this.user;
   }
 
@@ -21,5 +24,10 @@ export class UserService {
 
   createUser(user: any): void {
     profiles.push(user);
+  }
+
+  checkLoginStatus(): boolean {
+    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    return this.isLoggedIn;
   }
 }

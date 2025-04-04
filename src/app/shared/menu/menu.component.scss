@@ -1,46 +1,76 @@
 $small-screen: 500px;
 $medium-screen: 1000px;
 
-mat-nav-list{
+mat-nav-list {
+    display: flex;
+    flex-direction: column; 
+    height: 100%; 
     padding: 10px 10px 0px 10px;
 }
-
-mat-list-item span[matListItemTitle],
-mat-list-item .mat-mdc-list-item-title {
-    font-size: 16px; /* Adjust font size as needed */
-    color: white; /* Change text color to white */
-    margin-left: 10px; /* Add space between icon and text */
-    text-align: left; /* Ensure text is aligned to the left */
+  
+.top-wrapper {
+  flex: 1; 
 }
 
-.mdc-list-item__content {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start; /* Align content to the left */
-    width: 100%; /* Ensure it spans the full width */
+.bottom-wrapper {
+    margin-top: auto;
 }
 
-#post-link{
-    background-color: white;
-    
-    span, mat-icon{
-        color: black;
-    }
+mat-list-item span[matListItemTitle] {
+  font-size: 16px; 
+  color: white; 
+  margin-left: 10px;
+  text-align: left; 
+}
+
+span[matListItemTitle] {
+    display: block; 
+}
+
+
+a {
+  margin-bottom: 10px;
+}
+
+
+
+#post-link {
+  background-color: white;
+
+  span,
+  mat-icon {
+    color: black;
+  }
+}
+
+#post-link:hover {
+  background-color: rgb(218, 218, 218);
+  color: black;
+}
+
+.logout-button {
+  background-color: #f44336; 
+  color: white; 
 }
 
 @media (max-width: $medium-screen) {
-    span[matListItemTitle],
-    .mat-mdc-list-item-title {
-        display: none; /* Hide titles on smaller screens */
+    mat-nav-list {
+        height: 95%; 
     }
-    a{
-        padding: 0px;;
-    }
+  span[matListItemTitle] {
+    display: none; 
+  }
+  a {
+    padding: 0px;
+  }
+
 }
 
 @media (max-width: $small-screen) {
-    span[matListItemTitle],
-    .mat-mdc-list-item-title {
-        display: block; /* Show titles on very small screens */
-    }
+  span[matListItemTitle] {
+    display: block; 
+  }
+  mat-nav-list{
+    height: 90%;
+  }
 }
