@@ -30,7 +30,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
     private userService: UserService,
     private router: Router,
   ) {
-    console.log("constructor called");
+    //console.log("constructor called");
   }
 
   ngOnInit(): void {
@@ -42,11 +42,11 @@ export class MenuComponent implements OnInit, AfterViewInit {
         this.userHandle = localStorage.getItem('userHandle');
       }
     });
-    console.log("ngOnInit called");
+    //console.log("ngOnInit called");
   }
 
   ngAfterViewInit(): void {
-    console.log("ngAfterViewInait called");
+    //console.log("ngAfterViewInait called");
   }
 
   

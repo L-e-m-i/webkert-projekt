@@ -37,7 +37,7 @@ export class PostComponent {
   ngOnInit(): void {
 
     this.user = this.userService.getUser();
-    console.log(this.tweetService.getTweets());
+    //console.log(this.tweetService.getTweets());
   }
 
 
@@ -61,20 +61,8 @@ export class PostComponent {
       return;
     }
   
-    const tweet: tweetItem = {
-      id: Date.now(), // Use a timestamp as a unique ID
-      user: this.user.name,
-      content: this.post.value.trim(),
-      date: new Date().toISOString(),
-      likes: 0,
-      retweets: 0,
-      comments: 0,
-      isLiked: false,
-      isRetweeted: false,
-      handle: this.user?.handle ?? '',
-      bookmarks: 0,
-      isBookmarked: false,
-    };
+
+    const tweet = new tweetItem(Date.now(), this.post.value, this.user.handle, this.user.name, new Date().toISOString(), 0, 0, 0, 0);
   
     this.tweetService.addTweet(tweet);
     console.log('Tweet added:', tweet);

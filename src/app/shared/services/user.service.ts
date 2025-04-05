@@ -29,7 +29,7 @@ export class UserService {
   }
 
   getUser(): any {
-    console.log('getUser called:', this.user);
+    //console.log('getUser called:', this.user);
     return this.user;
   }
 

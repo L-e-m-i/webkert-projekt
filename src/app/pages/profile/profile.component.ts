@@ -64,4 +64,9 @@ export class ProfileComponent {
     return tweet.id;
   }
 
+
+  navigateToPost(tweet: tweetItem): void {
+    this.router.navigate([tweet.handle, tweet.id]);
+  }
+
 }

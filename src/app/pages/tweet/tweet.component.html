@@ -1,7 +1,41 @@
 <ng-container *ngFor="let tweet of items.slice().reverse()">
     <app-tweet-shared 
         *ngIf="tweet.handle === handle && tweet.id === id" 
-        [tweet]="tweet" 
+        [tweet]="tweet"
+        (click)="isReply(tweet) ? navigateToPost(tweet) : null"
+        class="opened"
         >
     </app-tweet-shared>
+    <div class="form-wrapper" *ngIf="tweet.handle === handle && tweet.id === id">
+        <form (ngSubmit)="postReply()" class="post-form">
+            <mat-form-field>
+              <div class="textarea-wrapper">
+                <textarea
+                  matInput
+                  placeholder="What are you thinking about?"
+                  (input)="adjustTextareaHeight($event)"
+                  [formControl]="reply"
+                ></textarea>
+              </div>
+            </mat-form-field>
+    
+           
+            <div class="button-wrapper">
+                <button mat-button type="submit">Post</button>
+            </div>
+        </form>
+    </div>
+
+    @if(tweet.handle === handle && tweet.id === id){
+        @for(reply of getReplies(tweet.id).slice().reverse(); track reply.id){
+            @if(reply.parentId === tweet.id){
+                <app-tweet-shared
+                    class="reply"
+                    [tweet]="reply"
+                    (click)="isReply(reply) ? navigateToPost(reply) : null"
+                ></app-tweet-shared>
+            }
+        }
+    }
+
 </ng-container>

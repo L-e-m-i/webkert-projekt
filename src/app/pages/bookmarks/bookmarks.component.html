@@ -1,1 +1,7 @@
-
+<ng-container *ngFor="let tweet of bookmarks.slice().reverse()">
+    <app-tweet-shared 
+        [tweet]="tweet" 
+        (bookmarkChange)="loadUserData()"
+        (click)="navigateToPost(tweet)"
+    ></app-tweet-shared>
+</ng-container>

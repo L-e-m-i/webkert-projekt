@@ -1,1 +1,17 @@
 @use '../../shared/styles/tweets.scss';
+
+.tweet-container {
+    cursor: default; // Default cursor for the main tweet
+
+    &.reply {
+        cursor: pointer; // Pointer cursor for replies
+    }
+
+    &.opened {
+        cursor: default; // Ensure the opened tweet always has the default cursor
+    }
+}
+
+.reply{
+    white-space: pre-wrap;
+}

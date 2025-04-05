@@ -1,4 +1,4 @@
-export interface Profile {
+export class Profile {
     id: number;
     name: string;
     handle: string;
@@ -15,6 +15,16 @@ export interface Profile {
     bookmarks?: number[];
     profilePicture?: string;
     bannerPicture?: string;
+
+    constructor(id: number, name: string, handle: string, email: string, password: string){
+        this.id = id;
+        this.name = name;
+        this.handle = handle;
+        this.email = email;
+        this.password = password;
+    }
+
+    
 }
 
 export const profiles: Profile[] = [
@@ -30,9 +40,9 @@ export const profiles: Profile[] = [
         followers: [2, 3],
         following: [2, 4],
         likes: [],
-        retweets: [301],
-        replies: [401],
-        bookmarks: [501],
+        retweets: [],
+        replies: [],
+        bookmarks: [],
         profilePicture: "johndoe.png",
     },
     {

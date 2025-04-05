@@ -6,6 +6,7 @@ import { profiles } from '../models/profiles';
   providedIn: 'root'
 })
 export class TweetService {
+
   profiles = profiles;
   user: any = profiles[0];
   constructor() { }
@@ -24,7 +25,7 @@ export class TweetService {
     if (tweet.isLiked) {
       tweet.likes++;
       this.user.likes.push(tweet.id);
-      console.log(this.user.likes);
+      //console.log(this.user.likes);
     } else {
       tweet.likes--;
       this.user.likes = this.user.likes.filter((id: number) => id !== tweet.id);
@@ -35,9 +36,11 @@ export class TweetService {
     tweet.isBookmarked = !tweet.isBookmarked;
     if(tweet.isBookmarked){
       tweet.bookmarks++;
+      this.user.bookmarks.push(tweet.id);
     }
     else{
       tweet.bookmarks--;
+      this.user.bookmarks = this.user.bookmarks.filter((id: number) => id !== tweet.id);
     }
   }
 
@@ -49,6 +52,12 @@ export class TweetService {
     else{
       tweet.retweets--;
     }
+  }
+
+  getReplies(tweetId: number): tweetItem[] {
+    const replies = this.tweets.filter((item: tweetItem) => item.parentId === tweetId);
+    //console.log(`Replies for tweet ${tweetId}:`,replies);
+    return replies;
   }
 
 }

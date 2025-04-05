@@ -1,4 +1,9 @@
-<div class="tweet-container" (click)="navigateToPost(tweet)">
+<div 
+    class="tweet-container" 
+    [ngClass]="{ 'opened': isOpened(tweet.id) }" 
+    (click)="navigateToPost(tweet)"
+      
+>
     <div class="tweet-header">
         <mat-icon>person</mat-icon>
         <p class="tweet-user-name">{{ tweet.user }}</p>
@@ -13,17 +18,18 @@
             <mat-icon>comment</mat-icon>
             {{ tweet.comments }}
         </span>
-        <span (click)="retweetTweet(tweet)">
+        <span (click)="$event.stopPropagation(); retweetTweet(tweet)">
             <mat-icon [class.retweeted]="tweet.isRetweeted">repeat</mat-icon>
             {{ tweet.retweets }}
         </span>
-        <span (click)="likeTweet(tweet)">
+        <span (click)="$event.stopPropagation(); likeTweet(tweet)">
             <mat-icon [class.liked]="tweet.isLiked">favorite</mat-icon>
             {{ tweet.likes }}
         </span>
-        <span (click)="bookmarkTweet(tweet)">
+        <span (click)="$event.stopPropagation(); bookmarkTweet(tweet)">
             <mat-icon [class.bookmarked]="tweet.isBookmarked">bookmark</mat-icon>
             {{ tweet.bookmarks }}
         </span>
     </div>
 </div>
+

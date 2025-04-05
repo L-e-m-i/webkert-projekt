@@ -1,0 +1,15 @@
+@use '../post/post.component.scss' as *;
+
+app-tweet-shared {
+    ::ng-deep .tweet-container{
+        &.reply {
+            cursor: default !important; // Override cursor for non-reply tweets
+        }
+        &.opened {
+            cursor: default !important; // Ensure the opened tweet always has the default cursor
+        }
+    }
+}
+
+
+
