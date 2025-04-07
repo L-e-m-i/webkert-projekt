@@ -52,8 +52,10 @@ export class AppComponent implements OnInit {
 
   user: any;
   ngOnInit(): void {
+    //console.log('AppComponent initialized');
     this.userService.checkLoginStatus() ? this.user = this.userService.getUser() : this.user = null;
-   
+    console.log('User:', this.user);
+    
     //localStorage.setItem('userHandle', 'johndoe');
     this.breakpointObserver.observe(['(max-width: 500px)']).subscribe(result => {
       this.isSmallScreen = result.matches;
@@ -61,6 +63,7 @@ export class AppComponent implements OnInit {
   
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
+        //console.log('Router event:', event);
         //this.updateScreenSize();
         this.updateSelectedTab(event.urlAfterRedirects);
         this.isLoggedIn = this.userService.checkLoginStatus();
@@ -88,8 +91,18 @@ export class AppComponent implements OnInit {
   }
 
   onTabChange(index: number): void {
-    const routes = ['/home', '/search', '/messages', `/profile/${localStorage.getItem('userHandle')}`];
-    if (routes[index]) {
+    let routes: string[] = ['/home', '/search', '/messages', '/profile'];
+    if(!this.userService.checkLoginStatus()){
+      routes = ['/home', '/search', '/login', '/login'];
+    }
+    if (index === 3) { // Profile tab
+      const currentHandle = this.router.url.split('/profile/')[1]; // Extract the current profile handle from the URL
+      const handle = currentHandle || localStorage.getItem('userHandle'); // Use the current handle if available, otherwise fallback to logged-in user's handle
+      this.userService.checkLoginStatus() ? 
+        this.router.navigate([`${routes[index]}/${handle}`]) : 
+        this.router.navigate(['/login']);
+
+    } else if (routes[index]) {
       this.router.navigate([routes[index]]);
     }
   }

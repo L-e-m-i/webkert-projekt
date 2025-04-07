@@ -6,7 +6,7 @@
                 '../../../assets/img/banner' + user.bannerPicture : 
                 '../../../assets/img/banner/default.png'" 
                 alt="banner" class="profile-banner">
-            <img [src]="'../../../assets/img/pfp/' + user.profilePicture" class="profile-picture">
+            <img [src]="user.profilePicture ? '../../../assets/img/pfp/' + user.profilePicture : '../../../assets/img/pfp/default.png'" class="profile-picture">
         </div>
         <div class="profile-data-wrapper">
             <h1>{{ user.name }}</h1>
@@ -21,12 +21,12 @@
     </div>
     <mat-tab-group>
         <mat-tab label="Tweets">
-            <ng-container *ngFor="let tweet of items.slice().reverse()">
+            <ng-container *ngFor="let tweet of items.slice().reverse(); trackBy: trackById">
                 <app-tweet-shared 
                     *ngIf="tweet.handle === user.handle && !tweet.isReply" 
                     [tweet]="tweet" 
-                    (likeChange)="loadUserData()" 
-                    (retweetChange)="loadUserData()"
+                    (likeChange)="loadProfileData(user.handle)" 
+                    (retweetChange)="loadProfileData(user.handle)"
                     (click)="navigateToPost(tweet)" 
                 ></app-tweet-shared>
             </ng-container>
@@ -66,21 +66,21 @@
             } -->
         </mat-tab>
         <mat-tab label="Replies">
-            <ng-container *ngFor="let tweet of items.slice().reverse()">
+            <ng-container *ngFor="let tweet of items.slice().reverse(); trackBy: trackById">
                 <app-tweet-shared 
                     *ngIf="tweet.handle === user.handle && tweet.isReply" 
                     [tweet]="tweet" 
-                    (likeChange)="loadUserData()" 
-                    (retweetChange)="loadUserData()"
+                    (likeChange)="loadProfileData(user.handle)" 
+                    (retweetChange)="loadProfileData(user.handle)"
                     (click)="navigateToPost(tweet)" 
                 ></app-tweet-shared>
             </ng-container>
         </mat-tab>
         <mat-tab label="Likes">
-            <ng-container *ngFor="let tweet of likes.slice().reverse()">
+            <ng-container *ngFor="let tweet of likes.slice().reverse(); trackBy: trackById">
                 <app-tweet-shared 
                     [tweet]="tweet" 
-                    (likeChange)="loadUserData()"
+                    (likeChange)="loadProfileData(user.handle)"
                     (click)="navigateToPost(tweet)"
                 ></app-tweet-shared>
             </ng-container>

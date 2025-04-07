@@ -38,6 +38,7 @@ export class MenuComponent implements OnInit, AfterViewInit {
     //this.userHandle = localStorage.getItem('userHandle');
     this.router.events.subscribe((event) => {
       if(event instanceof NavigationEnd) {
+        console.log("NavigationEnd event detected");
         this.isLoggedIn = this.userService.checkLoginStatus();
         this.userHandle = localStorage.getItem('userHandle');
       }

@@ -1,1 +1,10 @@
-<p>messages works!</p>
+@for($chat of chats; track $chat.id){
+    <div class="chat-wrapper">
+        <div class="chat-header">
+            <mat-icon>person</mat-icon>
+            <p class="chat-user-name">{{ $chat.getParticipantNamesExceptUser(user.id) }}</p>
+            <p class="latest-message">{{ $chat.getLatestMessage() }}</p>
+            <p class="chat-date">{{ $chat.getLatestMessage()?.timestamp || '' | dateFormatter }}</p>
+        </div>
+    </div>
+}

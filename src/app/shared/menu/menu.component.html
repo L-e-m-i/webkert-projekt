@@ -23,14 +23,25 @@
       <mat-icon matListItemIcon>search</mat-icon>
       <span matListItemTitle>Search</span>
     </a>
-    <a mat-list-item routerLink="/messages" routerLinkActive="active-list-item" (click)="closeMenu()">
-      <mat-icon matListItemIcon>mail</mat-icon>
-      <span matListItemTitle>Messages</span>
-    </a>
-    <a mat-list-item routerLink="/post" routerLinkActive="active-list-item" (click)="closeMenu()" id="post-link">
-      <mat-icon matListItemIcon>edit_note</mat-icon>
-      <span matListItemTitle>Post</span>  
-    </a>
+    @if(isLoggedIn){
+      <a mat-list-item routerLink="/messages" routerLinkActive="active-list-item" (click)="closeMenu()">
+        <mat-icon matListItemIcon>mail</mat-icon>
+        <span matListItemTitle>Messages</span>
+      </a>
+      <a mat-list-item routerLink="/post" routerLinkActive="active-list-item" (click)="closeMenu()" id="post-link">
+        <mat-icon matListItemIcon>edit_note</mat-icon>
+        <span matListItemTitle>Post</span>  
+      </a>
+    } @else{
+      <a mat-list-item routerLink="/login" routerLinkActive="active-list-item" (click)="closeMenu()">
+        <mat-icon matListItemIcon>mail</mat-icon>
+        <span matListItemTitle>Messages</span>
+      </a>
+      <a mat-list-item routerLink="/login" routerLinkActive="active-list-item" (click)="closeMenu()" id="post-link">
+        <mat-icon matListItemIcon>edit_note</mat-icon>
+        <span matListItemTitle>Post</span>  
+      </a>
+    }
   </div>
   @if(isLoggedIn){
     <div class="bottom-wrapper">

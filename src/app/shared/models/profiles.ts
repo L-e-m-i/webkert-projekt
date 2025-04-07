@@ -1,6 +1,6 @@
 export class Profile {
     id: number;
-    name: string;
+    username: string;
     handle: string;
     email: string;
     password: string;
@@ -18,7 +18,7 @@ export class Profile {
 
     constructor(id: number, name: string, handle: string, email: string, password: string){
         this.id = id;
-        this.name = name;
+        this.username = name;
         this.handle = handle;
         this.email = email;
         this.password = password;
@@ -30,7 +30,7 @@ export class Profile {
 export const profiles: Profile[] = [
     {
         id: 1,
-        name: "peanitsjorker",
+        username: "peanitsjorker",
         handle: "johndoe",
         age: 30,
         email: "johndoe@example.com",
@@ -47,7 +47,7 @@ export const profiles: Profile[] = [
     },
     {
         id: 2,
-        name: "Jane Smith",
+        username: "Jane Smith",
         handle: "janesmith",
         age: 25,
         email: "janesmith@example.com",
@@ -56,15 +56,15 @@ export const profiles: Profile[] = [
         tweets: [104, 105],
         followers: [1, 3],
         following: [1, 4],
-        likes: [203, 204],
-        retweets: [302],
-        replies: [402],
-        bookmarks: [502],
-        profilePicture: "janesmith.jpg"
+        likes: [],
+        retweets: [],
+        replies: [],
+        bookmarks: [],
+        //profilePicture: "janesmith.jpg"
     },
     {
         id: 3,
-        name: "Alice Johnson",
+        username: "Alice Johnson",
         handle: "alicej",
         age: 28,
         email: "alicej@example.com",
@@ -73,10 +73,10 @@ export const profiles: Profile[] = [
         tweets: [106],
         followers: [1, 2],
         following: [4],
-        likes: [205],
-        retweets: [303],
-        replies: [403],
-        bookmarks: [503],
-        profilePicture: "alicejohnson.jpg"
+        likes: [],
+        retweets: [],
+        replies: [],
+        bookmarks: [],
+        //profilePicture: "alicejohnson.jpg"
     }
 ];

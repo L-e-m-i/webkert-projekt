@@ -17,7 +17,7 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/bookmarks/bookmarks.component').then(m => m.BookmarksComponent)
     },
     {path: 'profile/:handle',
-        loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent)
+        loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent) 
     },
 
     {path: 'search/:query', 
@@ -28,9 +28,6 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/search/search.component').then(m => m.SearchComponent)
     },
 
-    {path: 'search',
-        loadComponent: () => import('./pages/search/search.component').then(m => m.SearchComponent)
-    },
     {path: 'messages',
         loadComponent: () => import('./pages/messages/messages.component').then(m => m.MessagesComponent)
     },

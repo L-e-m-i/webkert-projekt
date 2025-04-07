@@ -22,6 +22,6 @@ export class SearchComponent {
 
 
   navigateToPost(tweet: tweetItem): void {
-      this.router.navigate([tweet.handle, tweet.id]);
-    }
+    this.router.navigate([tweet.handle, tweet.id]);
+  }
 }

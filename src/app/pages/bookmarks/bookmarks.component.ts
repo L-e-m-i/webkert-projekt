@@ -26,6 +26,7 @@ export class BookmarksComponent {
   user: any;
   tweet: any;
   ngOnInit(): void {
+    console.log('bookmarks.component.ts')
     this.user = this.userService.getUser();
     this.loadUserData();
     this.router.events

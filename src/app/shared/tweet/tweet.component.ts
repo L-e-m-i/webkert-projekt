@@ -42,12 +42,14 @@ export class TweetComponentShared {
 
   ngOnInit(): void {
     this.user = this.userService.getUser();
+    console.log(this.tweet.isLiked)
     //this.loadUserData();
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
+
         this.loadUserData();
-      });
+    });
   }
 
 
@@ -88,6 +90,10 @@ export class TweetComponentShared {
     TweetComponentShared.openedTweetId = tweet.id; // Update the opened tweet ID
     //console.log(`navigateToPost: openedTweetId set to ${this.openedTweetId} opened: ${this.isOpened(tweet.id)}`);
     this.tweetClick.emit(tweet); // Emit the event for further actions
+  }
+
+  navigateToProfile(handle: string){
+    this.router.navigate(['profile/', handle])
   }
 
   isReply(tweet: any): boolean {

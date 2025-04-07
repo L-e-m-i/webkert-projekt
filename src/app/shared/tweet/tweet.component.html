@@ -5,9 +5,11 @@
       
 >
     <div class="tweet-header">
-        <mat-icon>person</mat-icon>
-        <p class="tweet-user-name">{{ tweet.user }}</p>
-        <p class="tweet-user-handle">{{ '@'+ tweet.handle }}</p>
+        <div class="tweet-header-profile-wrapper" (click)="$event.stopPropagation(); navigateToProfile(tweet.handle)">
+            <mat-icon>person</mat-icon>
+            <p class="tweet-user-name">{{ tweet.username }}</p>
+            <p class="tweet-user-handle">{{ '@'+ tweet.handle }}</p>
+        </div>
         <p class="tweet-date">{{ tweet.date | dateFormatter }}</p>
     </div>
     <div class="tweet-content">

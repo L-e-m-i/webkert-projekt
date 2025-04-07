@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { profiles } from '../../shared/models/profiles';
+import { ActivatedRoute, Router, NavigationEnd, NavigationStart, NavigationError, NavigationCancel, Event as RouterEvent } from '@angular/router';
+import { Profile, profiles } from '../../shared/models/profiles';
 import { tweetItem, tweetItems } from '../../shared/models/tweetItem';
 import { MatIcon } from '@angular/material/icon';
 import { TweetService } from '../../shared/services/tweet.service';
@@ -9,7 +9,7 @@ import { DateFormatterPipe } from '../../shared/pipes/date.pipe';
 import { MatTabGroup } from '@angular/material/tabs';
 import { MatTabsModule } from '@angular/material/tabs';
 import { UserService } from '../../shared/services/user.service';
-import { filter } from 'rxjs/operators';
+import { filter, distinctUntilChanged } from 'rxjs/operators';
 import { TweetComponentShared } from '../../shared/tweet/tweet.component';
 
 
@@ -27,9 +27,12 @@ import { TweetComponentShared } from '../../shared/tweet/tweet.component';
 })
 export class ProfileComponent {
   constructor(
-    private tweetService: TweetService,
+    //private tweetService: TweetService,
     private userService: UserService, 
-    private router: Router) { }
+    private router: Router,
+    private route: ActivatedRoute,
+  
+  ) { }
   
   /*items: tweetItem[] = [
     new tweetItem(1, 'WHO UP JORKING THEY PEANITS RN?', 'johndoe', 'peanitsjorker', '2025-01-01T12:34:56', 69, 12, 420, 666),
@@ -43,21 +46,50 @@ export class ProfileComponent {
   likes: tweetItem[] = [];
   user: any;
   tweet: any;
+  handle!: string | null; 
+
   ngOnInit(): void {
-    this.user = this.userService.getUser();
-    this.loadUserData();
-    this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.loadUserData();
-      });
+    //console.log('ngoninit prifile',this.route.snapshot.paramMap.get('handle'));
+    
+    //const handle = this.route.snapshot.paramMap.get('handle');
+    // Use the handle to load the correct profile data
+    this.route.paramMap.subscribe((params) => {
+      const handle = params.get('handle');
+      console.log('Profile handle changed:', handle);
+      this.loadProfileData(handle); // Reload profile data when handle changes
+    });
+
+    /*this.router.events.subscribe((event: RouterEvent) => {
+      if (event instanceof NavigationStart) {
+        console.log('NavigationStart:', event.url);
+        console.trace(event.navigationTrigger);
+        
+      } else if (event instanceof NavigationEnd) {
+        console.log('NavigationEnd:', event.url);
+      } else if (event instanceof NavigationError) {
+        console.error('NavigationError:', event.error);
+      } else if (event instanceof NavigationCancel) {
+        console.warn('NavigationCancel:', event.url);
+      }
+    });*/
   }
 
-  loadUserData(): void {
+  loadProfileData(handle: string | null): void {
+    if (!handle) {
+      console.error('No handle provided in the route.');
+      return;
+    }
+    const user = this.userService.getUserByHandle(handle);
+    if (!user) {
+      console.error('User not found for handle:', handle);
+      return;
+    }
+    this.user = user;
     this.likes = this.user.likes
       .map((id: number) => this.items.find((tweet: tweetItem) => tweet.id === id))
       .filter((tweet: tweetItem | undefined): tweet is tweetItem => !!tweet);
   }
+
 
 
   trackById(index: number, tweet: tweetItem): number {

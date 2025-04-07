@@ -43,6 +43,7 @@ export class TweetComponent {
     private route: ActivatedRoute,
     private router: Router,
     private tweetService: TweetService,
+    private userService: UserService,
   
   ) {}
 
@@ -51,6 +52,7 @@ export class TweetComponent {
   ngOnInit(): void {
     //console.log(this.getReplies(2))
     this.route.params.subscribe((params: Params) => {
+      console.log(params);
       this.handle = params['handle'];
       this.id = +params['postId']; 
     });
@@ -87,7 +89,9 @@ export class TweetComponent {
       //console.error('Tweet content is empty');
       return;
     }
-    const tweet = new tweetItem(Date.now(), this.reply.value, this.handle, this.handle, new Date().toISOString(), 0, 0, 0, 0, this.id);
+    const user = this.userService.getUser();
+    console.log(user);
+    const tweet = new tweetItem(Date.now(), this.reply.value, user.handle, user.username, new Date().toISOString(), 0, 0, 0, 0, this.id);
     this.tweetService.addTweet(tweet);
 
     this.reply.reset();
