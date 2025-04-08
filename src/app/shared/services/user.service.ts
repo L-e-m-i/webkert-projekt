@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { profiles } from '../models/profiles';
+import { Observable, of } from 'rxjs';
+
 
 @Injectable({
   providedIn: 'root', 
@@ -67,12 +69,34 @@ export class UserService {
     this.userSubject.next(this.user); // Notify subscribers
   }
 
-  createUser(user: any): void {
+  createUser(user: any): Observable<any> {
     profiles.push(user);
+    console.log('User created:', user);
+    return of({success: true});
   }
 
   checkLoginStatus(): boolean {
     this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     return this.isLoggedIn;
   }
+
+  toggleFollow(userId: number, followerId: number): void {
+    const user = this.getUserById(userId);
+    const follower = this.getUserById(followerId);
+    if (user && follower) {
+      if (user.followers.includes(followerId)) {
+        user.followers = user.followers.filter((id: number) => id !== followerId);
+        follower.following = follower.following.filter((id: number) => id !== userId);
+        console.log(`User ${followerId} unfollowed ${user.username}`);
+      } else {
+        user.followers.push(followerId);
+        follower.following.push(userId);
+        console.log(`User ${followerId} followed ${user.username}`);
+      }
+    
+    } else {
+      console.error('User not found for ID:', userId);
+    }
+  }
+
 }

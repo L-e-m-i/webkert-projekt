@@ -21,6 +21,7 @@ $medium-screen: 1000px;
 }
 
 .profile-header{
+    position:relative;
     z-index: 8 !important;
 }
 
@@ -64,4 +65,15 @@ $medium-screen: 1000px;
     .profile-banner{
         width: 100%;
     }
+}
+
+.follow-button{
+    position: absolute;
+    right: 30px;
+    bottom: 100px;
+    padding: 10px 20px;
+    border-radius: 20px;
+    background-color: white;
+    border:none;
+    cursor: pointer;
 }

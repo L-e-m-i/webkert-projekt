@@ -47,8 +47,9 @@ export class ProfileComponent {
   user: any;
   tweet: any;
   handle!: string | null; 
-
+  currentUser: any; // Current user object
   ngOnInit(): void {
+    this.currentUser = this.userService.getUser(); 
     //console.log('ngoninit prifile',this.route.snapshot.paramMap.get('handle'));
     
     //const handle = this.route.snapshot.paramMap.get('handle');
@@ -100,5 +101,26 @@ export class ProfileComponent {
   navigateToPost(tweet: tweetItem): void {
     this.router.navigate([tweet.handle, tweet.id]);
   }
+
+  followAccount(): void {
+    if(this.user && this.currentUser && this.user.id !== this.currentUser.id) {
+      this.userService.toggleFollow(this.user.id, this.currentUser.id);
+      //console.log('Following user:', this.user.username);
+
+    }
+    //console.log(this.user.followers);
+    
+  }
+
+  isFollowing(): boolean {
+    //console.log('isFollowing called:', this.user, this.currentUser);
+    if (this.user && this.currentUser) {
+      return this.user.followers.includes(this.currentUser.id);
+    }
+    return false;
+  }
+
+
+
 
 }

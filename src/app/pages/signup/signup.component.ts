@@ -5,6 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { UserService } from '../../shared/services/user.service';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
+import { Profile } from '../../shared/models/profiles';
 
 @Component({
   selector: 'app-signup',
@@ -21,6 +22,8 @@ import { Router } from '@angular/router';
 })
 export class SignupComponent {
   signupForm!: FormGroup;
+  error: string[] = [];
+
   constructor(private fb: FormBuilder, private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
@@ -29,18 +32,27 @@ export class SignupComponent {
 
   initializeForm() {
     this.signupForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
       handle: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
+      confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
     });
   }
 
   signup(): void {
     if (this.signupForm.valid) {
-      const { handle, password } = this.signupForm.value;
-      console.log('Signup successful:', { handle, password });
-      //this.userService.createUser(handle, password);
-      localStorage.setItem('isLoggedIn', 'true');
-      this.router.navigate(['/home']);
+      const { email, handle, password, confirmPassword } = this.signupForm.value;
+      if( password !== confirmPassword) {
+        this.error.push('Passwords do not match');
+        return;
+      }
+      const newUser = new Profile(Profile.profileId++, handle, handle, email, password);
+      this.userService.createUser(newUser).subscribe(
+        (response) => {
+          console.log('User created successfully:', response);
+          this.router.navigate(['/login']);
+        }
+      );
     } else {
       console.error('Form is invalid');
     }

@@ -47,5 +47,5 @@ export const tweetItems: tweetItem[] = [
     new tweetItem(3, 'jorking it in the clurb', 'johndoe', 'peanitsjorker', '2025-03-28T13:05:01', 69, 34, 420, 1),
     new tweetItem(4, 'Go woke go Jork', 'alicej', 'Alice Johnson', '2025-03-28T15:35:01', 69, 34, 420, 0, 3),
     new tweetItem(5, 'i replied', 'johndoe', 'peanitsjorker', '2025-04-05T15:35:01', 0, 0, 0, 0, 1),
-    new tweetItem(6, 'image', 'janesmith', 'Jane Smith', '2025-04-05T15:35:01', 0, 0, 0, 0),
+    new tweetItem(6, 'imagine', 'janesmith', 'Jane Smith', '2025-04-05T15:35:01', 0, 0, 0, 0),
 ]

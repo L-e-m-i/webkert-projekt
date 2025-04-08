@@ -7,6 +7,7 @@
                 '../../../assets/img/banner/default.png'" 
                 alt="banner" class="profile-banner">
             <img [src]="user.profilePicture ? '../../../assets/img/pfp/' + user.profilePicture : '../../../assets/img/pfp/default.png'" class="profile-picture">
+
         </div>
         <div class="profile-data-wrapper">
             <h1>{{ user.name }}</h1>
@@ -17,6 +18,11 @@
                 <span style="margin-left: 10px;"><strong>{{ user.followers.length }}</strong> Followers</span>
                 <span style="margin-left: 10px;"><strong>{{ user.following.length }}</strong> Following</span>
             </div>
+            @if(user !== currentUser){
+                <button mat-button type="submit" class="follow-button" [ngClass]="{'following': user.isFollowing}" (click)="followAccount()">
+                    {{ isFollowing() ? 'Unfollow' : 'Follow' }}
+                </button>
+            }
         </div>
     </div>
     <mat-tab-group>

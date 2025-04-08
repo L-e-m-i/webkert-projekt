@@ -4,7 +4,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButton } from '@angular/material/button';
 import { UserService } from '../../shared/services/user.service';
 import { MatInput, MatInputModule } from '@angular/material/input';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 
 @Component({
@@ -16,6 +16,8 @@ import { Router } from '@angular/router';
     ReactiveFormsModule,
     MatInputModule,
     FormsModule,
+    RouterLink,
+    RouterLinkActive,
     
   ],
   templateUrl: './login.component.html',

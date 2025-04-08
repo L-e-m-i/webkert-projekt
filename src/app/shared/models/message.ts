@@ -10,6 +10,7 @@ export class Message{
         this.timestamp = timestamp;
         this.content = content;
     }
+    static messageId = 5; // Static variable to keep track of the next message ID
 }
 
 export const messages: Message[] = [

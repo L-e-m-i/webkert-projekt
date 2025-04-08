@@ -5,10 +5,10 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.component';
 import { SearchComponent } from './pages/search/search.component';
 import { MessagesComponent } from './pages/messages/messages.component';
+import { LoginComponent } from './pages/login/login.component';
 
 export const routes: Routes = [
 
-    
 
     {path: 'home', 
         loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
@@ -44,9 +44,14 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/signup/signup.component').then(m => m.SignupComponent)
     },
 
+    {path: 'chat/:chatId',
+        loadComponent: () => import('./pages/chat/chat.component').then(m => m.ChatComponent)
+    },
+
     {path: ':handle/:postId', 
         loadComponent: () => import('./pages/tweet/tweet.component').then(m => m.TweetComponent)
     },
+
 
     {path: '', redirectTo: '/home', pathMatch: 'full'},
     {path: '**', component: PageNotFoundComponent}

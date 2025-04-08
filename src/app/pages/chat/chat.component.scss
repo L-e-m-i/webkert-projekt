@@ -1,0 +1,113 @@
+@use '../post/post.component.scss' as *;
+
+$border-color: rgb(129, 129, 129);
+$sent-color: #3a59f2;
+$received-color: #838383;
+$small-screen: 500px;
+$medium-screen: 1000px;
+
+
+.chat-header{
+    background-color: $background-color;
+    box-sizing: border-box;
+    width: 630px;
+
+    height: 48px;
+    position: fixed;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+    padding: 5px;
+    padding-left: 30px;
+}
+.profile-picture{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ccc;
+}
+
+.chat-body{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    overflow-y: auto; /* Make the chat scrollable */
+    padding: 10px;
+    //margin-bottom: 70px;
+    padding-bottom: 180px;
+    padding-top: 48px;
+}
+
+.message-wrapper {
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 70%;
+    word-wrap: break-word;
+    margin: 5px 0;
+
+    &.sent {
+        background-color: $sent-color;
+        align-self: flex-end;
+    }
+
+    &.received {
+        background-color: $received-color;
+        align-self: flex-start;
+    }
+}
+
+.form-wrapper {
+    box-sizing: border-box;
+    background-color: $background-color;
+    position: fixed; /* Fix the form at the bottom */
+    bottom: 0;
+    width: 630px;
+    align-items: stretch;
+  
+    z-index: 10;
+}
+
+textarea {
+    border: none; /* Remove the default border of the textarea */
+    width: 90%; /* Ensure the textarea takes the full width of the wrapper */
+    resize: none; /* Disable resizing if needed */
+    outline: none; /* Remove the focus outline */
+    background-color: transparent; /* Match the wrapper's background */
+    font-size: 16px;/* Remove the focus outline */
+}
+
+
+.message-date{
+    font-size: 12px;
+    margin: 5px 0;
+}
+
+@media (max-width: 780px) {
+    .form-wrapper {
+        position: fixed; /* Fix the form at the bottom */
+        bottom: 0;
+        width: calc(100% - 160px); /* Adjust width to fit the screen */
+        left: 80px;
+        padding: 10px;  
+        z-index: 10;
+    }
+    .chat-header{
+        width: calc(100% - 160px); /* Adjust width to fit the screen */
+        left: 80px;
+    }
+}
+@media (max-width: $small-screen) {
+    .form-wrapper {
+        position: fixed; /* Fix the form at the bottom */
+        bottom: 48px;
+        width: 100%;
+        left: 0;
+        padding: 10px;  
+        z-index: 10;
+    }
+    .chat-header{
+        width: 100%;
+        left: 0;
+    }
+}
