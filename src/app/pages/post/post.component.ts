@@ -54,16 +54,18 @@ export class PostComponent {
   postTweet(): void {
     this.error = '';
     //event.preventDefault(); // Prevent the default form submission behavior
-  
+    
     if (!this.post.value?.trim()) {
+      
       //console.error('Tweet content is empty');
       this.error = 'Please enter a tweet.';
       return;
     }
-  
-
-    const tweet = new tweetItem(Date.now(), this.post.value, this.user.handle, this.user.name, new Date().toISOString(), 0, 0, 0, 0);
-  
+    let postValue = this.post.value.trim();
+    postValue = this.post.value.replace(/\n/g, '<br>'); // Replace newlines with spaces
+    const tweet = new tweetItem(Date.now(), postValue, this.user.handle, this.user.name, new Date().toISOString(), 0, 0, 0, 0);
+    console.log(postValue);
+    this.userService.addTweet(tweet.id); 
     this.tweetService.addTweet(tweet);
     console.log('Tweet added:', tweet);
     this.post.reset();

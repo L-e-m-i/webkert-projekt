@@ -69,6 +69,15 @@ export class TweetComponent {
     this.router.navigate([tweet.handle, tweet.id]);
   }
 
+  navigateToReply(tweet: tweetItem): void {
+    const parent = this.items.find((t: tweetItem) => t.id === tweet.parentId);
+    if (parent) {
+      this.router.navigate([parent.handle, parent.id]);
+    } else {
+      console.error('Parent tweet not found:', tweet.parentId);
+    }
+  }
+
 
   getReplies(tweetId: number): tweetItem[] {
     return this.tweetService.getReplies(tweetId);
@@ -89,11 +98,18 @@ export class TweetComponent {
       //console.error('Tweet content is empty');
       return;
     }
+    let replyValue = this.reply.value.trim();
+    replyValue = this.reply.value.replace(/\n/g, '<br>'); // Replace newlines with spaces
+    
     const user = this.userService.getUser();
-    console.log(user);
-    const tweet = new tweetItem(Date.now(), this.reply.value, user.handle, user.username, new Date().toISOString(), 0, 0, 0, 0, this.id);
+    //console.log(user);
+    const tweet = new tweetItem(Date.now(), replyValue, user.handle, user.username, new Date().toISOString(), 0, 0, 0, 0, this.id);
+    this.userService.addReply(tweet.id)
     this.tweetService.addTweet(tweet);
-
+    const textarea = document.querySelector('textarea');
+    if (textarea) {
+      textarea.style.height = 'auto'; // Reset the height to default
+    }
     this.reply.reset();
   }
 

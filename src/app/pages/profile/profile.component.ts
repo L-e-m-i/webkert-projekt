@@ -102,6 +102,15 @@ export class ProfileComponent {
     this.router.navigate([tweet.handle, tweet.id]);
   }
 
+  navigateToReply(tweet: tweetItem): void {
+    const parent = this.items.find((t: tweetItem) => t.id === tweet.parentId);
+    if (parent) {
+      this.router.navigate([parent.handle, parent.id]);
+    } else {
+      console.error('Parent tweet not found:', tweet.parentId);
+    }
+  }
+
   followAccount(): void {
     if(this.user && this.currentUser && this.user.id !== this.currentUser.id) {
       this.userService.toggleFollow(this.user.id, this.currentUser.id);

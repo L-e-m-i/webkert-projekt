@@ -223,4 +223,9 @@ mat-form-field{
     .search-input {
         display: none;
     }
+
+
+    :host ::ng-deep .mdc-tab{
+        min-width: 60px;
+    }
 }

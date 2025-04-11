@@ -12,9 +12,7 @@
         </div>
         <p class="tweet-date">{{ tweet.date | dateFormatter }}</p>
     </div>
-    <div class="tweet-content">
-        <p>{{ tweet.content }}</p>
-    </div>
+    <div class="tweet-content" [innerHTML]="tweet.content"></div>
     <div class="tweet-footer">
         <span>
             <mat-icon>comment</mat-icon>

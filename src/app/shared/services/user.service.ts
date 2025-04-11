@@ -99,4 +99,22 @@ export class UserService {
     }
   }
 
+  addTweet(tweetId: number): void {
+    if (this.user) {
+      this.user.tweets.push(tweetId);
+      console.log(`Tweet ${tweetId} added to user ${this.user.handle}`);
+    } else {
+      console.error('User not found');
+    }
+  }
+
+  addReply(tweetId: number): void {
+    if (this.user) {
+      this.user.replies.push(tweetId);
+      console.log(`Reply ${tweetId} added to user ${this.user.handle}`);
+    } else {
+      console.error('User not found');
+    }
+  }
+
 }

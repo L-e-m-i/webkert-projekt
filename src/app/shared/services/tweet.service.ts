@@ -61,9 +61,13 @@ export class TweetService {
     tweet.isRetweeted = this.user.retweets.includes(tweet.id) ? false : true;
     if(tweet.isRetweeted){
       tweet.retweets++;
+      if (!this.user.retweets.includes(tweet.id)) {
+        this.user.retweets.push(tweet.id);
+      }
     }
     else{
       tweet.retweets--;
+      this.user.retweets = this.user.retweets.filter((id: number) => id !== tweet.id)
     }
   }
 
