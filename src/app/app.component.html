@@ -22,12 +22,14 @@
           (keyup)="onSearch($event)" />
       </mat-form-field>-->
 
-      <input 
+      <input
+      *ngIf="!(isSmallScreen && !isSearchRoute)"
         #searchInput
         type="text" 
         [placeholder]="'Search...'" 
         class="search-input" 
         (keyup)="onSearch($event)" />
+      <img src="../assets/img/logo-white.png" alt="" class="logo" />
       <button 
         mat-button (click)="onSidenavToggle(sidenav)" 
         class="menu-toggle-button">

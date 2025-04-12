@@ -10,7 +10,7 @@ import { MatButton } from '@angular/material/button';
 import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-chat',
@@ -30,6 +30,8 @@ import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 export class ChatComponent {
   private chats = chats; 
 
+  title: string = 'Y / Chat';
+
   send = new FormControl('');
   user: any;
   participant: any | null = null;
@@ -37,12 +39,15 @@ export class ChatComponent {
   chatId: number | null = null; 
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+
+    private titleService: Title,
   ) {
 
   }
 
   ngOnInit(): void{
+    this.titleService.setTitle(this.title);
     this.user = this.userService.getUser();
     const chatIdParam = this.router.url.split('/').pop(); 
     this.chatId = chatIdParam ? parseInt(chatIdParam, 10) : null; 

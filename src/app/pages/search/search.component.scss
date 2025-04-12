@@ -1,1 +1,18 @@
 @use '../../shared/styles/tweets.scss';
+
+$background-color: #0d1114;
+$secondary-color: #3AA8F2;
+$border-color: rgb(129, 129, 129);
+$sidenav-width: calc(50% - 315px);
+$small-screen: 500px;
+$medium-screen: 1000px;
+
+
+
+
+@media (max-width: $small-screen) {
+    .results-container {
+        margin-top: 60px;
+    }
+
+}

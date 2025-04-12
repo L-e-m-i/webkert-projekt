@@ -1,7 +1,10 @@
-<ng-container *ngFor="let tweet of results.slice().reverse()">
-    <app-tweet-shared 
-        *ngIf="!tweet.isReply"
-        [tweet]="tweet"
-        (click)="navigateToPost(tweet)"
-    ></app-tweet-shared>
-</ng-container>
+
+<div class="results-container">
+    <ng-container *ngFor="let tweet of results.slice().reverse()">
+        <app-tweet-shared 
+            *ngIf="!tweet.isReply"
+            [tweet]="tweet"
+            (click)="navigateToPost(tweet)"
+        ></app-tweet-shared>
+    </ng-container>
+</div>

@@ -5,6 +5,10 @@ $sidenav-width: calc(50% - 315px);
 $small-screen: 500px;
 $medium-screen: 1000px;
 
+.logo{
+    display: none;
+}
+
 nav {
     display: flex;
     justify-content: flex-end;
@@ -38,7 +42,6 @@ main {
     
 }
 
-
 app-menu{
     position: absolute;
     height: 95%;
@@ -64,17 +67,17 @@ mat-toolbar{
 
 mat-sidenav {
     border-radius: 0px;
-    position: fixed; /* Use fixed positioning to ensure it stays in place */
-    top: 0; /* Align to the top of the viewport */
-    left: 0; /* Align to the left of the viewport */
-    height: 100%; /* Ensure it spans the full height of the viewport */
-    z-index: 100; /* Higher z-index to appear above bottom-tabs */
-    width: $sidenav-width; /* Default width */
+    position: fixed; 
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 100; 
+    width: $sidenav-width; 
     background-color: $background-color;
     border-right: $border-color solid 1px;
-    display: flex; /* Use flexbox for alignment */
-    flex-direction: column; /* Stack items vertically */
-    align-items: flex-start; /* Align items to the left */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
 
 }
 
@@ -84,17 +87,10 @@ mat-sidenav-container {
 }
 
 mat-sidenav-content {
-    z-index: 1; /* Ensure it is below mat-sidenav */
-    position: relative; /* Ensure stacking context is respected */
-    padding-bottom: 56px; /* Add padding to prevent content from overlapping the tabs */
+    z-index: 1; 
+    position: relative; 
+    padding-bottom: 56px;
 }
-
-
-
-
-
-
-
 
 .menu-toggle-button-icon{
     display: flex;
@@ -109,19 +105,16 @@ mat-sidenav-content {
     
 }
 
-
-
 .bottom-tabs {
     position: fixed; 
     bottom: 0; 
     left: 0;
     width: 100%; 
-    z-index: 10; /* Ensure it has a lower z-index than mat-sidenav */
+    z-index: 10;
     background-color: $background-color;
     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
     border-top: $border-color solid 1px;
-    display: none; /* Hidden by default */
-;
+    display: none; 
 }
 
 
@@ -153,9 +146,9 @@ mat-form-field{
 @media (max-width: $medium-screen) {
 
     app-menu{
-        position: static; /* Reset position to default */
-        padding: 0; /* Remove padding */
-        width: 100%; /* Make it span the full width */
+        position: static; 
+        padding: 0; 
+        width: 100%; 
     }
 
     mat-sidenav {
@@ -167,7 +160,7 @@ mat-form-field{
     }
 
     main {
-        width: calc(100% - 80px); /* Matches the width of the sidenav */
+        width: calc(100% - 80px);
     }
     
     nav ul {
@@ -182,12 +175,23 @@ mat-form-field{
 
 @media (max-width: $small-screen) {
 
-    app-menu{
-        position: static; /* Reset position to default */
-        padding: 0; /* Remove padding */
-        width: 100%; /* Make it span the full width */
+    .logo{
+        position: fixed;
+
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: block;
+        width: 32px;
+        height: 32px;
+        margin-left: 0;
     }
 
+    app-menu{
+        position: static;
+        padding: 0;
+        width: 100%; 
+    }
     main {
         width: 100%;
         margin-bottom:48px;
@@ -195,18 +199,14 @@ mat-form-field{
     .menu-toggle-button {
         display: block;
     }
-    
     nav ul {
         display: none;
     }
-
     .bottom-tabs {
         bottom: 0; 
         left: 0;
         display: block;
-
     }
-
     mat-sidenav {
         width: 250px;
         border: none;
@@ -214,16 +214,33 @@ mat-form-field{
     span[matListItemTitle] {
         display: block;
     }
-
     mat-toolbar{
         width: 100%;
         margin-right: 0;
     }
 
     .search-input {
-        display: none;
+        display: block;
+        position: absolute;
+        top: 66px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1000;
+        width: 300px;
+        padding: 10px;
+        border: $border-color 1px solid;
+        border-radius: 20px;
+        color: white;
+        background-color: $background-color;
     }
 
+    .results-container {
+        margin-top: 60px;
+    }
+
+    .search-input:focus {
+        outline: 2px solid $secondary-color;
+    }
 
     :host ::ng-deep .mdc-tab{
         min-width: 60px;

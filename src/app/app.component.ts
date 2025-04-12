@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { NavigationEnd, RouterOutlet, Router } from '@angular/router';
 import { tweetItem } from './shared/models/tweetItem';
-
+import { CommonModule } from '@angular/common';
 import { MenuComponent } from "./shared/menu/menu.component";
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,6 +14,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatTab, MatTabsModule } from '@angular/material/tabs';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UserService } from './shared/services/user.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -28,6 +29,7 @@ import { UserService } from './shared/services/user.service';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    CommonModule,
     //RouterLink,
   ],
   templateUrl: './app.component.html',
@@ -41,7 +43,7 @@ export class AppComponent implements OnInit {
   title = 'Y';
   page: string = 'home';
   isSmallScreen: boolean = false;
-  
+  isSearchRoute: boolean = false;
   selectedTabIndex: number = 0;
 
   constructor(
@@ -52,6 +54,7 @@ export class AppComponent implements OnInit {
 
   user: any;
   ngOnInit(): void {
+
     //console.log('AppComponent initialized');
     this.userService.checkLoginStatus() ? this.user = this.userService.getUser() : this.user = null;
     console.log('User:', this.user);
@@ -72,6 +75,11 @@ export class AppComponent implements OnInit {
         }
       }
     });
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationEnd))
+      .subscribe((event: NavigationEnd) => {
+        this.isSearchRoute = event.urlAfterRedirects.includes('/search');
+      });
   }
 
   

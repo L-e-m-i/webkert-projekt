@@ -7,7 +7,7 @@ import { UserService } from '../../shared/services/user.service';
 import { Chat, chats } from '../../shared/models/chat'; 
 import { DateFormatterPipe } from '../../shared/pipes/date.pipe';
 import { Message } from '../../shared/models/message';
-
+import { Title } from '@angular/platform-browser';
 
 
 
@@ -24,15 +24,19 @@ import { Message } from '../../shared/models/message';
 export class MessagesComponent {
   @Input() chats!: Chat[];
   
+
+  title: string = 'Y / Messages';
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private titleService: Title,
   
   ) { }
 
 
   user: any;  // Initialize chats with the imported chats array
   ngOnInit(): void {
+    this.titleService.setTitle(this.title);
     this.chats = chats;
     for (let chat of this.chats) {
       chat.setUserService(this.userService); // Set the userService instance for each chat

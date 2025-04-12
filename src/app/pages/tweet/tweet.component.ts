@@ -13,7 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButton } from '@angular/material/button';
 import { UserService } from '../../shared/services/user.service';
 import { MatInput, MatInputModule } from '@angular/material/input';
-
+import { Title } from '@angular/platform-browser';
 
 
 @Component({
@@ -44,11 +44,11 @@ export class TweetComponent {
     private router: Router,
     private tweetService: TweetService,
     private userService: UserService,
-  
+    private titleService: Title,
   ) {}
 
   items = tweetItems;
-
+  title = ''; // Title for the page
   ngOnInit(): void {
     //console.log(this.getReplies(2))
     this.route.params.subscribe((params: Params) => {
@@ -56,6 +56,9 @@ export class TweetComponent {
       this.handle = params['handle'];
       this.id = +params['postId']; 
     });
+
+    this.title = `Y / Tweet by ${this.handle}`; // Set the title based on the user handle
+    this.titleService.setTitle(this.title);
     //console.log(this.handle);
     //console.log(this.id);
     

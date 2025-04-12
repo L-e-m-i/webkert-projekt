@@ -5,7 +5,7 @@ import { MatButton } from '@angular/material/button';
 import { UserService } from '../../shared/services/user.service';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-login',
@@ -25,14 +25,16 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 })
 export class LoginComponent {
   loginForm!: FormGroup;
-  
+  title: string = 'Y / Login';
   constructor(
     private fb: FormBuilder, 
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private titleService: Title,
   ){}
 
   ngOnInit(): void {
+    this.titleService.setTitle(this.title);
     this.initializeForm();
   }
 

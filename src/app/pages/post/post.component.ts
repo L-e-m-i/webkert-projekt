@@ -9,6 +9,8 @@ import { MatInput, MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { TweetService } from '../../shared/services/tweet.service';
 import { tweetItem } from '../../shared/models/tweetItem';
+import { Title } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-post',
@@ -27,15 +29,17 @@ export class PostComponent {
   post = new FormControl('');
   user: any; 
   error: string = '';
+  title: string = 'Y / Post'; 
 
   constructor(
     private userService: UserService,
     private tweetService: TweetService,
     private router: Router,
+    private titleService: Title,
   ) { }
 
   ngOnInit(): void {
-
+    this.titleService.setTitle(this.title);
     this.user = this.userService.getUser();
     //console.log(this.tweetService.getTweets());
   }

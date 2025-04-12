@@ -11,6 +11,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { UserService } from '../../shared/services/user.service';
 import { filter, distinctUntilChanged } from 'rxjs/operators';
 import { TweetComponentShared } from '../../shared/tweet/tweet.component';
+import { Title } from '@angular/platform-browser';
 
 
 @Component({
@@ -31,7 +32,7 @@ export class ProfileComponent {
     private userService: UserService, 
     private router: Router,
     private route: ActivatedRoute,
-  
+    private titleService: Title,
   ) { }
   
   /*items: tweetItem[] = [
@@ -48,6 +49,7 @@ export class ProfileComponent {
   tweet: any;
   handle!: string | null; 
   currentUser: any; // Current user object
+  title: string = ''
   ngOnInit(): void {
     this.currentUser = this.userService.getUser(); 
     //console.log('ngoninit prifile',this.route.snapshot.paramMap.get('handle'));
@@ -59,7 +61,8 @@ export class ProfileComponent {
       console.log('Profile handle changed:', handle);
       this.loadProfileData(handle); // Reload profile data when handle changes
     });
-
+    this.title = `Y / ${this.user.handle}`;
+    this.titleService.setTitle(this.title);
     /*this.router.events.subscribe((event: RouterEvent) => {
       if (event instanceof NavigationStart) {
         console.log('NavigationStart:', event.url);

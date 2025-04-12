@@ -6,6 +6,8 @@ import { UserService } from '../../shared/services/user.service';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { Profile } from '../../shared/models/profiles';
+import { Title } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-signup',
@@ -16,6 +18,7 @@ import { Profile } from '../../shared/models/profiles';
     ReactiveFormsModule,
     MatInputModule,
     FormsModule,
+
   ],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss'
@@ -23,10 +26,18 @@ import { Profile } from '../../shared/models/profiles';
 export class SignupComponent {
   signupForm!: FormGroup;
   error: string[] = [];
+  title: string = 'Y / Signup';
 
-  constructor(private fb: FormBuilder, private userService: UserService, private router: Router) { }
+
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private router: Router, 
+    private titleService: Title,
+  ) { }
 
   ngOnInit(): void {
+    this.titleService.setTitle(this.title);
     this.initializeForm();
   }
 

@@ -5,6 +5,7 @@ import { tweetItem, tweetItems } from '../../shared/models/tweetItem';
 import { TweetComponentShared } from '../../shared/tweet/tweet.component';
 import { filter } from 'rxjs/operators';
 import { Router, NavigationEnd } from '@angular/router';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-bookmarks',
@@ -18,8 +19,10 @@ import { Router, NavigationEnd } from '@angular/router';
 export class BookmarksComponent {
   constructor(
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private titleService: Title,
   ) { }
+  title: string = 'Y / Bookmarks';
 
   items = tweetItems;
   bookmarks: tweetItem[] = [];
@@ -27,6 +30,7 @@ export class BookmarksComponent {
   tweet: any;
   ngOnInit(): void {
     console.log('bookmarks.component.ts')
+    this.titleService.setTitle(this.title);
     this.user = this.userService.getUser();
     this.loadUserData();
     this.router.events
