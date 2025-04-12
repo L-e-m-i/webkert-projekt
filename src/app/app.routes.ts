@@ -6,6 +6,7 @@ import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.co
 import { SearchComponent } from './pages/search/search.component';
 import { MessagesComponent } from './pages/messages/messages.component';
 import { LoginComponent } from './pages/login/login.component';
+import { authGuard } from './shared/guard/auth.guard';
 
 export const routes: Routes = [
 
@@ -14,10 +15,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
     },
     {path: 'bookmarks',
-        loadComponent: () => import('./pages/bookmarks/bookmarks.component').then(m => m.BookmarksComponent)
+        loadComponent: () => import('./pages/bookmarks/bookmarks.component').then(m => m.BookmarksComponent),
+        canActivate: [authGuard]
     },
     {path: 'profile/:handle',
-        loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent) 
+        loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
+        canActivate: [authGuard] 
     },
 
     {path: 'search/:query', 
@@ -29,11 +32,13 @@ export const routes: Routes = [
     },
 
     {path: 'messages',
-        loadComponent: () => import('./pages/messages/messages.component').then(m => m.MessagesComponent)
+        loadComponent: () => import('./pages/messages/messages.component').then(m => m.MessagesComponent),
+        canActivate: [authGuard]
     },
 
     {path: 'post',
-        loadComponent: () => import('./pages/post/post.component').then(m => m.PostComponent)
+        loadComponent: () => import('./pages/post/post.component').then(m => m.PostComponent),
+        canActivate: [authGuard]
     },
     
     {path: 'login', 
@@ -45,7 +50,8 @@ export const routes: Routes = [
     },
 
     {path: 'chat/:chatId',
-        loadComponent: () => import('./pages/chat/chat.component').then(m => m.ChatComponent)
+        loadComponent: () => import('./pages/chat/chat.component').then(m => m.ChatComponent),
+        canActivate: [authGuard]
     },
 
     {path: ':handle/:postId', 

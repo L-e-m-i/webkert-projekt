@@ -4,16 +4,21 @@
       <mat-icon matListItemIcon>home</mat-icon>
       <span matListItemTitle>Home</span>
     </a>
-    <a mat-list-item routerLink="/bookmarks" routerLinkActive="active-list-item" (click)="closeMenu()">
-      <mat-icon matListItemIcon>bookmark</mat-icon>
-      <span matListItemTitle>Bookmarks</span>
-    </a>
+    
     @if(isLoggedIn){ 
+      <a mat-list-item routerLink="/bookmarks" routerLinkActive="active-list-item" (click)="closeMenu()">
+        <mat-icon matListItemIcon>bookmark</mat-icon>
+        <span matListItemTitle>Bookmarks</span>
+      </a>
       <a mat-list-item [routerLink]="'/profile/' + userHandle" routerLinkActive="active-list-item" (click)="closeMenu()">
         <mat-icon matListItemIcon>person</mat-icon>
         <span matListItemTitle>Profile</span>
       </a>
     }@else{
+      <a mat-list-item routerLink="/login" routerLinkActive="active-list-item" (click)="closeMenu()">
+        <mat-icon matListItemIcon>bookmark</mat-icon>
+        <span matListItemTitle>Bookmarks</span>
+      </a>
       <a mat-list-item routerLink="/login" routerLinkActive="active-list-item" (click)="closeMenu()">
         <mat-icon matListItemIcon>person</mat-icon>
         <span matListItemTitle>Profile</span>
