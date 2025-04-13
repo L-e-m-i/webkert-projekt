@@ -116,4 +116,12 @@ export class TweetComponent {
     this.reply.reset();
   }
 
+  isLoggedIn(): boolean {
+    return this.userService.checkLoginStatus();
+  }
+
+  redirectToLogin(): void {
+    this.router.navigate(['/login']);
+  }
+
 }

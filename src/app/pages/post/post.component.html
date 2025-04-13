@@ -16,8 +16,14 @@
               {{ error }}
             </div>
         }
-        <div class="button-wrapper">
-            <button mat-button type="submit">Post</button>
-        </div>
+        @if(isLoggedIn()){
+          <div class="button-wrapper">
+              <button mat-button type="submit">Post</button>
+          </div>
+        } @else {
+            <div class="button-wrapper">
+              <button mat-button type="button" (click)="redirectToLogin()">Login</button>
+            </div>
+        }
     </form>
 </div>

@@ -44,6 +44,13 @@ export class PostComponent {
     //console.log(this.tweetService.getTweets());
   }
 
+  isLoggedIn(): boolean {
+    return this.userService.checkLoginStatus();
+  }
+
+  redirectToLogin(): void {
+    this.router.navigate(['/login']);
+  }
 
   adjustTextareaHeight(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
