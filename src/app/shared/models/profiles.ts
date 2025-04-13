@@ -80,7 +80,7 @@ export const profiles: Profile[] = [
         age: 28,
         email: "alicej@example.com",
         password: "alicepassword",
-        bio: "Writer and bookworm.",
+        bio: "bedtime: 21:00",
         tweets: [106],
         followers: [1, 2],
         following: [4],

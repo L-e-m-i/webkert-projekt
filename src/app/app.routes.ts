@@ -6,7 +6,7 @@ import { PageNotFoundComponent } from './shared/page-not-found/page-not-found.co
 import { SearchComponent } from './pages/search/search.component';
 import { MessagesComponent } from './pages/messages/messages.component';
 import { LoginComponent } from './pages/login/login.component';
-import { authGuard } from './shared/guard/auth.guard';
+import { AuthGuard } from './shared/guard/auth.guard';
 
 export const routes: Routes = [
 
@@ -16,11 +16,11 @@ export const routes: Routes = [
     },
     {path: 'bookmarks',
         loadComponent: () => import('./pages/bookmarks/bookmarks.component').then(m => m.BookmarksComponent),
-        canActivate: [authGuard]
+        canActivate: [AuthGuard]
     },
     {path: 'profile/:handle',
         loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
-        canActivate: [authGuard] 
+        canActivate: [AuthGuard] 
     },
 
     {path: 'search/:query', 
@@ -33,12 +33,12 @@ export const routes: Routes = [
 
     {path: 'messages',
         loadComponent: () => import('./pages/messages/messages.component').then(m => m.MessagesComponent),
-        canActivate: [authGuard]
+        canActivate: [AuthGuard]
     },
 
     {path: 'post',
         loadComponent: () => import('./pages/post/post.component').then(m => m.PostComponent),
-        canActivate: [authGuard]
+        canActivate: [AuthGuard]
     },
     
     {path: 'login', 
@@ -51,7 +51,7 @@ export const routes: Routes = [
 
     {path: 'chat/:chatId',
         loadComponent: () => import('./pages/chat/chat.component').then(m => m.ChatComponent),
-        canActivate: [authGuard]
+        canActivate: [AuthGuard]
     },
 
     {path: ':handle/:postId', 

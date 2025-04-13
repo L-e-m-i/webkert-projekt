@@ -67,7 +67,7 @@ export class PostComponent {
     }
     let postValue = this.post.value.trim();
     postValue = this.post.value.replace(/\n/g, '<br>'); // Replace newlines with spaces
-    const tweet = new tweetItem(Date.now(), postValue, this.user.handle, this.user.name, new Date().toISOString(), 0, 0, 0, 0);
+    const tweet = new tweetItem(Date.now(), postValue, [], this.user.handle, this.user.name, new Date().toISOString(), 0, 0, 0, 0);
     console.log(postValue);
     this.userService.addTweet(tweet.id); 
     this.tweetService.addTweet(tweet);

@@ -106,7 +106,7 @@ export class TweetComponent {
     
     const user = this.userService.getUser();
     //console.log(user);
-    const tweet = new tweetItem(Date.now(), replyValue, user.handle, user.username, new Date().toISOString(), 0, 0, 0, 0, this.id);
+    const tweet = new tweetItem(Date.now(), replyValue, [], user.handle, user.username, new Date().toISOString(), 0, 0, 0, 0, this.id);
     this.userService.addReply(tweet.id)
     this.tweetService.addTweet(tweet);
     const textarea = document.querySelector('textarea');
