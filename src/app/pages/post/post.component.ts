@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 import { TweetService } from '../../shared/services/tweet.service';
 import { tweetItem } from '../../shared/models/tweetItem';
 import { Title } from '@angular/platform-browser';
+import { Subscription, take } from 'rxjs';
 
 
 @Component({
@@ -30,6 +31,8 @@ export class PostComponent {
   user: any; 
   error: string = '';
   title: string = 'Y / Post'; 
+  private userSub!: Subscription;
+
 
   constructor(
     private userService: UserService,
@@ -41,7 +44,7 @@ export class PostComponent {
   ngOnInit(): void {
     this.titleService.setTitle(this.title);
     this.loadProfileData();
-    //console.log(this.tweetService.getTweets());
+    
     this.post = new FormControl('', [Validators.required, Validators.maxLength(140)]);
   }
 
@@ -49,11 +52,9 @@ export class PostComponent {
     if(!this.userService.checkLoginStatus()) {
       this.user = null; // Set user to null if not logged in
     }
-    this.userService.getUserProfile().subscribe({
+    this.userService.getUserProfile().pipe(take(1)).subscribe({
       next: (user) => {
         this.user = user;
-        // console.log('User data:', user);
-        // console.log('this.user:', this.user);
 
       },
       error: (error) => {
@@ -100,4 +101,9 @@ export class PostComponent {
     this.router.navigate(['/home']);
   }
 
+  ngOnDestroy(): void {
+    if (this.userSub) {
+      this.userSub.unsubscribe();
+    }
+  }
 }

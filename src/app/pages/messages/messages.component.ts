@@ -8,6 +8,7 @@ import { Chat, chats } from '../../shared/models/chat';
 import { DateFormatterPipe } from '../../shared/pipes/date.pipe';
 import { Message } from '../../shared/models/message';
 import { Title } from '@angular/platform-browser';
+import { take } from 'rxjs';
 
 
 
@@ -43,7 +44,7 @@ export class MessagesComponent {
     }
      
     this.loadProfileData();
-    // console.log(this.chats[0].getParticipantNamesExceptUser(this.user.id));
+    
     
   }
 
@@ -51,12 +52,9 @@ export class MessagesComponent {
     if(!this.userService.checkLoginStatus()) {
       this.user = null; // Set user to null if not logged in
     }
-    this.userService.getUserProfile().subscribe({
+    this.userService.getUserProfile().pipe(take(1)).subscribe({
       next: (user) => {
         this.user = user;
-        // console.log('User data:', user);
-        // console.log('this.user:', this.user);
-
       },
       error: (error) => {
         console.error('Error fetching user data:', error);

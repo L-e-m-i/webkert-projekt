@@ -40,7 +40,9 @@ export class ProfileComponent {
     private firestore: Firestore,
   ) { }
   
-  private subscribtion: Subscription | null = null;
+  private currentUserSub: Subscription | null = null;
+  private userSub: Subscription | null = null;
+  private routeSub: Subscription | null = null;
   isLoading: boolean = true;
   items: tweetItem[] = [];
   likes: any[] = [];
@@ -52,16 +54,16 @@ export class ProfileComponent {
   title: string = '';
 
   ngOnInit(): void {
-    this.userService.getUserProfile().subscribe((user) => {
+    this.currentUserSub = this.userService.getUserProfile().subscribe((user) => {
       this.currentUser = user;
-      console.log('Current user:', this.currentUser);
+
     })
     
    
    
    
 
-    this.route.paramMap.subscribe((params) => {
+    this.routeSub = this.route.paramMap.subscribe((params) => {
       const handle = params.get('handle');
       this.loadProfileData(handle); // Reload profile data when handle changes
       
@@ -78,9 +80,8 @@ export class ProfileComponent {
       console.error('No handle provided in the route.');
       return;
     }
-    this.subscribtion = this.userService.getUserProfileByHandle(handle).subscribe({
+    this.userSub = this.userService.getUserProfileByHandle(handle).subscribe({
       next: (data) =>{
-        console.log('data:', data);
         if(!data){
           console.error('No data found for handle:', handle);
           return;
@@ -95,7 +96,6 @@ export class ProfileComponent {
           this.items = data.tweets as tweetItem[];
           this.items.sort((a, b) => new Timestamp(Number(a.timestamp), 0).toMillis() - new Timestamp(Number(b.timestamp), 0).toMillis());
           
-          console.log('Profile user:', this.user);
           
         }
         this.isLoading = false;
@@ -145,15 +145,15 @@ export class ProfileComponent {
   followAccount(): void {
     if(this.user && this.currentUser && this.user.id !== this.currentUser.id) {
       this.userService.toggleFollow(this.user.id, this.currentUser.id);
-      //console.log('Following user:', this.user.username);
+      
 
     }
-    //console.log(this.user.followers);
+    
     
   }
 
   isFollowing(): boolean {
-    //console.log('isFollowing called:', this.user, this.currentUser);
+    
     if (this.user && this.currentUser) {
       return this.user.followers?.includes(this.currentUser.id) ?? false;
     }
@@ -163,7 +163,7 @@ export class ProfileComponent {
   likeTweet(tweetId: string): void {
     if (this.currentUser) {
       this.userService.toggleLike(tweetId);
-      //console.log('Liked tweet:', tweetId);
+      
     }
   }
 
@@ -171,5 +171,17 @@ export class ProfileComponent {
 
   openEditProfile(): void {
     this.router.navigate(['edit-profile']);
+  }
+
+  ngOnDestroy(): void {
+    if (this.currentUserSub) {
+      this.currentUserSub.unsubscribe();
+    }
+    if (this.userSub) {
+      this.userSub.unsubscribe();
+    }
+    if (this.routeSub) {
+      this.routeSub.unsubscribe();
+    }
   }
 }

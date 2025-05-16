@@ -68,7 +68,7 @@ export class SignupComponent {
       }
       this.authService.signUp(email, password, userData)
       .then((userCredential) => {
-        // console.log('User signed up successfully:', userCredential);
+        
         this.userService.setUser(userCredential.user.uid); // Set the user ID in the UserService
         this.router.navigate(['/home']); // Navigate to the home page after successful signup
       })

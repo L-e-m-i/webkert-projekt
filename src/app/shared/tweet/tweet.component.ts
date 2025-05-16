@@ -1,12 +1,13 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIcon } from '@angular/material/icon';
 import { tweetItem, tweetItems } from '../../shared/models/tweetItem';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { TweetService } from '../../shared/services/tweet.service';
 import { UserService } from '../../shared/services/user.service';
 import { DateFormatterPipe } from '../../shared/pipes/date.pipe';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -33,49 +34,44 @@ export class TweetComponentShared {
     private tweetService: TweetService,
     private userService: UserService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
   ) {}
 
-  items: tweetItem[] = [];
-  likes: tweetItem[] = [];
+  likes: string[] = [];
+  bookmarks: string[] = [];
   replies: tweetItem[] = [];
   user: any;
   hasReplies: boolean = false;
 
+  isLiked: boolean = false;
+  isBookmarked: boolean = false;
+
+  tweetSub: Subscription | null = null;
+  userSub: Subscription | null = null;
+  routeSub: Subscription | null = null;
+
   ngOnInit(): void {
+    this.userSub = this.userService.getUserProfile().pipe(take(1)).subscribe((user) => {
+      this.user = user;
+      this.likes = this.user.likes ? this.user.likes.map((like: any) => like.id) : [];
+      this.bookmarks = this.user.bookmarks ? this.user.bookmarks.map((bookmark: any) => bookmark.id) : [];
+      this.isLiked = this.likes.includes(this.tweet.id);
+    });
     if (!this.tweet || typeof this.tweet.id !== 'string') {
       console.error('Invalid tweet object passed to TweetComponentShared:', this.tweet);
       return;
     }
     console.log('tweetcomponens',this.tweet);
     
-    this.tweetService.getTweets().subscribe((tweets: tweetItem[]) => {
-      this.items = tweets;
-      // console.log('tweets',tweets);
-      // console.log('Tweet',this.tweet);
-      // console.log('items',this.items);  
-      
-      this.user = this.userService.getUser();
-      // console.log(this.tweet.isLiked)
-      //this.loadUserData();
-      this.router.events
-        .pipe(filter((event) => event instanceof NavigationEnd))
-        .subscribe(() => {
-        
-          this.loadUserData();
-      });
-    });
     
   }
 
 
   loadUserData(): void {
-    if(!this.user|| !this.user.likes) {
-      this.likes = [];
-      return;
-    };
-    this.likes = this.user.likes
-      .map((id: string) => this.items.find((tweet: tweetItem) => tweet.id === id))
-      .filter((tweet: tweetItem | undefined): tweet is tweetItem => !!tweet);
+    this.userSub = this.userService.getUserProfile().pipe(take(1)).subscribe((user) => {
+      this.user = user;
+      
+    });
   }
 
   getReplies(tweetId: string): void {
@@ -85,13 +81,47 @@ export class TweetComponentShared {
     })
   }
 
-  likeTweet(tweet: tweetItem): void {
-    this.userService.toggleLike(tweet.id);
-    this.tweetService.toggleLike(tweet);
-    this.likeChange.emit();
+  async likeTweet(tweet: tweetItem): Promise<void> {
+    
+    this.userService.toggleLike(tweet.id).then(() => {
+      
+      if(this.likes.includes(tweet.id)){
+        this.likes = this.likes.filter((t) => t !== tweet.id);
+     
+      }else{
+        this.likes.push(tweet.id);
+      }
+
+      this.cdr.detectChanges()
+      // this.tweetService.toggleLike(tweet);
+      this.likeChange.emit();
+    }).finally(() => {
+      this.isLiked = !this.isLiked
+    })
+    
+    
+
+    
   }
 
+
+
   bookmarkTweet(tweet: tweetItem): void {
+
+    this.userService.toggleBookmark(tweet.id).then(() => {
+      if(this.bookmarks.includes(tweet.id)){
+        this.bookmarks = this.bookmarks.filter((t) => t !== tweet.id);
+      }else{
+        this.bookmarks.push(tweet.id);
+      }
+      this.cdr.detectChanges()
+      this.bookmarkChange.emit();
+    }).finally(() => {
+      this.isBookmarked = !this.isBookmarked
+      
+    })
+
+
     this.tweetService.toggleBookmark(tweet);
     this.bookmarkChange.emit();
   }
@@ -106,7 +136,7 @@ export class TweetComponentShared {
       return; 
     }
     TweetComponentShared.openedTweetId = tweet.id;
-    //console.log(`navigateToPost: openedTweetId set to ${this.openedTweetId} opened: ${this.isOpened(tweet.id)}`);
+    
     this.tweetClick.emit(tweet); // Emit the event for further actions
   }
 
@@ -120,7 +150,19 @@ export class TweetComponentShared {
 
   isOpened(tweetId: string): boolean{
     //const isOpen = this.openedTweetId === tweetId;
-    //console.log(`isOpened called for tweetId: ${tweetId}, result: ${isOpen}`);
+    
     return TweetComponentShared.openedTweetId == tweetId;
+  }
+
+  ngOnDestroy(): void{
+    if (this.tweetSub) {
+      this.tweetSub.unsubscribe();
+    }
+    if (this.userSub) {
+      this.userSub.unsubscribe();
+    }
+    if (this.routeSub) {
+      this.routeSub.unsubscribe();
+    }
   }
 }

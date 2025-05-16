@@ -2,12 +2,11 @@ import { Injectable } from '@angular/core';
 import { tweetItem, tweetItems } from '../models/tweetItem';
 import { UserService } from './user.service';
 import { profiles } from '../models/profiles';
-import { collection, query } from 'firebase/firestore';
-import { Firestore, getDocs, where } from '@angular/fire/firestore';
+import { Firestore, getDocs, where, collection, query, doc  } from '@angular/fire/firestore';
 import { collectionData } from 'rxfire/firestore';
 import { filter, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { doc } from 'firebase/firestore';
+
 
 @Injectable({
   providedIn: 'root'
@@ -24,10 +23,10 @@ export class TweetService {
     .pipe(filter(user => !!user))
     .subscribe(user => {
       this.user = user;
-      console.log('TweetService updated with user:', this.user);
+
     });
     //this.user = this.userService.getUser(); // Get the user from UserService
-    console.log('TweetService initialized with user:', this.user);
+
   }
   private tweets: tweetItem[] = tweetItems;
 
@@ -54,13 +53,13 @@ export class TweetService {
     var isLiked: boolean = false;
     
     isLiked = this.user.likes.includes(tweet.id) ? false : true;
-    console.log(isLiked);
+
     if (isLiked) {
-      // tweet.likes++;
+
       if (!this.user.likes.includes(tweet.id)) {
         this.user.likes.push(tweet.id);
       }
-      console.log(this.user,this.user.likes);
+
     } else {
       // tweet.likes--;
       // this.user.likes = this.user.likes.filter((id: number) => id !== tweet.id);
@@ -68,17 +67,20 @@ export class TweetService {
   }
 
   toggleBookmark(tweet: tweetItem): void {
-    // tweet.isBookmarked = this.user.bookmarks.includes(tweet.id) ? false : true;
-    // if(tweet.isBookmarked){
-    //   tweet.bookmarks++;
-    //   if (!this.user.bookmarks.includes(tweet.id)) {
-    //     this.user.bookmarks.push(tweet.id);
-    //   }
-    // }
-    // else{
-    //   tweet.bookmarks--;
-    //   this.user.bookmarks = this.user.bookmarks.filter((id: number) => id !== tweet.id);
-    // }
+    var isBookmarked: boolean = false;
+    
+    isBookmarked = this.user.bookmarks.includes(tweet.id) ? false : true;
+
+    if (isBookmarked) {
+      // tweet.likes++;
+      if (!this.user.bookmarks.includes(tweet.id)) {
+        this.user.bookmarks.push(tweet.id);
+      }
+
+    } else {
+      // tweet.likes--;
+      // this.user.likes = this.user.likes.filter((id: number) => id !== tweet.id);
+    }
   }
 
   toggleRetweet(tweet: tweetItem): void {

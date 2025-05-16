@@ -33,7 +33,7 @@
     </div>
 
     @if(tweet.handle === handle && tweet.id === id){
-        @for(reply of this.replies.slice().reverse(); track reply.id){
+        @for(reply of this.replies; track reply.id;){
             
                 <app-tweet-shared
                     class="reply"

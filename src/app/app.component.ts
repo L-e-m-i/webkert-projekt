@@ -14,7 +14,7 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { MatTab, MatTabsModule } from '@angular/material/tabs';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UserService } from './shared/services/user.service';
-import { filter } from 'rxjs';
+import { filter, take } from 'rxjs';
 import { Firestore } from '@angular/fire/firestore';
 
 @Component({
@@ -57,7 +57,7 @@ export class AppComponent implements OnInit {
   user: any;
   ngOnInit(): void {
     
-    //console.log('AppComponent initialized');
+    
     this.loadProfileData();
     
     //localStorage.setItem('userHandle', 'johndoe');
@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
   
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        //console.log('Router event:', event);
+        
         //this.updateScreenSize();
         this.updateSelectedTab(event.urlAfterRedirects);
         this.isLoggedIn = this.userService.checkLoginStatus();
@@ -87,11 +87,10 @@ export class AppComponent implements OnInit {
     if(!this.userService.checkLoginStatus()) {
       this.user = null; // Set user to null if not logged in
     }
-    this.userService.getUserProfile().subscribe({
+    this.userService.getUserProfile().pipe(take(1)).subscribe({
       next: (user) => {
         this.user = user;
-        // console.log('User data:', user);
-        // console.log('this.user:', this.user);
+
 
       },
       error: (error) => {
@@ -132,7 +131,7 @@ export class AppComponent implements OnInit {
   }
 
   updateSelectedTab(url: string): void {
-    //console.log('URL:', url);
+    
     const routes = ['/home', '/search', '/messages', '/profile'];
     const index = routes.findIndex(route => 
       route === '/profile' ? url.startsWith('/profile') : route === url

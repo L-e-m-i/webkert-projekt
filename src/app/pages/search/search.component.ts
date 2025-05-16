@@ -48,7 +48,7 @@ export class SearchComponent {
         return handle.includes(query) || content.includes(query);
       });
     });
-    //console.log('ngOnInit search', this.query);
+    
   }
 
   onSearch(event: KeyboardEvent): void {

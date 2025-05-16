@@ -56,7 +56,7 @@ export class LoginComponent {
       this.authService.signIn(email, password).then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
-        // console.log('User logged in:', user);
+        
         this.authService.updateLoginStatus(true);
         this.router.navigate(['/home']);
       }).catch((error) => {

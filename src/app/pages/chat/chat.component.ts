@@ -11,6 +11,7 @@ import { MatFormField, MatFormFieldModule } from '@angular/material/form-field';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Title } from '@angular/platform-browser';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-chat',
@@ -62,7 +63,7 @@ export class ChatComponent {
     if (this.userChat) {
       this.participant = this.userChat.participants.find((participant: any) => participant.id !== this.user.id) || null;
     }
-    // console.log('userChat:',this.userChat);
+    
   }
 
 
@@ -70,11 +71,10 @@ export class ChatComponent {
     if(!this.userService.checkLoginStatus()) {
       this.user = null; // Set user to null if not logged in
     }
-    this.userService.getUserProfile().subscribe({
+    this.userService.getUserProfile().pipe(take(1)).subscribe({
       next: (user) => {
         this.user = user;
-        // console.log('User data:', user);
-        // console.log('this.user:', this.user);
+
 
       },
       error: (error) => {

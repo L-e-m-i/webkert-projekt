@@ -3,7 +3,7 @@ import { UserService } from '../../shared/services/user.service';
 import { CommonModule } from '@angular/common';
 import { tweetItem, tweetItems } from '../../shared/models/tweetItem';
 import { TweetComponentShared } from '../../shared/tweet/tweet.component';
-import { filter } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { Router, NavigationEnd } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 
@@ -29,7 +29,7 @@ export class BookmarksComponent {
   user: any;
   tweet: any;
   ngOnInit(): void {
-    // console.log('bookmarks.component.ts')
+    
     this.titleService.setTitle(this.title);
     this.loadProfileData();
     this.loadUserData();
@@ -38,18 +38,17 @@ export class BookmarksComponent {
       .subscribe(() => {
         this.loadUserData();
       });
-    //console.log(this.bookmarks);
+    
   }
 
   loadProfileData() {
     if(!this.userService.checkLoginStatus()) {
       this.user = null; // Set user to null if not logged in
     }
-    this.userService.getUserProfile().subscribe({
+    this.userService.getUserProfile().pipe(take(1)).subscribe({
       next: (user) => {
         this.user = user;
-        // console.log('User data:', user);
-        // console.log('this.user:', this.user);
+
 
       },
       error: (error) => {

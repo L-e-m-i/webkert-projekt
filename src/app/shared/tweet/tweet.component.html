@@ -18,16 +18,16 @@
             <mat-icon>comment</mat-icon>
             {{ tweet.comments }}
         </span>
-        <span (click)="$event.stopPropagation(); retweetTweet(tweet)">
+        <!-- <span (click)="$event.stopPropagation(); retweetTweet(tweet)"> -->
             <!-- <mat-icon [class.retweeted]="tweet.isRetweeted">repeat</mat-icon> -->
             <!-- {{ tweet.retweets }} -->
-        </span>
+        <!-- </span> -->
         <span (click)="$event.stopPropagation(); likeTweet(tweet)">
-            <mat-icon >favorite</mat-icon>
+            <mat-icon [class.liked]="isLiked">favorite</mat-icon>
             {{ tweet.likes }}
         </span>
         <span (click)="$event.stopPropagation(); bookmarkTweet(tweet)">
-            <mat-icon >bookmark</mat-icon>
+            <mat-icon [class.bookmarked]="isBookmarked">bookmark</mat-icon>
             {{ tweet.bookmarks }}
         </span>
     </div>

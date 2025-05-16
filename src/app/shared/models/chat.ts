@@ -34,17 +34,17 @@ export class Chat{
     }
 
     getUserById(userId: string): any {// Create an instance of UserService
-        //console.log(this.userService.getUserById(userId));
+        
         
         return this.userService.getUserById(userId); // Assuming you have a method to get user by ID
     }
 
     getParticipantNamesExceptUser(userId: string): string[]{
         const participantIds = this.getParticipantsExceptUser(userId);
-        //console.log('Participant IDs except user:', participantIds);
+        
         return participantIds.map((id) => {
             const user = this.getUserById(id);
-            //console.log('User for ID:', id, 'Result:', user);
+            
             return user ? user.username : 'Unknown';
         });
     }

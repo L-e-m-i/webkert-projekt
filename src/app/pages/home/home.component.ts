@@ -8,7 +8,7 @@ import { DateFormatterPipe } from '../../shared/pipes/date.pipe';
 import { UserService } from '../../shared/services/user.service';
 import { TweetComponentShared } from '../../shared/tweet/tweet.component';
 import { Title } from '@angular/platform-browser';
-import { Observable } from 'rxjs';
+import { Observable, Subscription, take } from 'rxjs';
 import { Timestamp } from '@angular/fire/firestore';
 
 
@@ -34,15 +34,16 @@ export class HomeComponent {
 
   user: any; 
   items: tweetItem[] = []
+  private tweetSub!: Subscription;
+  private userSub!: Subscription;
 
 
   ngOnInit(): void {
     this.titleService.setTitle(this.title);
     this.loadProfileData();
 
-    this.tweetService.getTweets().subscribe((tweets: tweetItem[]) => {
+    this.tweetSub = this.tweetService.getTweets().subscribe((tweets: tweetItem[]) => {
       this.items = tweets;
-      console.log('home',tweets);
       this.items.sort((a, b) => new Timestamp(Number(a.timestamp), 0).toMillis() - new Timestamp(Number(b.timestamp), 0).toMillis());
     });
     
@@ -52,11 +53,10 @@ export class HomeComponent {
     if(!this.userService.checkLoginStatus()) {
       this.user = null; // Set user to null if not logged in
     }
-    this.userService.getUserProfile().subscribe({
+    this.userSub = this.userService.getUserProfile().pipe(take(1)).subscribe({
       next: (user) => {
         this.user = user;
-        // console.log('User data:', user);
-        // console.log('this.user:', this.user);
+
 
       },
       error: (error) => {
@@ -65,10 +65,21 @@ export class HomeComponent {
     })
   }
 
-  
+  trackById(index: number, tweet: tweetItem): string {
+    return tweet.id;
+  }
 
 
   navigateToPost(tweet: tweetItem): void {
     this.router.navigate([tweet.handle, tweet.id]);
+  }
+
+  ngOnDestroy(): void {
+    if (this.tweetSub) {
+      this.tweetSub.unsubscribe();
+    }
+    if (this.userSub) {
+      this.userSub.unsubscribe();
+    }
   }
 }

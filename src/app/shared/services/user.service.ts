@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, from, switchMap } from 'rxjs';
+import { BehaviorSubject, from, switchMap, take } from 'rxjs';
 import { Profile, profiles } from '../models/profiles';
 import { Observable, of } from 'rxjs';
 import { AuthService } from './auth.service';
-import { collection, doc, Firestore, getDoc, getDocs, query, where } from '@angular/fire/firestore';
+import { collection, doc, Firestore, getDoc, getDocs, query, where, addDoc, DocumentReference, setDoc, Timestamp, updateDoc } from '@angular/fire/firestore';
 import { tweetItem } from '../models/tweetItem';
-import { addDoc, DocumentReference, setDoc, Timestamp, updateDoc } from 'firebase/firestore';
-
 
 @Injectable({
   providedIn: 'root', 
@@ -23,11 +21,11 @@ export class UserService {
     private firestore: Firestore,
   ) {
     // this.loadUserFromLocalStorage();
-    this.getUserProfile().subscribe({
+    this.getUserProfile().pipe(take(1)).subscribe({
       next: (user) => {
         this.user = user;
         this.userSubject.next(user); 
-        // console.log('this.user:', this.user);
+
 
       },
       error: (error) => {
@@ -41,6 +39,7 @@ export class UserService {
     user: Profile | null;
     tweets: tweetItem[] | null;
     replies: tweetItem[] | null;
+    bookmarks: tweetItem[] | null;
     likes: tweetItem[] | null;
     followers: Profile[] | null;
     following: Profile[] | null;
@@ -53,6 +52,7 @@ export class UserService {
             user: null,
             tweets: null,
             replies: null,
+            bookmarks: null,
             likes: null,
             followers: null,
             following: null,
@@ -68,6 +68,7 @@ export class UserService {
     user: Profile | null;
     tweets: tweetItem[] | null;
     replies: tweetItem[] | null;
+    bookmarks: tweetItem[] | null;
     likes: tweetItem[] | null;
     followers: Profile[] | null;
     following: Profile[] | null;
@@ -80,6 +81,7 @@ export class UserService {
             user: null,
             tweets: null,
             replies: null,
+            bookmarks: null,
             likes: null,
             followers: null,
             following: null,
@@ -95,6 +97,7 @@ export class UserService {
     user: Profile | null;
     tweets: tweetItem[] | null;
     replies: tweetItem[] | null;
+    bookmarks: tweetItem[] | null;
     likes: tweetItem[] | null;
     followers: Profile[] | null;
     following: Profile[] | null;
@@ -109,13 +112,14 @@ export class UserService {
         user: null,
         tweets: null,
         replies: null,
+        bookmarks: null,
         likes: null,
         followers: null,
         following: null,
       };
     }
     const userData = userSnapshot.data() as Profile;
-    // console.log('User data fetched from Firestore:', userData);
+    
     
     
 
@@ -124,10 +128,10 @@ export class UserService {
     const tweetsQuery = query(tweetDocsRef, where('userId', '==', userId));
     const tweetsSnapshot = await getDocs(tweetsQuery);
     const tweets = tweetsSnapshot.docs.map(doc => doc.data() as tweetItem);
-    // console.log('Tweets fetched from Firestore:', tweets);
+    
 
     const likesReferences = userData.likes || [];
-    //console.log('likesReferences:', likesReferences);
+    
     
     let likes: tweetItem[] = [];
     if (likesReferences.length > 0) {
@@ -140,7 +144,22 @@ export class UserService {
       );
       likes = likesSnapshots.filter((tweet): tweet is tweetItem => tweet !== null);
     }
-    console.log('Likes fetched from Firestore:', likes);
+
+
+    const bookmarksReferences = userData.bookmarks || [];
+    let bookmarks: tweetItem[] = [];
+    if (bookmarksReferences.length > 0) {
+      const tweetDocsRef = collection(this.firestore, 'Tweets');
+      const bookmarksSnapshots = await Promise.all(
+        bookmarksReferences.map(async (ref: any) => {
+          const tweetDoc = await getDoc(doc(tweetDocsRef, ref.id || ref));
+          return tweetDoc.exists() ? tweetDoc.data() as tweetItem : null;
+        })
+      );
+      bookmarks = bookmarksSnapshots.filter((tweet): tweet is tweetItem => tweet !== null);
+      bookmarks.sort((a, b) => new Timestamp(Number(a.timestamp), 0).toMillis() - new Timestamp(Number(b.timestamp), 0).toMillis());
+    }
+
 
     const repliesQuery = query(
       tweetDocsRef,
@@ -149,18 +168,18 @@ export class UserService {
     );
     const repliesSnapshot = await getDocs(repliesQuery);
     const replies = repliesSnapshot.docs.map(doc => doc.data() as tweetItem);
-    // console.log('Replies fetched from Firestore:', replies);
+    
 
 
     const followersQuery = query(collection(this.firestore, 'Users'), where('followers', 'array-contains', userId));
     const followersSnapshot = await getDocs(followersQuery);
     const followers = followersSnapshot.docs.map(doc => doc.data() as Profile);
-    // console.log('Followers fetched from Firestore:', followers);
+    
 
     const followingQuery = query(collection(this.firestore, 'Users'), where('following', 'array-contains', userId));
     const followingSnapshot = await getDocs(followingQuery);
     const following = followingSnapshot.docs.map(doc => doc.data() as Profile);
-    // console.log('Following fetched from Firestore:', following);
+    
 
 
 
@@ -169,7 +188,8 @@ export class UserService {
       user: userData, // Include the user data
       tweets: tweets,
       replies: replies,
-      likes: likes, //todo
+      bookmarks: bookmarks, //todo
+      likes: likes, 
       followers: followers,
       following: following,
     };
@@ -181,6 +201,7 @@ export class UserService {
     user: Profile | null;
     tweets: tweetItem[] | null;
     replies: tweetItem[] | null;
+    bookmarks: tweetItem[] | null;
     likes: tweetItem[] | null; 
     followers: Profile[] | null;
     following: Profile[] | null;
@@ -195,6 +216,7 @@ export class UserService {
         user: null,
         tweets: null,
         replies: null,
+        bookmarks: null,
         likes: null,
         followers: null,
         following: null,
@@ -202,13 +224,13 @@ export class UserService {
     }
     const userData = userSnapshot.docs[0].data() as Profile;
     const userId = userSnapshot.docs[0].id;
-    // console.log('User data fetched from Firestore:', userData);
+    
     
     const tweetDocsRef = collection(this.firestore, 'Tweets');
     const tweetsQuery = query(tweetDocsRef, where('userId', '==', userId));
     const tweetsSnapshot = await getDocs(tweetsQuery);
     const tweets = tweetsSnapshot.docs.map(doc => doc.data() as tweetItem);
-    // console.log('Tweets fetched from Firestore by handle:', tweets);
+    
 
     const repliesQuery = query(
       tweetDocsRef,
@@ -217,9 +239,9 @@ export class UserService {
     );
     const repliesSnapshot = await getDocs(repliesQuery);
     const replies = repliesSnapshot.docs.map(doc => doc.data() as tweetItem);
-    // console.log('Replies fetched from Firestore:', replies);
+    
     const likesReferences = userData.likes || [];
-    //console.log('likesReferences:', likesReferences);
+    
     
     let likes: tweetItem[] = [];
     if (likesReferences.length > 0) {
@@ -232,18 +254,32 @@ export class UserService {
       );
       likes = likesSnapshots.filter((tweet): tweet is tweetItem => tweet !== null);
     }
-    console.log('Likes fetched from Firestore:', likes);
+
+
+    const bookmarksReferences = userData.bookmarks || [];
+    let bookmarks: tweetItem[] = [];
+    if (bookmarksReferences.length > 0) {
+      const tweetDocsRef = collection(this.firestore, 'Tweets');
+      const bookmarksSnapshots = await Promise.all(
+        bookmarksReferences.map(async (ref: any) => {
+          const tweetDoc = await getDoc(doc(tweetDocsRef, ref.id || ref));
+          return tweetDoc.exists() ? tweetDoc.data() as tweetItem : null;
+        })
+      );
+      bookmarks = bookmarksSnapshots.filter((tweet): tweet is tweetItem => tweet !== null);
+      bookmarks.sort((a, b) => new Timestamp(Number(a.timestamp), 0).toMillis() - new Timestamp(Number(b.timestamp), 0).toMillis());
+    }
     
 
     const followersQuery = query(collection(this.firestore, 'Users'), where('followers', 'array-contains', userId));
     const followersSnapshot = await getDocs(followersQuery);
     const followers = followersSnapshot.docs.map(doc => doc.data() as Profile);
-    // console.log('Followers fetched from Firestore:', followers);
+    
 
     const followingQuery = query(collection(this.firestore, 'Users'), where('following', 'array-contains', userId));
     const followingSnapshot = await getDocs(followingQuery);
     const following = followingSnapshot.docs.map(doc => doc.data() as Profile);
-    //console.log('Following fetched from Firestore:', following);
+    
 
 
 
@@ -252,6 +288,7 @@ export class UserService {
       user: userData, // Include the user data
       tweets: tweets,
       replies: replies,
+      bookmarks: bookmarks, //todo
       likes: likes, //todo
       followers: followers,
       following: following,
@@ -272,13 +309,13 @@ export class UserService {
 
 
   getUsers(): any[] {
-    // console.log('getUsers called:', profiles);
+    
     return profiles;
   }
 
   async getUser(): Promise<any> {
     // console.trace('getUser called:', this.user); // Debugging
-    //console.log('getUser called:', this.user);
+    
     return this.user;
   }
 
@@ -311,7 +348,7 @@ export class UserService {
 
   createUser(user: any): Observable<any> {
     profiles.push(user);
-    console.log('User created:', user);
+
     return of({success: true});
   }
 
@@ -353,7 +390,7 @@ export class UserService {
 
   async postTweet(content: string, parentId?: string): Promise<void> {
     if (this.user) {
-      // console.log('user:',this.user);
+      
       const tweetCollection = collection(this.firestore, 'Tweets')
 
       let parentIdValue: string | null;
@@ -433,12 +470,12 @@ export class UserService {
       if (userSnapshot.exists()) {
         const userData = userSnapshot.data();
         const likes = userData['likes'] || [];
-        
+        const tweetData = (await getDoc(tweetRef)).data();
         if (likes.some((ref: DocumentReference) => ref.id === tweetId)) {
           // Remove the tweet reference from likes
           const updatedLikes = likes.filter((ref: DocumentReference) => ref.id !== tweetId);
           await updateDoc(userDocRef, { likes: updatedLikes });
-           const tweetData = (await getDoc(tweetRef)).data();
+
            const currentLikes = tweetData && typeof tweetData['likes'] === 'number' ? tweetData['likes'] : 0;
            await updateDoc(tweetRef, { 
              likes: currentLikes > 0 ? currentLikes - 1 : 0
@@ -448,12 +485,55 @@ export class UserService {
           // Add the tweet reference to likes
           likes.push(tweetRef);
           await updateDoc(userDocRef, { likes });
-          const tweetData = (await getDoc(tweetRef)).data();
+
           const currentLikes = tweetData && typeof tweetData['likes'] === 'number' ? tweetData['likes'] : 0;
           await updateDoc(tweetRef, { 
             likes: currentLikes + 1
           });
           console.log(`Tweet ${tweetId} liked by user ${this.user.id}`);
+        }
+      } else {
+        console.error('User document not found');
+      }
+    } else {
+      console.error('User not found');
+    }
+  }
+
+  async toggleBookmark(tweetId: string): Promise<void>{
+    const usersCollection = collection(this.firestore, 'Users');
+    const tweetsCollection = collection(this.firestore, 'Tweets');
+    if (this.user) {
+      const tweetRef = doc(tweetsCollection, tweetId)
+      const userDocRef = doc(usersCollection, this.user.id);
+      const userSnapshot = await getDoc(userDocRef);
+
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        const bookmarks = userData['bookmarks'] || [];
+        const tweetData = (await getDoc(tweetRef)).data();
+        if (bookmarks.some((ref: DocumentReference) => ref.id === tweetId)) {
+          // Remove the tweet reference from bookmarks
+          const updatedBookmarks = bookmarks.filter((ref: DocumentReference) => ref.id !== tweetId);
+          await updateDoc(userDocRef, { bookmarks: updatedBookmarks });
+
+          const currentBookmarks = tweetData && typeof tweetData['bookmarks'] === 'number' ? tweetData['bookmarks'] : 0;
+          await updateDoc(tweetRef, { 
+            bookmarks: currentBookmarks > 0 ? currentBookmarks - 1 : 0
+          });
+          
+           console.log(`Tweet ${tweetId} unbookmarked by user ${this.user.id}`);
+        } else {
+          // Add the tweet reference to bookmarks
+          bookmarks.push(tweetRef);
+          await updateDoc(userDocRef, { bookmarks });
+
+          const currentBookmarks = tweetData && typeof tweetData['bookmarks'] === 'number' ? tweetData['bookmarks'] : 0;
+          await updateDoc(tweetRef, { 
+            bookmarks: currentBookmarks + 1
+          });
+          
+          console.log(`Tweet ${tweetId} bookmarked by user ${this.user.id}`);
         }
       } else {
         console.error('User document not found');

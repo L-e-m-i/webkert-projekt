@@ -14,7 +14,8 @@ import { MatButton } from '@angular/material/button';
 import { UserService } from '../../shared/services/user.service';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { Title } from '@angular/platform-browser';
-import { collection, doc, Firestore, getDocs, query, where } from '@angular/fire/firestore';
+import { collection, doc, Firestore, getDocs, query, Timestamp, where } from '@angular/fire/firestore';
+import { Subscription } from 'rxjs';
 
 
 @Component({
@@ -40,6 +41,9 @@ export class TweetComponent {
   reply = new FormControl('');
   replies: tweetItem[] = [];
 
+  tweetSub!: Subscription;
+  routeSub!: Subscription;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -52,14 +56,14 @@ export class TweetComponent {
   items: tweetItem[] = [];
   title = ''; // Title for the page
   ngOnInit(): void {
-    this.tweetService.getTweets().subscribe((tweets: tweetItem[]) => {
+    this.tweetSub = this.tweetService.getTweets().subscribe((tweets: tweetItem[]) => {
       this.items = tweets;
-      // console.log(tweets);
+      
       
     });
-    //console.log(this.getReplies(2))
-    this.route.params.subscribe((params: Params) => {
-      // console.log(params);
+    
+    this.routeSub = this.route.params.subscribe((params: Params) => {
+      
       this.handle = params['handle'];
       this.id = params['postId'];
       this.getReplies(this.id);
@@ -67,8 +71,8 @@ export class TweetComponent {
 
     this.title = `Y / Tweet by ${this.handle}`; // Set the title based on the user handle
     this.titleService.setTitle(this.title);
-    //console.log(this.handle);
-    //console.log(this.id);
+    
+    
     
   }
 
@@ -77,7 +81,7 @@ export class TweetComponent {
   }
 
   navigateToPost(tweet: any): void {
-    console.log('Navigating to post:', tweet);
+
     this.router.navigate([tweet.handle, tweet.id]);
   }
 
@@ -87,8 +91,7 @@ export class TweetComponent {
     const parentQuery = query(tweetCollection, where('id', '==', tweetRef.id));
     const parentSnapshot = await getDocs(parentQuery);
     const parent = parentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0] as tweetItem;
-    console.log('parent:', parent);
-    
+
     if (parent) {
       this.router.navigate([parent.handle, parent.id]);
     } else {
@@ -100,7 +103,7 @@ export class TweetComponent {
   getReplies(tweetId: string): void {
     this.tweetService.getReplies(tweetId).then((replies) => {
       this.replies = replies;
-      console.log('replies', replies);
+      this.replies.sort((a, b) => new Timestamp(Number(a.timestamp), 0).toMillis() - new Timestamp(Number(b.timestamp), 0).toMillis());
       
     });
   }
@@ -139,6 +142,19 @@ export class TweetComponent {
 
   redirectToLogin(): void {
     this.router.navigate(['/login']);
+  }
+
+  trackByTweetId(index: string, tweet: tweetItem): string {
+    return tweet.id;
+  }
+
+  ngOnDestroy(): void {
+    if (this.tweetSub) {
+      this.tweetSub.unsubscribe();
+    }
+    if (this.routeSub) {
+      this.routeSub.unsubscribe();
+    }
   }
 
 }
