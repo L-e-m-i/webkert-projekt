@@ -10,24 +10,24 @@
             <p class="tweet-user-name">{{ tweet.username }}</p>
             <p class="tweet-user-handle">{{ '@'+ tweet.handle }}</p>
         </div>
-        <p class="tweet-date">{{ tweet.date | dateFormatter }}</p>
+        <p class="tweet-date">{{ tweet.timestamp.seconds * 1000 | dateFormatter }}</p>
     </div>
     <div class="tweet-content" [innerHTML]="tweet.content"></div>
     <div class="tweet-footer">
-        <span>
+        <span (click)="$event.stopPropagation(); navigateToPost(tweet)">
             <mat-icon>comment</mat-icon>
             {{ tweet.comments }}
         </span>
         <span (click)="$event.stopPropagation(); retweetTweet(tweet)">
-            <mat-icon [class.retweeted]="tweet.isRetweeted">repeat</mat-icon>
-            {{ tweet.retweets }}
+            <!-- <mat-icon [class.retweeted]="tweet.isRetweeted">repeat</mat-icon> -->
+            <!-- {{ tweet.retweets }} -->
         </span>
         <span (click)="$event.stopPropagation(); likeTweet(tweet)">
-            <mat-icon [class.liked]="tweet.isLiked">favorite</mat-icon>
+            <mat-icon >favorite</mat-icon>
             {{ tweet.likes }}
         </span>
         <span (click)="$event.stopPropagation(); bookmarkTweet(tweet)">
-            <mat-icon [class.bookmarked]="tweet.isBookmarked">bookmark</mat-icon>
+            <mat-icon >bookmark</mat-icon>
             {{ tweet.bookmarks }}
         </span>
     </div>

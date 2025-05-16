@@ -1,7 +1,7 @@
 
 <ng-container *ngFor="let tweet of items.slice().reverse()">
     <app-tweet-shared 
-        *ngIf="!tweet.isReply"
+        *ngIf="!tweet.inReplyTo"
         [tweet]="tweet"
         (click)="navigateToPost(tweet)"
     ></app-tweet-shared>

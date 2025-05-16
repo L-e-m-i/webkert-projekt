@@ -2,6 +2,12 @@ import { Injectable } from '@angular/core';
 import { tweetItem, tweetItems } from '../models/tweetItem';
 import { UserService } from './user.service';
 import { profiles } from '../models/profiles';
+import { collection, query } from 'firebase/firestore';
+import { Firestore, getDocs, where } from '@angular/fire/firestore';
+import { collectionData } from 'rxfire/firestore';
+import { filter, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import { doc } from 'firebase/firestore';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +16,13 @@ export class TweetService {
   
   user: any;
 
-  constructor(private userService: UserService) {
-    this.userService.user$.subscribe(user => {
+  constructor(
+    private userService: UserService,
+    private firestore: Firestore
+  ) {
+    this.userService.user$
+    .pipe(filter(user => !!user))
+    .subscribe(user => {
       this.user = user;
       console.log('TweetService updated with user:', this.user);
     });
@@ -20,8 +31,19 @@ export class TweetService {
   }
   private tweets: tweetItem[] = tweetItems;
 
-  getTweets(): tweetItem[] {
-    return this.tweets;
+  getTweets(): Observable<tweetItem[]> {
+    const tweetCollection = collection(this.firestore, 'Tweets')
+    return collectionData(tweetCollection, { idField: 'id' }).pipe(
+      map((tweets: any[]) => tweets as tweetItem[])
+    );
+  }
+
+  async getTweetByUserHandle(handle: string): Promise<tweetItem[]> {
+    const tweetCollection = collection(this.firestore, 'Tweets');
+    const tweetsSnapshot = await getDocs(tweetCollection);
+    const tweets = tweetsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as tweetItem[];
+    const userTweets = tweets.filter(tweet => tweet.handle === handle);
+    return userTweets;
   }
 
   addTweet(tweet: tweetItem): void {
@@ -29,51 +51,60 @@ export class TweetService {
   }
 
   toggleLike(tweet: tweetItem): void {
-    tweet.isLiked = this.user.likes.includes(tweet.id) ? false : true;
-    console.log(tweet.isLiked);
-    if (tweet.isLiked) {
-      tweet.likes++;
+    var isLiked: boolean = false;
+    
+    isLiked = this.user.likes.includes(tweet.id) ? false : true;
+    console.log(isLiked);
+    if (isLiked) {
+      // tweet.likes++;
       if (!this.user.likes.includes(tweet.id)) {
         this.user.likes.push(tweet.id);
       }
       console.log(this.user,this.user.likes);
     } else {
-      tweet.likes--;
-      this.user.likes = this.user.likes.filter((id: number) => id !== tweet.id);
+      // tweet.likes--;
+      // this.user.likes = this.user.likes.filter((id: number) => id !== tweet.id);
     }
   }
 
   toggleBookmark(tweet: tweetItem): void {
-    tweet.isBookmarked = this.user.bookmarks.includes(tweet.id) ? false : true;
-    if(tweet.isBookmarked){
-      tweet.bookmarks++;
-      if (!this.user.bookmarks.includes(tweet.id)) {
-        this.user.bookmarks.push(tweet.id);
-      }
-    }
-    else{
-      tweet.bookmarks--;
-      this.user.bookmarks = this.user.bookmarks.filter((id: number) => id !== tweet.id);
-    }
+    // tweet.isBookmarked = this.user.bookmarks.includes(tweet.id) ? false : true;
+    // if(tweet.isBookmarked){
+    //   tweet.bookmarks++;
+    //   if (!this.user.bookmarks.includes(tweet.id)) {
+    //     this.user.bookmarks.push(tweet.id);
+    //   }
+    // }
+    // else{
+    //   tweet.bookmarks--;
+    //   this.user.bookmarks = this.user.bookmarks.filter((id: number) => id !== tweet.id);
+    // }
   }
 
   toggleRetweet(tweet: tweetItem): void {
-    tweet.isRetweeted = this.user.retweets.includes(tweet.id) ? false : true;
-    if(tweet.isRetweeted){
-      tweet.retweets++;
-      if (!this.user.retweets.includes(tweet.id)) {
-        this.user.retweets.push(tweet.id);
-      }
-    }
-    else{
-      tweet.retweets--;
-      this.user.retweets = this.user.retweets.filter((id: number) => id !== tweet.id)
-    }
+    // tweet.isRetweeted = this.user.retweets.includes(tweet.id) ? false : true;
+    // if(tweet.isRetweeted){
+    //   tweet.retweets++;
+    //   if (!this.user.retweets.includes(tweet.id)) {
+    //     this.user.retweets.push(tweet.id);
+    //   }
+    // }
+    // else{
+    //   // tweet.retweets--;
+    //   this.user.retweets = this.user.retweets.filter((id: number) => id !== tweet.id)
+    // }
   }
 
-  getReplies(tweetId: number): tweetItem[] {
-    const replies = this.tweets.filter((item: tweetItem) => item.parentId === tweetId);
-    //console.log(`Replies for tweet ${tweetId}:`,replies);
+  async getReplies(tweetId: string): Promise<tweetItem[]> {
+    const tweetCollection = collection(this.firestore, 'Tweets');
+    const tweetRef = doc(this.firestore, 'Tweets', tweetId);
+    const replyQuery = query(tweetCollection, where('inReplyTo', '==', tweetRef));
+    const tweetsSnapshot = await getDocs(replyQuery);
+    const replies = tweetsSnapshot.docs.map(doc => ({ 
+      id: doc.id, ...doc.data() 
+    })) as tweetItem[]; 
+    
+    
     return replies;
   }
 

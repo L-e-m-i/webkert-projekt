@@ -6,6 +6,8 @@ import { UserService } from '../../shared/services/user.service';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { Title } from '@angular/platform-browser';
+import { AuthService } from '../../shared/services/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -26,11 +28,14 @@ import { Title } from '@angular/platform-browser';
 export class LoginComponent {
   loginForm!: FormGroup;
   title: string = 'Y / Login';
+
+  authSubscription?: Subscription;
   constructor(
     private fb: FormBuilder, 
     private userService: UserService,
     private router: Router,
     private titleService: Title,
+    private authService: AuthService,
   ){}
 
   ngOnInit(): void {
@@ -40,26 +45,38 @@ export class LoginComponent {
 
   initializeForm() {
     this.loginForm = this.fb.group({
-      handle:['', [Validators.required, Validators.minLength(3)]],
+      email:['', [Validators.required, Validators.minLength(3)]],
       password:['', [Validators.required, Validators.minLength(8)]],
     });
   }
 
   login(): void{
     if (this.loginForm.valid) {
-      const { handle, password } = this.loginForm.value;   
-      for(let i = 0; i < this.userService.getUsers().length; i++){
-        if(this.userService.getUsers()[i].handle == handle && this.userService.getUsers()[i].password == password){
-          console.log('User found:', this.userService.getUsers()[i]);
-          this.userService.setUser(this.userService.getUsers()[i]);
-          this.loginForm.reset();
-          this.router.navigate(['/home']);
-          break;
+      const { email, password } = this.loginForm.value;   
+      this.authService.signIn(email, password).then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+        // console.log('User logged in:', user);
+        this.authService.updateLoginStatus(true);
+        this.router.navigate(['/home']);
+      }).catch((error) => {
+        switch (error.code) {
+          case 'auth/user-not-found':
+            console.error('User not found');
+            break;
+          case 'auth/wrong-password':
+            console.error('Wrong password');
+            break;
+          default:
+            console.error('Login failed:', error.message);
         }
-      }
+      });
     } else {
       console.error('Form is invalid');
     }
   }
 
+  ngOnDestroy(): void {
+    this.authSubscription?.unsubscribe();
+  }
 }

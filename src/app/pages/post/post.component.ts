@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 import { MatButton } from '@angular/material/button';
@@ -40,8 +40,26 @@ export class PostComponent {
 
   ngOnInit(): void {
     this.titleService.setTitle(this.title);
-    this.user = this.userService.getUser();
+    this.loadProfileData();
     //console.log(this.tweetService.getTweets());
+    this.post = new FormControl('', [Validators.required, Validators.maxLength(140)]);
+  }
+
+  loadProfileData() {
+    if(!this.userService.checkLoginStatus()) {
+      this.user = null; // Set user to null if not logged in
+    }
+    this.userService.getUserProfile().subscribe({
+      next: (user) => {
+        this.user = user;
+        // console.log('User data:', user);
+        // console.log('this.user:', this.user);
+
+      },
+      error: (error) => {
+        console.error('Error fetching user data:', error);
+      },
+    })
   }
 
   isLoggedIn(): boolean {
@@ -74,11 +92,10 @@ export class PostComponent {
     }
     let postValue = this.post.value.trim();
     postValue = this.post.value.replace(/\n/g, '<br>'); // Replace newlines with spaces
-    const tweet = new tweetItem(Date.now(), postValue, [], this.user.handle, this.user.name, new Date().toISOString(), 0, 0, 0, 0);
-    console.log(postValue);
-    this.userService.addTweet(tweet.id); 
-    this.tweetService.addTweet(tweet);
-    console.log('Tweet added:', tweet);
+    this.userService.postTweet(postValue);
+   
+   
+   
     this.post.reset();
     this.router.navigate(['/home']);
   }

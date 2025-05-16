@@ -5,7 +5,7 @@
       <span matListItemTitle>Home</span>
     </a>
     
-    @if(isLoggedIn){ 
+    @if(isLoggedIn && userHandle){ 
       <a mat-list-item routerLink="/bookmarks" routerLinkActive="active-list-item" (click)="closeMenu()">
         <mat-icon matListItemIcon>bookmark</mat-icon>
         <span matListItemTitle>Bookmarks</span>

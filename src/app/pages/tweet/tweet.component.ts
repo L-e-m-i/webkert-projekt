@@ -14,6 +14,7 @@ import { MatButton } from '@angular/material/button';
 import { UserService } from '../../shared/services/user.service';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { Title } from '@angular/platform-browser';
+import { collection, doc, Firestore, getDocs, query, where } from '@angular/fire/firestore';
 
 
 @Component({
@@ -35,9 +36,9 @@ export class TweetComponent {
   @ViewChild(TweetComponentShared) tweetShared!: TweetComponentShared;
 
   handle!: string; // User handle from route
-  id!: number; // Tweet ID from route
+  id!: string; // Tweet ID from route
   reply = new FormControl('');
-
+  replies: tweetItem[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -45,16 +46,23 @@ export class TweetComponent {
     private tweetService: TweetService,
     private userService: UserService,
     private titleService: Title,
+    private firestore: Firestore,
   ) {}
 
-  items = tweetItems;
+  items: tweetItem[] = [];
   title = ''; // Title for the page
   ngOnInit(): void {
+    this.tweetService.getTweets().subscribe((tweets: tweetItem[]) => {
+      this.items = tweets;
+      // console.log(tweets);
+      
+    });
     //console.log(this.getReplies(2))
     this.route.params.subscribe((params: Params) => {
-      console.log(params);
+      // console.log(params);
       this.handle = params['handle'];
-      this.id = +params['postId']; 
+      this.id = params['postId'];
+      this.getReplies(this.id);
     });
 
     this.title = `Y / Tweet by ${this.handle}`; // Set the title based on the user handle
@@ -69,49 +77,58 @@ export class TweetComponent {
   }
 
   navigateToPost(tweet: any): void {
+    console.log('Navigating to post:', tweet);
     this.router.navigate([tweet.handle, tweet.id]);
   }
 
-  navigateToReply(tweet: tweetItem): void {
-    const parent = this.items.find((t: tweetItem) => t.id === tweet.parentId);
+  async navigateToReply(tweet: tweetItem): Promise<void> {
+    const tweetCollection = collection(this.firestore, 'Tweets');
+    const tweetRef = doc(tweetCollection, tweet.id);
+    const parentQuery = query(tweetCollection, where('id', '==', tweetRef.id));
+    const parentSnapshot = await getDocs(parentQuery);
+    const parent = parentSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0] as tweetItem;
+    console.log('parent:', parent);
+    
     if (parent) {
       this.router.navigate([parent.handle, parent.id]);
     } else {
-      console.error('Parent tweet not found:', tweet.parentId);
+      console.error('Parent tweet not found:', tweet.inReplyTo);
     }
   }
 
 
-  getReplies(tweetId: number): tweetItem[] {
-    return this.tweetService.getReplies(tweetId);
+  getReplies(tweetId: string): void {
+    this.tweetService.getReplies(tweetId).then((replies) => {
+      this.replies = replies;
+      console.log('replies', replies);
+      
+    });
   }
 
   adjustTextareaHeight(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
-    textarea.style.height = 'auto'; // Reset the height to calculate the new height
+    textarea.style.height = 'auto'; 
     if (textarea.scrollHeight < 300) {
-      textarea.style.height = `${textarea.scrollHeight}px`; // Set the height to match the content
+      textarea.style.height = `${textarea.scrollHeight}px`; 
     }else{
-      textarea.style.height = '300px'; // Set a maximum height
+      textarea.style.height = '300px';
     }
   }
 
-  postReply(): void{
+  async postReply(): Promise<void> {
     if (!this.reply.value?.trim()) {
-      //console.error('Tweet content is empty');
+
       return;
     }
     let replyValue = this.reply.value.trim();
-    replyValue = this.reply.value.replace(/\n/g, '<br>'); // Replace newlines with spaces
+    replyValue = this.reply.value.replace(/\n/g, '<br>');
     
-    const user = this.userService.getUser();
-    //console.log(user);
-    const tweet = new tweetItem(Date.now(), replyValue, [], user.handle, user.username, new Date().toISOString(), 0, 0, 0, 0, this.id);
-    this.userService.addReply(tweet.id)
-    this.tweetService.addTweet(tweet);
+    await this.userService.postTweet(replyValue, this.id);
+    this.getReplies(this.id);
+
     const textarea = document.querySelector('textarea');
     if (textarea) {
-      textarea.style.height = 'auto'; // Reset the height to default
+      textarea.style.height = 'auto'; 
     }
     this.reply.reset();
   }

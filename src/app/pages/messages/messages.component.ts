@@ -41,15 +41,31 @@ export class MessagesComponent {
     for (let chat of this.chats) {
       chat.setUserService(this.userService); // Set the userService instance for each chat
     }
-
      
-    this.user = this.userService.getUser();
-    console.log(this.chats[0].getParticipantNamesExceptUser(this.user.id));
+    this.loadProfileData();
+    // console.log(this.chats[0].getParticipantNamesExceptUser(this.user.id));
     
   }
 
+  loadProfileData() {
+    if(!this.userService.checkLoginStatus()) {
+      this.user = null; // Set user to null if not logged in
+    }
+    this.userService.getUserProfile().subscribe({
+      next: (user) => {
+        this.user = user;
+        // console.log('User data:', user);
+        // console.log('this.user:', this.user);
 
-  openChat(chatId: number) {
+      },
+      error: (error) => {
+        console.error('Error fetching user data:', error);
+      },
+    })
+  }
+
+
+  openChat(chatId: string) {
     // Navigate to the chat component with the selected chat ID
     this.router.navigate(['/chat', chatId]);
   }

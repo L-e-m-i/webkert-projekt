@@ -3,11 +3,11 @@ import { UserService } from '../services/user.service';
 
 
 export class Chat{
-    id: number;
-    participants: number[];
+    id: string;
+    participants: string[];
     messages: Message[];
     private userService!: UserService; // Declare userService
-    constructor(id: number, participants: number[]) {
+    constructor(id: string, participants: string[]) {
         this.id = id;
         this.participants = participants;
         this.messages = [];
@@ -25,31 +25,31 @@ export class Chat{
         return this.messages[this.messages.length - 1];
     }
 
-    getParticipants(): number[] {
+    getParticipants(): string[] {
         return this.participants;
     }
 
-    getParticipantsExceptUser(userId: number): number[] {
+    getParticipantsExceptUser(userId: string): string[] {
         return this.participants.filter(participant => participant !== userId);
     }
 
-    getUserById(userId: number): any {// Create an instance of UserService
+    getUserById(userId: string): any {// Create an instance of UserService
         //console.log(this.userService.getUserById(userId));
         
         return this.userService.getUserById(userId); // Assuming you have a method to get user by ID
     }
 
-    getParticipantNamesExceptUser(userId: number): string[]{
+    getParticipantNamesExceptUser(userId: string): string[]{
         const participantIds = this.getParticipantsExceptUser(userId);
         //console.log('Participant IDs except user:', participantIds);
-        return participantIds.map(id => {
+        return participantIds.map((id) => {
             const user = this.getUserById(id);
             //console.log('User for ID:', id, 'Result:', user);
             return user ? user.username : 'Unknown';
         });
     }
 
-    isUserInChat(userId: number): boolean {
+    isUserInChat(userId: string): boolean {
         return this.participants.includes(userId);
     }
 
@@ -59,9 +59,9 @@ export class Chat{
 
 }
 export const chats: Chat[] = [
-    new Chat(1, [1, 3]),
-    new Chat(2, [1, 3]),
-    new Chat(3, [2, 3]),
+    new Chat('1', ['1', '3']),
+    new Chat('2', ['1', '3']),
+    new Chat('3', ['2', '3']),
 ];
 
 // Adding messages to the chats

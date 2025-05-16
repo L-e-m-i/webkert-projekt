@@ -10,7 +10,7 @@
     @for($message of userChat?.messages; track $message.id){
         <div class="message-wrapper" [ngClass]="{'sent': $message.senderId === user.id, 'received': $message.senderId !== user.id}">
             <div class="message-content">{{ $message.content }}</div>
-            <div class="message-date">{{ $message.timestamp | dateFormatter }}</div>
+            <div class="message-date">{{ $message.timestamp }}</div>
         </div>
     }
 </div>

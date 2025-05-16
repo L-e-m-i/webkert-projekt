@@ -7,6 +7,7 @@ import { MatInput, MatInputModule } from '@angular/material/input';
 import { Router } from '@angular/router';
 import { Profile } from '../../shared/models/profiles';
 import { Title } from '@angular/platform-browser';
+import { AuthService } from '../../shared/services/auth.service';
 
 
 @Component({
@@ -34,6 +35,7 @@ export class SignupComponent {
     private userService: UserService,
     private router: Router, 
     private titleService: Title,
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {
@@ -45,6 +47,7 @@ export class SignupComponent {
     this.signupForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       handle: ['', [Validators.required, Validators.minLength(3)]],
+      username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
     });
@@ -52,18 +55,27 @@ export class SignupComponent {
 
   signup(): void {
     if (this.signupForm.valid) {
-      const { email, handle, password, confirmPassword } = this.signupForm.value;
+      const { email, handle, username, password, confirmPassword } = this.signupForm.value;
       if( password !== confirmPassword) {
         this.error.push('Passwords do not match');
         return;
       }
-      const newUser = new Profile(Profile.profileId++, handle, handle, email, password);
-      this.userService.createUser(newUser).subscribe(
-        (response) => {
-          console.log('User created successfully:', response);
-          this.router.navigate(['/login']);
-        }
-      );
+      const userData: Partial<Profile> = {
+        email: email || '',
+        handle: handle || '',
+        username: username || '',
+        password: password || '',
+      }
+      this.authService.signUp(email, password, userData)
+      .then((userCredential) => {
+        // console.log('User signed up successfully:', userCredential);
+        this.userService.setUser(userCredential.user.uid); // Set the user ID in the UserService
+        this.router.navigate(['/home']); // Navigate to the home page after successful signup
+      })
+      .catch((error) => {
+        console.error('Error signing up:', error);
+        this.error.push('Error signing up: ' + error.message);
+      });
     } else {
       console.error('Form is invalid');
     }

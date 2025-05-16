@@ -1,132 +1,145 @@
-
-<div class="profile-container">
-    <div class="profile-header">
-        <div class="profile-wrapper">
-            <img [src]="user.bannerPicture ? 
-                '../../../assets/img/banner' + user.bannerPicture : 
-                '../../../assets/img/banner/default.png'" 
-                alt="banner" class="profile-banner">
-            <img [src]="user.profilePicture ? '../../../assets/img/pfp/' + user.profilePicture : '../../../assets/img/pfp/default.png'" class="profile-picture">
-
-        </div>
-        <div class="profile-data-wrapper">
-            <h1>{{ user.name }}</h1>
-            <p class="profile-handle">{{ '@' + user.handle }}</p>
-            <p class="profile-bio">{{ user.bio }}</p>
-            <div class="profile-stats">
-                <span><strong>{{ user.tweets.length }}</strong> Tweets</span>
-                <span style="margin-left: 10px;"><strong>{{ user.followers.length }}</strong> Followers</span>
-                <span style="margin-left: 10px;"><strong>{{ user.following.length }}</strong> Following</span>
-            </div>
-            @if(user !== currentUser){
-                <button mat-button type="submit" class="follow-button" [ngClass]="{'following': user.isFollowing}" (click)="followAccount()">
-                    {{ isFollowing() ? 'Unfollow' : 'Follow' }}
-                </button>
-            }
-        </div>
+@if (isLoading) {
+    <div class="loading-container">
+      <p>Loading profile data...</p>
     </div>
-    <mat-tab-group>
-        <mat-tab label="Tweets">
-            <ng-container *ngFor="let tweet of items.slice().reverse(); trackBy: trackById">
-                <app-tweet-shared 
-                    *ngIf="tweet.handle === user.handle && !tweet.isReply" 
-                    [tweet]="tweet" 
-                    (likeChange)="loadProfileData(user.handle)" 
-                    (retweetChange)="loadProfileData(user.handle)"
-                    (click)="navigateToPost(tweet)" 
-                ></app-tweet-shared>
-            </ng-container>
+} @else if (user) {
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-wrapper">
+                <img [src]="user.bannerPicture ? 
+                    '../../../assets/img/banner' + user.bannerPicture : 
+                    '../../../assets/img/banner/default.png'" 
+                    alt="banner" class="profile-banner">
+                <img [src]="user.profilePicture ? '../../../assets/img/pfp/' + user.profilePicture : '../../../assets/img/pfp/default.png'" class="profile-picture">
 
-            <!-- @for($tweet of items.slice().reverse(); track $tweet.id){
-                @if($tweet.handle === user.handle){
-                    <div class="tweet-container">
-                        <div class="tweet-header">
-                            <mat-icon>person</mat-icon>
-                            <p class="tweet-user-name">{{ $tweet.user }}</p>
-                            <p class="tweet-user-handle">{{ '@'+ $tweet.handle }}</p>
-                            <p class="tweet-date">{{ $tweet.date | dateFormatter }}</p>
-                        </div>
-                        <div class="tweet-content">
-                            <p>{{ $tweet.content }}</p>
-                        </div>
-                        <div class="tweet-footer">
-                            <span>
-                                <mat-icon>comment</mat-icon>
-                                {{ $tweet.comments }}
-                            </span>
-                            <span (click)="retweetTweet($tweet)">
-                                <mat-icon [class.retweeted]="$tweet.isRetweeted">repeat</mat-icon>
-                                {{ $tweet.retweets }}
-                            </span>
-                            <span (click)="likeTweet($tweet)">
-                                <mat-icon [class.liked]="$tweet.isLiked">favorite</mat-icon>
-                                {{ $tweet.likes }}
-                            </span>
-                            <span (click)="bookmarkTweet($tweet)">
-                                <mat-icon [class.bookmarked]="$tweet.isBookmarked">bookmark</mat-icon>
-                                {{ $tweet.bookmarks }}
-                            </span>
-                        </div>
-                    </div>
+            </div>
+            <div class="profile-data-wrapper">
+                <h1>{{ user.username }}</h1>
+                <p class="profile-handle">{{ '@' + user.handle }}</p>
+                <p class="profile-bio">{{ user.bio }}</p>
+                <div class="profile-stats">
+                    <span><strong>{{ user.tweets?.length }}</strong> Tweets</span>
+                    <span style="margin-left: 10px;"><strong>{{ user.followers?.length }}</strong> Followers</span>
+                    <span style="margin-left: 10px;"><strong>{{ user.following?.length }}</strong> Following</span>
+                </div>
+                @if(user.handle !== currentUser.user.handle){
+                    <button mat-button type="submit" class="follow-button" [ngClass]="{'following': isFollowing}" (click)="followAccount()">
+                        {{ isFollowing() ? 'Unfollow' : 'Follow' }}
+                    </button>
+                }@else{
+                    <button mat-button type="submit" class="follow-button" (click)="openEditProfile()">
+                        Edit Profile
+                    </button>
                 }
-            } -->
-        </mat-tab>
-        <mat-tab label="Replies">
-            <ng-container *ngFor="let tweet of items.slice().reverse(); trackBy: trackById">
-                <app-tweet-shared 
-                    *ngIf="tweet.handle === user.handle && tweet.isReply" 
-                    [tweet]="tweet" 
-                    (likeChange)="loadProfileData(user.handle)" 
-                    (retweetChange)="loadProfileData(user.handle)"
-                    (click)="navigateToReply(tweet)" 
-                ></app-tweet-shared>
-            </ng-container>
-        </mat-tab>
-        <mat-tab label="Likes">
-            <ng-container *ngFor="let tweet of likes.slice().reverse(); trackBy: trackById">
-                <app-tweet-shared 
-                    [tweet]="tweet" 
-                    (likeChange)="loadProfileData(user.handle)"
-                    (click)="navigateToPost(tweet)"
-                ></app-tweet-shared>
-            </ng-container>
-            
-            <!-- @for($tweet of likes.slice().reverse(); track $tweet.id){
+            </div>
+        </div>
+        <mat-tab-group>
+            <mat-tab label="Tweets">
+                <ng-container *ngFor="let tweet of items.slice().reverse(); trackBy: trackById">
+                    <app-tweet-shared 
+                        *ngIf="tweet.handle === user?.handle && !tweet.inReplyTo" 
+                        [tweet]="tweet" 
+                        (likeChange)="loadProfileData(user.handle)" 
+                        (retweetChange)="loadProfileData(user.handle)"
+                        (click)="navigateToPost(tweet)" 
+                    ></app-tweet-shared>
+                </ng-container>
+
+
+
+                        <!-- <div class="tweet-container">
+                            <div class="tweet-header">
+                                <mat-icon>person</mat-icon>
+                                <p class="tweet-user-name">{{ $tweet.username }}</p>
+                                <p class="tweet-user-handle">{{ '@'+ $tweet.handle }}</p>
+                                <p class="tweet-date">{{ $tweet.timestamp.seconds * 1000 | dateFormatter }}</p>
+                            </div>
+                            <div class="tweet-content">
+                                <p>{{ $tweet.content }}</p>
+                            </div>
+                            <div class="tweet-footer">
+                                <span>
+                                    <mat-icon>comment</mat-icon>
+                                    {{ $tweet.comments }}
+                                </span>
+                                <span (click)="retweetTweet($tweet)">
+                                    <mat-icon [class.retweeted]="$tweet.isRetweeted">repeat</mat-icon>
+                                    {{ $tweet.retweets }}
+                                </span>
+                                <span (click)="likeTweet($tweet.id)">
+                                    <mat-icon >favorite</mat-icon>
+                                    {{ $tweet.likes }}
+                                </span>
+                                <span (click)="bookmarkTweet($tweet)">
+                                    <mat-icon [class.bookmarked]="$tweet.isBookmarked">bookmark</mat-icon>
+                                    {{ $tweet.bookmarks }}
+                                </span>
+                            </div>
+                        </div> -->
+
                 
-                    <div class="tweet-container">
-                        <div class="tweet-header">
-                            <mat-icon>person</mat-icon>
-                            <p class="tweet-user-name">{{ $tweet.user }}</p>
-                            <p class="tweet-user-handle">{{ '@'+ $tweet.handle }}</p>
-                            <p class="tweet-date">{{ $tweet.date | dateFormatter }}</p>
+            </mat-tab>
+            <mat-tab label="Replies">
+                <ng-container *ngFor="let tweet of items.slice().reverse(); trackBy: trackById">
+                    <app-tweet-shared 
+                        *ngIf="tweet.handle === user.handle && tweet.inReplyTo" 
+                        [tweet]="tweet" 
+                        (likeChange)="loadProfileData(user.handle)" 
+                        (retweetChange)="loadProfileData(user.handle)"
+                        (click)="navigateToReply(tweet)" 
+                    ></app-tweet-shared>
+                </ng-container>
+            </mat-tab>
+            <mat-tab label="Likes">
+                <ng-container *ngFor="let tweet of likes.slice().reverse(); trackBy: trackById">
+                    <app-tweet-shared 
+                        [tweet]="tweet" 
+                        (likeChange)="loadProfileData(user.handle)"
+                        (click)="navigateToPost(tweet)"
+                    ></app-tweet-shared>
+                </ng-container>
+
+                <!-- @for($tweet of likes.slice().reverse(); track $tweet.id){
+
+                        <div class="tweet-container">
+                            <div class="tweet-header">
+                                <mat-icon>person</mat-icon>
+                                <p class="tweet-user-name">{{ $tweet.user }}</p>
+                                <p class="tweet-user-handle">{{ '@'+ $tweet.handle }}</p>
+                                <p class="tweet-date">{{ $tweet.date | dateFormatter }}</p>
+                            </div>
+                            <div class="tweet-content">
+                                <p>{{ $tweet.content }}</p>
+                            </div>
+                            <div class="tweet-footer">
+                                <span>
+                                    <mat-icon>comment</mat-icon>
+                                    {{ $tweet.comments }}
+                                </span>
+                                <span (click)="retweetTweet($tweet)">
+                                    <mat-icon [class.retweeted]="$tweet.isRetweeted">repeat</mat-icon>
+                                    {{ $tweet.retweets }}
+                                </span>
+                                <span (click)="likeTweet($tweet)">
+                                    <mat-icon [class.liked]="$tweet.isLiked">favorite</mat-icon>
+                                    {{ $tweet.likes }}
+                                </span>
+                                <span (click)="bookmarkTweet($tweet)">
+                                    <mat-icon [class.bookmarked]="$tweet.isBookmarked">bookmark</mat-icon>
+                                    {{ $tweet.bookmarks }}
+                                </span>
+                            </div>
                         </div>
-                        <div class="tweet-content">
-                            <p>{{ $tweet.content }}</p>
-                        </div>
-                        <div class="tweet-footer">
-                            <span>
-                                <mat-icon>comment</mat-icon>
-                                {{ $tweet.comments }}
-                            </span>
-                            <span (click)="retweetTweet($tweet)">
-                                <mat-icon [class.retweeted]="$tweet.isRetweeted">repeat</mat-icon>
-                                {{ $tweet.retweets }}
-                            </span>
-                            <span (click)="likeTweet($tweet)">
-                                <mat-icon [class.liked]="$tweet.isLiked">favorite</mat-icon>
-                                {{ $tweet.likes }}
-                            </span>
-                            <span (click)="bookmarkTweet($tweet)">
-                                <mat-icon [class.bookmarked]="$tweet.isBookmarked">bookmark</mat-icon>
-                                {{ $tweet.bookmarks }}
-                            </span>
-                        </div>
-                    </div>
-                
-            } -->
-        </mat-tab>
-      </mat-tab-group>
+                    
+                } -->
+            </mat-tab>
+          </mat-tab-group>
 
 
 
-</div>
+    </div>
+} @else {
+    <div class="error-container">
+        <p>User not found.</p>
+    </div>
+}

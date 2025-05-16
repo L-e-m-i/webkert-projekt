@@ -7,7 +7,7 @@
             </div>
             <div class="chat-body">
                 <p class="latest-message">{{ $chat.getLatestMessage()?.content }}</p>
-                <p class="chat-date">{{ $chat.getLatestMessage()?.timestamp || '' | dateFormatter }}</p>
+                <p class="chat-date">{{ $chat.getLatestMessage()?.timestamp || ''  }}</p>
             </div>
         </div>
     }

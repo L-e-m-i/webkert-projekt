@@ -15,6 +15,7 @@ import { MatTab, MatTabsModule } from '@angular/material/tabs';
 import { MatTabChangeEvent } from '@angular/material/tabs';
 import { UserService } from './shared/services/user.service';
 import { filter } from 'rxjs';
+import { Firestore } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-root',
@@ -49,15 +50,15 @@ export class AppComponent implements OnInit {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private router: Router,
-    private userService: UserService
+    private userService: UserService,
+    private firestore: Firestore,
   ) {}
 
   user: any;
   ngOnInit(): void {
     
     //console.log('AppComponent initialized');
-    this.userService.checkLoginStatus() ? this.user = this.userService.getUser() : this.user = null;
-    console.log('User:', this.user);
+    this.loadProfileData();
     
     //localStorage.setItem('userHandle', 'johndoe');
     this.breakpointObserver.observe(['(max-width: 500px)']).subscribe(result => {
@@ -82,7 +83,22 @@ export class AppComponent implements OnInit {
       });
   }
 
-  
+  loadProfileData() {
+    if(!this.userService.checkLoginStatus()) {
+      this.user = null; // Set user to null if not logged in
+    }
+    this.userService.getUserProfile().subscribe({
+      next: (user) => {
+        this.user = user;
+        // console.log('User data:', user);
+        // console.log('this.user:', this.user);
+
+      },
+      error: (error) => {
+        console.error('Error fetching user data:', error);
+      },
+    })
+  }
 
   /*updateScreenSize() {
     this.isSmallScreen = this.breakpointObserver.isMatched(['(max-width: 500px)']);

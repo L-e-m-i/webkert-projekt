@@ -33,14 +33,14 @@
     </div>
 
     @if(tweet.handle === handle && tweet.id === id){
-        @for(reply of getReplies(tweet.id).slice().reverse(); track reply.id){
-            @if(reply.parentId === tweet.id){
+        @for(reply of this.replies.slice().reverse(); track reply.id){
+            
                 <app-tweet-shared
                     class="reply"
                     [tweet]="reply"
-                    (click)="isReply(reply) ? navigateToPost(reply) : null"
+                    (click)="navigateToPost(reply)"
                 ></app-tweet-shared>
-            }
+
         }
     }
 

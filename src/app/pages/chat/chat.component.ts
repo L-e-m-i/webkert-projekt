@@ -36,7 +36,7 @@ export class ChatComponent {
   user: any;
   participant: any | null = null;
   userChat: Chat | null = null; 
-  chatId: number | null = null; 
+  chatId: string | null = null; 
   constructor(
     private userService: UserService,
     private router: Router,
@@ -48,9 +48,9 @@ export class ChatComponent {
 
   ngOnInit(): void{
     this.titleService.setTitle(this.title);
-    this.user = this.userService.getUser();
+    this.loadProfileData();
     const chatIdParam = this.router.url.split('/').pop(); 
-    this.chatId = chatIdParam ? parseInt(chatIdParam, 10) : null; 
+    this.chatId = chatIdParam ? chatIdParam : null; 
     this.chats = chats;
     for(let chat of this.chats) {
       if(chat.id === this.chatId) {
@@ -62,8 +62,27 @@ export class ChatComponent {
     if (this.userChat) {
       this.participant = this.userChat.participants.find((participant: any) => participant.id !== this.user.id) || null;
     }
-    console.log('userChat:',this.userChat);
+    // console.log('userChat:',this.userChat);
   }
+
+
+  loadProfileData() {
+    if(!this.userService.checkLoginStatus()) {
+      this.user = null; // Set user to null if not logged in
+    }
+    this.userService.getUserProfile().subscribe({
+      next: (user) => {
+        this.user = user;
+        // console.log('User data:', user);
+        // console.log('this.user:', this.user);
+
+      },
+      error: (error) => {
+        console.error('Error fetching user data:', error);
+      },
+    })
+  }
+
 
   adjustTextareaHeight(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;

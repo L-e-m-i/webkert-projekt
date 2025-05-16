@@ -29,9 +29,9 @@ export class BookmarksComponent {
   user: any;
   tweet: any;
   ngOnInit(): void {
-    console.log('bookmarks.component.ts')
+    // console.log('bookmarks.component.ts')
     this.titleService.setTitle(this.title);
-    this.user = this.userService.getUser();
+    this.loadProfileData();
     this.loadUserData();
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
@@ -41,9 +41,27 @@ export class BookmarksComponent {
     //console.log(this.bookmarks);
   }
 
+  loadProfileData() {
+    if(!this.userService.checkLoginStatus()) {
+      this.user = null; // Set user to null if not logged in
+    }
+    this.userService.getUserProfile().subscribe({
+      next: (user) => {
+        this.user = user;
+        // console.log('User data:', user);
+        // console.log('this.user:', this.user);
+
+      },
+      error: (error) => {
+        console.error('Error fetching user data:', error);
+      },
+    })
+  }
+
+
   loadUserData(): void {
     this.bookmarks = this.user.bookmarks
-      .map((id: number) => this.items.find((tweet: tweetItem) => tweet.id === id))
+      .map((id: string) => this.items.find((tweet: tweetItem) => tweet.id === id))
       .filter((tweet: tweetItem | undefined): tweet is tweetItem => !!tweet);
   }
 

@@ -1,5 +1,5 @@
 export class Profile {
-    id: number;
+    id: string;
     username: string;
     handle: string;
     email: string;
@@ -17,7 +17,7 @@ export class Profile {
     bannerPicture?: string;
     
     static profileId = 4; // Static variable to keep track of the next profile ID
-    constructor(id: number, name: string, handle: string, email: string, password: string){
+    constructor(id: string, name: string, handle: string, email: string, password: string){
         this.id = id;
         this.username = name;
         this.handle = handle;
@@ -40,7 +40,7 @@ export class Profile {
 
 export const profiles: Profile[] = [
     {
-        id: 1,
+        id: '1',
         username: "peanitsjorker",
         handle: "johndoe",
         age: 30,
@@ -57,7 +57,7 @@ export const profiles: Profile[] = [
         profilePicture: "johndoe.png",
     },
     {
-        id: 2,
+        id: '2',
         username: "Jane Smith",
         handle: "janesmith",
         age: 25,
@@ -74,7 +74,7 @@ export const profiles: Profile[] = [
         //profilePicture: "janesmith.jpg"
     },
     {
-        id: 3,
+        id: '3',
         username: "Alice Johnson",
         handle: "alicej",
         age: 28,
