@@ -101,7 +101,7 @@ export class TweetComponentShared {
       console.error('Invalid tweet object passed to TweetComponentShared:', this.tweet);
       return;
     }
-    //console.log('tweetcomponens',this.tweet);
+
     
   }
 

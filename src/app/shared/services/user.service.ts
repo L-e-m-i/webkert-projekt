@@ -432,7 +432,7 @@ export class UserService {
         //  console.log('Chat deleted');
         //})
         
-        console.log(`User ${followerId} unfollowed ${userId}`);
+
       } else {
         // Follow
         followers.push(followerId);
@@ -442,12 +442,12 @@ export class UserService {
 
         
         this.createChat([userDocRef, followerDocRef]).then((chat) => {
-          console.log('Chat created:', chat);
+
         })
         
 
 
-        console.log(`User ${followerId} followed ${userId}`);
+
       }
     }
   }
@@ -528,9 +528,9 @@ export class UserService {
   addReply(tweetId: string): void {
     if (this.user) {
       this.user.replies.push(tweetId);
-      console.log(`Reply ${tweetId} added to user ${this.user.handle}`);
+
     } else {
-      console.error('User not found');
+
     }
   }
 
@@ -556,7 +556,7 @@ export class UserService {
            await updateDoc(tweetRef, { 
              likes: currentLikes > 0 ? currentLikes - 1 : 0
            });
-           console.log(`Tweet ${tweetId} unliked by user ${this.user.id}`);
+
         } else {
           // Add the tweet reference to likes
           likes.push(tweetRef);
@@ -566,7 +566,7 @@ export class UserService {
           await updateDoc(tweetRef, { 
             likes: currentLikes + 1
           });
-          console.log(`Tweet ${tweetId} liked by user ${this.user.id}`);
+
         }
       } else {
         console.error('User document not found');
@@ -598,7 +598,7 @@ export class UserService {
             bookmarks: currentBookmarks > 0 ? currentBookmarks - 1 : 0
           });
           
-           console.log(`Tweet ${tweetId} unbookmarked by user ${this.user.id}`);
+
         } else {
           // Add the tweet reference to bookmarks
           bookmarks.push(tweetRef);
@@ -609,7 +609,7 @@ export class UserService {
             bookmarks: currentBookmarks + 1
           });
           
-          console.log(`Tweet ${tweetId} bookmarked by user ${this.user.id}`);
+
         }
       } else {
         console.error('User document not found');
@@ -631,16 +631,16 @@ export class UserService {
     if (userSnapshot.exists()) {
       const chatsRef = collection(this.firestore, 'Chats');
       this.deleteChatByParticipants([userDocRef]).then(() => {
-        console.log('Chat deleted');
+
       }
       ).catch((error) => {
         console.error('Error deleting chat:', error);
       });
       await this.authService.deleteUser(userId);
       await deleteDoc(userDocRef);
-      console.log(`User ${userId} deleted successfully`);
+
     } else {
-      console.error(`User ${userId} not found`);
+
     }
   }
 
@@ -743,7 +743,7 @@ export class UserService {
       lastMessageSender: null,
       lastMessageTime: Timestamp.now(),
     };
-    console.log('Creating chat with data:', chatData);
+
     
     const docRef = await addDoc(chatsRef, chatData);
     const chat = await getDoc(docRef);
@@ -805,10 +805,10 @@ export class UserService {
 
 
   async addMessageToChat(chatId: string, message: any): Promise<any> {
-    console.log('addMessageToChat called:', chatId, message);
+
     
     const chatRef = doc(this.firestore, 'Chats', chatId);
-    console.log('Chat reference:', chatRef);
+
     const messagesRef = collection(this.firestore, 'Messages');
 
     const messageData = {

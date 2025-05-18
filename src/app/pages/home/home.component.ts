@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { tweetItem, tweetItems } from '../../shared/models/tweetItem';
 import { MatIcon } from '@angular/material/icon';
@@ -10,7 +10,7 @@ import { TweetComponentShared } from '../../shared/tweet/tweet.component';
 import { Title } from '@angular/platform-browser';
 import { Observable, Subscription, take } from 'rxjs';
 import { Timestamp } from '@angular/fire/firestore';
-
+import { InfiniteScrollDirective } from 'ngx-infinite-scroll';
 
 @Component({
   selector: 'app-home',
@@ -19,6 +19,7 @@ import { Timestamp } from '@angular/fire/firestore';
     //DateFormatterPipe,
     TweetComponentShared,
     CommonModule,
+    InfiniteScrollDirective,
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
@@ -30,6 +31,7 @@ export class HomeComponent {
     private userService: UserService,
     private router: Router,
     private titleService: Title,
+    private cdr: ChangeDetectorRef
   ) { }  
 
   user: any; 
@@ -37,6 +39,9 @@ export class HomeComponent {
   private tweetSub!: Subscription;
   private userSub!: Subscription;
 
+  tweetsPerPage: number = 10;
+  currentPage: number = 1;
+  visibleTweets: tweetItem[] = [];
 
   ngOnInit(): void {
     this.titleService.setTitle(this.title);
@@ -44,20 +49,38 @@ export class HomeComponent {
 
     this.tweetSub = this.tweetService.getTweets().subscribe((tweets: tweetItem[]) => {
       this.items = tweets;
-      this.items.sort((a, b) => new Timestamp(Number(a.timestamp), 0).toMillis() - new Timestamp(Number(b.timestamp), 0).toMillis());
+      this.items.sort((a, b) => new Timestamp(Number(b.timestamp), 0).toMillis() - new Timestamp(Number(a.timestamp), 0).toMillis());
+      this.loadMoreTweets();
     });
     
   }
 
+  loadMoreTweets(): void {
+    const startIndex = (this.currentPage - 1) * this.tweetsPerPage;
+    const endIndex = startIndex + this.tweetsPerPage;
+
+    if (this.items && this.items.length > startIndex) {
+      const newTweets = this.items.slice(startIndex, endIndex);
+      this.visibleTweets = [...this.visibleTweets, ...newTweets]; 
+      this.currentPage++;
+      this.cdr.detectChanges(); 
+    } else {
+      //console.warn('No more tweets to load.');
+    }
+  }
+
+  deleteTweet(tweet: tweetItem): void {
+    this.items = this.items.filter(item => item.id !== tweet.id);
+    this.visibleTweets = this.visibleTweets.filter(item => item.id !== tweet.id);
+  }
+
   loadProfileData() {
     if(!this.userService.checkLoginStatus()) {
-      this.user = null; // Set user to null if not logged in
+      this.user = null; 
     }
     this.userSub = this.userService.getUserProfile().pipe(take(1)).subscribe({
       next: (user) => {
         this.user = user;
-
-
       },
       error: (error) => {
         console.error('Error fetching user data:', error);

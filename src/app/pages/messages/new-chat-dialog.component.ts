@@ -34,10 +34,10 @@ export class NewChatDialogComponent {
   }
 
   onSearch() {
-    console.log('Search query:', this.searchQuery);
+
     this.userService.searchUsers(this.searchQuery).then((users) => {
       this.data.users = users;
-      console.log('Filtered Users:', this.data.users);
+
     });
   }
 
@@ -50,17 +50,6 @@ export class NewChatDialogComponent {
     this.userService.getUserReference(user.id).then((userRef) => {
         this.dialogRef.close(userRef);
     })
-    //this.dialogRef.close({ selectedUserRef: userRef });
 
-    
-    // this.userService.createChat(user).then(() => {
-    //   console.log('Chat created with user:', user);
-    // }
-    // ).catch((error) => {
-    //     console.error('Error creating chat:', error);
-    // }).finally(() => {
-    //     this.dialogRef.close(user);
-    // });
-     
   }
 }

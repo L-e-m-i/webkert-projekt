@@ -4,7 +4,7 @@
         <app-tweet-shared 
             
             [tweet]="tweet"
-            (deleteTweetEvent)="search()"
+            (deleteTweetEvent)="deleteTweet(tweet)"
             (click)="navigateToPost(tweet)"
         ></app-tweet-shared>
     </ng-container>

@@ -86,7 +86,7 @@ export class SearchComponent {
 async navigateToReply(tweet: tweetItem): Promise<void> {  
       //const tweetCollection = collection(this.firestore, 'Tweets');
   
-      console.log('tweetData', tweet);
+
   
       // Check if inReplyTo is a DocumentReference
       const inReplyTo = tweet.inReplyTo as DocumentReference | undefined;
@@ -122,6 +122,11 @@ async navigateToReply(tweet: tweetItem): Promise<void> {
       return;
     }
     this.router.navigate([tweet.handle, tweet.id]);
+  }
+
+
+  deleteTweet(tweet: tweetItem): void {
+    this.results = this.results.filter(item => item.id !== tweet.id);
   }
 
   ngOnDestroy(): void{

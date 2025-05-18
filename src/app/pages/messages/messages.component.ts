@@ -105,10 +105,10 @@ export class MessagesComponent {
       if (result) {
         this.userService.getUserReference(this.user.id).then((userRef) => { 
           this.userService.createChat([userRef, result]).then(() => {
-            console.log('Chat created successfully');
+
           })
         }).catch((error) => {
-          console.error('Error creating chat:', error);
+
         });
         // Optionally, you can refresh the chat list or show a success message
         this.userService.getChatsByUserId(this.user.id).then((chats: Chat[]) => {
@@ -130,7 +130,7 @@ export class MessagesComponent {
     }
     this.userService.deleteChat(chatId).then(() => {
       // Optionally, you can refresh the chat list or show a success message
-      console.log('Chat deleted successfully');
+
       this.chats = this.chats.filter(chat => chat.id !== chatId);
     }).catch((error) => {
       console.error('Error deleting chat:', error);

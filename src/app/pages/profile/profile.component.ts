@@ -126,7 +126,7 @@ export class ProfileComponent {
   async navigateToReply(tweet: tweetItem): Promise<void> {  
     //const tweetCollection = collection(this.firestore, 'Tweets');
 
-    console.log('tweetData', tweet);
+ 
 
     // Check if inReplyTo is a DocumentReference
     const inReplyTo = tweet.inReplyTo as DocumentReference | undefined;
@@ -306,7 +306,7 @@ export class FollowListDialogComponent {
   ) {}
 
   ngOnInit(): void {
-    console.log('Dialog data:', this.data);
+
     this.data.users.forEach((user) => {
       this.userService.getUserProfileById(user).pipe(take(1)).subscribe({
         next: (userData) => {

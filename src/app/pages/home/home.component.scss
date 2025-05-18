@@ -1,1 +1,6 @@
 @use '../../shared/styles/tweets.scss';
+
+.tweet-list {
+    height: calc(100vh - 64px); /* Adjust height to account for 64px offset */
+  overflow: auto; /* Enable vertical scrolling */
+}

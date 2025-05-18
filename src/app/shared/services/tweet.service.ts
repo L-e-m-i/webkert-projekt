@@ -120,7 +120,7 @@ export class TweetService {
   async deleteTweet(tweetId: string): Promise<void> {
     const tweetCollection = collection(this.firestore, 'Tweets');
     const tweetRef = doc(tweetCollection, tweetId);
-    console.log('tweet deleted', tweetRef);
+
     
     await deleteDoc(tweetRef);
   }

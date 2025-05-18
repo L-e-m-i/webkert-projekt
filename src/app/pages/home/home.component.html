@@ -1,11 +1,20 @@
-
-<ng-container *ngFor="let tweet of items.slice().reverse(); trackBy: trackById">
-    <app-tweet-shared 
-        *ngIf="!tweet.inReplyTo"
-        [tweet]="tweet"
-        (click)="navigateToPost(tweet)"
-    ></app-tweet-shared>
-</ng-container>
+<div class="tweet-list" 
+    infinite-scroll
+    [infiniteScrollDistance]="5" 
+    [infiniteScrollUpDistance]="1.5" 
+    [infiniteScrollThrottle]="300" 
+    [scrollWindow]="false"
+    (scrolled)="loadMoreTweets()"
+>
+    <ng-container *ngFor="let tweet of visibleTweets; trackBy: trackById">
+        <app-tweet-shared 
+            *ngIf="!tweet.inReplyTo"
+            [tweet]="tweet"
+            (deleteTweetEvent)="deleteTweet(tweet)"
+            (click)="navigateToPost(tweet)"
+        ></app-tweet-shared>
+    </ng-container>
+</div>
     <!-- <div class="tweet-container">
         <div class="tweet-header">
             <mat-icon>person</mat-icon>
