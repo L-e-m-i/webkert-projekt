@@ -69,11 +69,10 @@ export class AuthService {
     return setDoc(userRef, userData);
   }
 
-  signOut() : Promise<void>{
+  async signOut() : Promise<void>{
     localStorage.setItem('isLoggedIn', 'false');
-    return signOut(this.auth).then(() => {
-      this.router.navigate(['/login']);
-    });
+    await signOut(this.auth);
+    this.router.navigate(['/login']);
   }
 
   isLoggedIn(): Observable<FirebaseUser | null> {
@@ -82,5 +81,13 @@ export class AuthService {
 
   updateLoginStatus(status: boolean) {
     localStorage.setItem('isLoggedIn', status ? 'true' : 'false');
+  }
+
+  async deleteUser(userId: string): Promise<void>{
+    const userRef = doc(collection(this.firestore, 'Users'), userId);
+    await setDoc(userRef, {
+      isDeleted: true
+    }, { merge: true });
+    await this.auth.currentUser?.delete();
   }
 }

@@ -7,7 +7,9 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { environment } from '../environment';
 import { getStorage, provideStorage } from '@angular/fire/storage';
+import { setLogLevel, LogLevel } from "@angular/fire";
 
+setLogLevel(LogLevel.SILENT);
 
 
 export const appConfig: ApplicationConfig = {

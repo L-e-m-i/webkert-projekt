@@ -16,6 +16,7 @@ import { MatInput, MatInputModule } from '@angular/material/input';
 import { Title } from '@angular/platform-browser';
 import { collection, doc, Firestore, getDocs, query, Timestamp, where } from '@angular/fire/firestore';
 import { Subscription } from 'rxjs';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 
 @Component({
@@ -29,6 +30,7 @@ import { Subscription } from 'rxjs';
     ReactiveFormsModule,
     MatInputModule,
     FormsModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './tweet.component.html',
   styleUrl: './tweet.component.scss'
@@ -36,6 +38,7 @@ import { Subscription } from 'rxjs';
 export class TweetComponent {
   @ViewChild(TweetComponentShared) tweetShared!: TweetComponentShared;
 
+  tweet!: tweetItem;
   handle!: string; // User handle from route
   id!: string; // Tweet ID from route
   reply = new FormControl('');
@@ -43,6 +46,9 @@ export class TweetComponent {
 
   tweetSub!: Subscription;
   routeSub!: Subscription;
+
+  isLoading: boolean = true; 
+
 
   constructor(
     private route: ActivatedRoute,
@@ -66,6 +72,10 @@ export class TweetComponent {
       
       this.handle = params['handle'];
       this.id = params['postId'];
+      this.tweetService.getTweetById(this.id).then((tweet) => {
+        this.tweet = tweet;
+        this.isLoading = false;
+      });
       this.getReplies(this.id);
     });
 
@@ -144,9 +154,12 @@ export class TweetComponent {
     this.router.navigate(['/login']);
   }
 
-  trackByTweetId(index: string, tweet: tweetItem): string {
+
+
+  trackById(index: number, tweet: tweetItem): string {
     return tweet.id;
   }
+
 
   ngOnDestroy(): void {
     if (this.tweetSub) {

@@ -1,34 +1,41 @@
-<div class="chat-header-wrapper">
-    <div class="chat-header">
-        <img [src]="participant.profilePicture ? 
-        '../../../assets/img/pfp/' + participant.profilePicture : 
-        '../../../assets/img/pfp/default.png'" alt="Profile Picture" class="profile-picture">
-        <span class="participant-name">{{ this.userChat?.getParticipantNamesExceptUser(user.id) }}</span>
+@if(isLoading){
+    <div class="loading-spinner">
+        <mat-spinner></mat-spinner>
     </div>
-</div>
-<div class="chat-body">
-    @for($message of userChat?.messages; track $message.id){
-        <div class="message-wrapper" [ngClass]="{'sent': $message.senderId === user.id, 'received': $message.senderId !== user.id}">
-            <div class="message-content">{{ $message.content }}</div>
-            <div class="message-date">{{ $message.timestamp }}</div>
-        </div>
-    }
-</div>
+}@else{
 
-<div class="form-wrapper">
-    <form (ngSubmit)="sendMessage()" class="post-form">
-        <mat-form-field>
-          <div class="textarea-wrapper">
-            <textarea
-              matInput
-              placeholder="Start typing..."
-              (input)="adjustTextareaHeight($event)"
-              [formControl]="send"
-            ></textarea>
-          </div>
-        </mat-form-field>
-        <div class="button-wrapper">
-            <button mat-button type="submit">Send</button>
+    <div class="chat-header-wrapper"  >
+        <div class="chat-header" (click)="navigateToProfile(participant)">
+            <img [src]="participant.profilePicture ? 
+            participant.profilePicture : 
+            '../../../assets/img/pfp/default.png'" alt="Profile Picture" class="profile-picture">
+            <span class="participant-name">{{ this.participant }}</span>
         </div>
-    </form>
-</div>
+    </div>
+    <div class="chat-body">
+        @for($message of messages; track $message.id){
+            <div class="message-wrapper" [ngClass]="{'sent': $message.senderId === user.id, 'received': $message.senderId !== user.id}">
+                <div class="message-content" [innerHTML]="$message.content"></div>
+                <div class="message-date">{{ $message.timestamp | dateFormatter}}</div>
+            </div>
+        }
+    </div>
+
+    <div class="form-wrapper">
+        <form (ngSubmit)="sendMessage()" class="post-form">
+            <mat-form-field>
+              <div class="textarea-wrapper">
+                <textarea
+                  matInput
+                  placeholder="Start typing..."
+                  (input)="adjustTextareaHeight($event)"
+                  [formControl]="send"
+                ></textarea>
+              </div>
+            </mat-form-field>
+            <div class="button-wrapper">
+                <button mat-button type="submit">Send</button>
+            </div>
+        </form>
+    </div>
+}

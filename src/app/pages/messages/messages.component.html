@@ -1,14 +1,32 @@
-@for($chat of chats; track $chat.id){
-    @if($chat.isUserInChat(user.id)){
-        <div class="chat-wrapper" (click)="openChat($chat.id)">
-            <div class="chat-header">
-                <mat-icon>person</mat-icon>
-                <p class="chat-user-name">{{ $chat.getParticipantNamesExceptUser(user.id) }}</p>
+@if(isLoading){
+    <div class="loading-spinner">
+        <mat-spinner></mat-spinner>
+    </div>
+}@else{
+    <div class="wrapper">
+        <ng-container *ngFor="let $chat of chats; trackBy: trackByChatId">
+            <div class="chat-wrapper">
+                <div class="chat" (click)="openChat($chat.id)">
+                    <div class="chat-header">
+                        <img [src]="participantsExceptUser?.profilePicture ? participantsExceptUser?.profilePicture : '../../../assets/img/pfp/default.png'" class="profile-picture">
+                        <p class="chat-user-name">{{ $chat.title }}</p>
+                    </div>
+                    <div class="chat-body">
+                        <p class="latest-message">{{ $chat.lastMessage }}</p>
+                        <p class="chat-date">{{ $chat.lastMessageTime ? ($chat.lastMessageTime | dateFormatter) : 'N/A' }}</p>
+                    </div>
+                </div>
+                <button mat-button [matMenuTriggerFor]="menu" class="menu-button">
+                    <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #menu="matMenu">
+                  <button mat-menu-item (click)="deleteChat($chat.id)">Delete</button>    
+                </mat-menu>
             </div>
-            <div class="chat-body">
-                <p class="latest-message">{{ $chat.getLatestMessage()?.content }}</p>
-                <p class="chat-date">{{ $chat.getLatestMessage()?.timestamp || ''  }}</p>
-            </div>
-        </div>
-    }
+        </ng-container>
+        <button mat-button (click)="openNewChat()" id="new-chat-button">
+            <mat-icon>add_circle</mat-icon>
+        </button>
+    </div>
+
 }

@@ -65,6 +65,8 @@ export class SignupComponent {
         handle: handle || '',
         username: username || '',
         password: password || '',
+        username_lowercase: username.toLowerCase(),
+        handle_lowercase: handle.toLowerCase(),
       }
       this.authService.signUp(email, password, userData)
       .then((userCredential) => {

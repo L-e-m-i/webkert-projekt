@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { tweetItem, tweetItems } from '../models/tweetItem';
 import { UserService } from './user.service';
-import { profiles } from '../models/profiles';
-import { Firestore, getDocs, where, collection, query, doc  } from '@angular/fire/firestore';
+import { Firestore, getDocs, getDoc, where, collection, query, doc, deleteDoc  } from '@angular/fire/firestore';
 import { collectionData } from 'rxfire/firestore';
 import { filter, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -37,12 +36,33 @@ export class TweetService {
     );
   }
 
-  async getTweetByUserHandle(handle: string): Promise<tweetItem[]> {
+  async getTweetsByUserHandle(handle: string): Promise<tweetItem[]> {
     const tweetCollection = collection(this.firestore, 'Tweets');
     const tweetsSnapshot = await getDocs(tweetCollection);
     const tweets = tweetsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as tweetItem[];
     const userTweets = tweets.filter(tweet => tweet.handle === handle);
     return userTweets;
+  }
+
+  async getTweetById(tweetId: string): Promise<tweetItem> {
+    
+    
+    const tweetCollection = collection(this.firestore, 'Tweets');
+    const tweetRef = doc(tweetCollection, tweetId);
+    const tweetSnapshot = await getDoc(tweetRef);
+    const tweet = { id: tweetSnapshot.id, ...tweetSnapshot.data() } as tweetItem;
+    return tweet;
+  }
+
+  async getTweetsByContent(query: string): Promise<tweetItem[]> {
+    const tweetCollection = collection(this.firestore, 'Tweets');
+    return getDocs(tweetCollection).then((tweetsSnapshot) => {
+      const tweets = tweetsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as tweetItem[];
+      const filteredTweets = tweets.filter(tweet => tweet.content.toLowerCase().includes(query.toLowerCase()));
+
+      
+      return filteredTweets;
+    });
   }
 
   addTweet(tweet: tweetItem): void {
@@ -95,6 +115,14 @@ export class TweetService {
     //   // tweet.retweets--;
     //   this.user.retweets = this.user.retweets.filter((id: number) => id !== tweet.id)
     // }
+  }
+
+  async deleteTweet(tweetId: string): Promise<void> {
+    const tweetCollection = collection(this.firestore, 'Tweets');
+    const tweetRef = doc(tweetCollection, tweetId);
+    console.log('tweet deleted', tweetRef);
+    
+    await deleteDoc(tweetRef);
   }
 
   async getReplies(tweetId: string): Promise<tweetItem[]> {

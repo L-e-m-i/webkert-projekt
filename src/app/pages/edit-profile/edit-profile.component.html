@@ -1,0 +1,21 @@
+<div class="form-wrapper">
+    <form [formGroup]="editProfileForm" (ngSubmit)="updateProfile()" class="edit-profile-form">
+        <mat-form-field>
+            <mat-label>Username:</mat-label>
+            <input matInput type="text"
+                formControlName="username"
+            />
+        </mat-form-field>
+        <mat-form-field>
+            <mat-label>Bio:</mat-label>
+            <textarea matInput
+                formControlName="bio"
+            ></textarea>
+        </mat-form-field>
+        <mat-label>Profile Picture:</mat-label>
+        <input type="file" accept="image/*" formControlName="image" (change)="onFileSelected($event)" />
+        <button mat-button>Update Profile</button>
+        <button mat-button type="button" (click)="cancelEdit()">Cancel</button>
+        <button mat-button type="button"(click)="deleteProfile()">DELETE ACCOUT</button>
+    </form>
+</div>

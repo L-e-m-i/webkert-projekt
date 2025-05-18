@@ -1,47 +1,48 @@
-<ng-container *ngFor="let tweet of items.slice().reverse()">
-    <app-tweet-shared 
-        *ngIf="tweet.handle === handle && tweet.id === id" 
-        [tweet]="tweet"
-        (click)="isReply(tweet) ? navigateToPost(tweet) : null"
-        class="opened"
-        >
-    </app-tweet-shared>
-    <div class="form-wrapper" *ngIf="tweet.handle === handle && tweet.id === id">
-        <form (ngSubmit)="postReply()" class="post-form">
-            <mat-form-field>
-              <div class="textarea-wrapper">
-                <textarea
-                  matInput
-                  placeholder="What are you thinking about?"
-                  (input)="adjustTextareaHeight($event)"
-                  [formControl]="reply"
-                ></textarea>
-              </div>
-            </mat-form-field>
-    
-           
-            @if(isLoggedIn()){
-                <div class="button-wrapper">
-                    <button mat-button type="submit">Post</button>
-                </div>
-              } @else {
-                  <div class="button-wrapper">
-                    <button mat-button type="button" (click)="redirectToLogin()">Login to reply</button>
-                  </div>
-              }
-        </form>
+@if(isLoading){
+    <div class="loading">
+        page is loading...
     </div>
+} @else { 
+  <app-tweet-shared 
+      *ngIf="tweet.handle === handle && tweet.id === id" 
+      [tweet]="tweet"
+      (click)="isReply(tweet) ? navigateToPost(tweet) : null"
+      class="opened"
+  >
+  </app-tweet-shared>
+  <div class="form-wrapper" *ngIf="tweet.handle === handle && tweet.id === id">
+      <form (ngSubmit)="postReply()" class="post-form">
+          <mat-form-field>
+            <div class="textarea-wrapper">
+              <textarea
+                matInput
+                placeholder="What are you thinking about?"
+                (input)="adjustTextareaHeight($event)"
+                [formControl]="reply"
+              ></textarea>
+            </div>
+          </mat-form-field>
+  
+         
+          @if(isLoggedIn()){
+              <div class="button-wrapper">
+                  <button mat-button type="submit">Post</button>
+              </div>
+            } @else {
+                <div class="button-wrapper">
+                  <button mat-button type="button" (click)="redirectToLogin()">Login to reply</button>
+                </div>
+            }
+      </form>
+  </div>
+  @if(tweet.handle === handle && tweet.id === id){
+      <ng-container *ngFor="let reply of replies.slice().reverse(); trackBy: trackById">
+        <app-tweet-shared
+            class="reply"
+            [tweet]="reply"
+            (click)="navigateToPost(reply)"
+        ></app-tweet-shared>
+      </ng-container>
+  }
 
-    @if(tweet.handle === handle && tweet.id === id){
-        @for(reply of this.replies; track reply.id;){
-            
-                <app-tweet-shared
-                    class="reply"
-                    [tweet]="reply"
-                    (click)="navigateToPost(reply)"
-                ></app-tweet-shared>
-
-        }
-    }
-
-</ng-container>
+}

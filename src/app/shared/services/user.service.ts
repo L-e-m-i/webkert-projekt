@@ -1,10 +1,28 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, from, switchMap, take } from 'rxjs';
-import { Profile, profiles } from '../models/profiles';
+import { Profile } from '../models/profiles';
 import { Observable, of } from 'rxjs';
 import { AuthService } from './auth.service';
-import { collection, doc, Firestore, getDoc, getDocs, query, where, addDoc, DocumentReference, setDoc, Timestamp, updateDoc } from '@angular/fire/firestore';
+import { 
+  collection, 
+  doc, 
+  Firestore, 
+  getDoc, 
+  getDocs, 
+  query, 
+  where, 
+  addDoc, 
+  DocumentReference, 
+  setDoc, 
+  Timestamp, 
+  updateDoc, 
+  deleteDoc,
+  arrayUnion,
+  onSnapshot,
+  orderBy} from '@angular/fire/firestore';
 import { tweetItem } from '../models/tweetItem';
+import { Message } from '../models/message';
+
 
 @Injectable({
   providedIn: 'root', 
@@ -25,7 +43,7 @@ export class UserService {
       next: (user) => {
         this.user = user;
         this.userSubject.next(user); 
-
+        
 
       },
       error: (error) => {
@@ -90,6 +108,19 @@ export class UserService {
         return this.fetchUserByHandle(handle);
       }
     ));
+  }
+
+  getUserProfileById(userId: string): Observable<{
+   id: string | null;
+    user: Profile | null;
+    tweets: tweetItem[] | null;
+    replies: tweetItem[] | null;
+    bookmarks: tweetItem[] | null;
+    likes: tweetItem[] | null;
+    followers: Profile[] | null;
+    following: Profile[] | null;
+  }> {
+    return from(this.fetchUser(userId));
   }
 
   private async fetchUser(userId: string): Promise<{
@@ -157,7 +188,7 @@ export class UserService {
         })
       );
       bookmarks = bookmarksSnapshots.filter((tweet): tweet is tweetItem => tweet !== null);
-      bookmarks.sort((a, b) => new Timestamp(Number(a.timestamp), 0).toMillis() - new Timestamp(Number(b.timestamp), 0).toMillis());
+      // bookmarks.sort((a, b) => new Timestamp(Number(a.timestamp), 0).toMillis() - new Timestamp(Number(b.timestamp), 0).toMillis());
     }
 
 
@@ -296,21 +327,51 @@ export class UserService {
   }
 
   private loadUserFromLocalStorage(): void {
-    const userHandle = localStorage.getItem('userHandle');
-    if (userHandle) {
-      const storedUser = profiles.find(profile => profile.handle === userHandle);
-      if (storedUser) {
-        this.user = storedUser;
-        this.isLoggedIn = true;
-        this.userSubject.next(this.user);
-      }
+
+  }
+
+
+  async getUserReference(userId: string): Promise<DocumentReference | null> {
+    const userDocRef = doc(this.firestore, 'Users', userId);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      return userDocRef;
+    } else {
+      console.error('User not found:', userId);
+      return null;
     }
   }
 
 
-  getUsers(): any[] {
+  async getUsers(): Promise<any[]> {
+    const usersCollection = collection(this.firestore, 'Users');
+    return getDocs(usersCollection).then((snapshot) => {
+      const users: any[] = [];
+      snapshot.forEach((doc) => {
+        users.push({ id: doc.id, ...doc.data() });
+      });
+      return users;
+    });
     
-    return profiles;
+
+  }
+
+  async searchUsers(searchQuery: string): Promise<any[]> {
+    const usersCollection = collection(this.firestore, 'Users');
+    const q = query(
+      usersCollection,
+      where('username', '>=', searchQuery.toLowerCase()),
+      where('username', '<=', searchQuery.toLowerCase() + '\uf8ff'),
+      where('handle', '>=', searchQuery.toLowerCase()),
+      where('handle', '<=', searchQuery.toLowerCase() + '\uf8ff')
+    );
+    return getDocs(q).then((snapshot) => {
+      const users: any[] = [];
+      snapshot.forEach((doc) => {
+        users.push({ id: doc.id, ...doc.data() });
+      });
+      return users;
+    });
   }
 
   async getUser(): Promise<any> {
@@ -321,21 +382,12 @@ export class UserService {
 
   getUserById(id: string): any {
     // console.trace('getUserById called:', id); // Debugging
-    const user = profiles.find((profile) => profile.id === id);
-    if (!user) {
-      console.error('User not found for ID:', id);
-    }
-    return user;
+   
   }
 
 
   getUserByHandle(handle: string): any {
-    // console.trace('getUserByHandle called:', handle); // Debugging
-    const user = profiles.find((profile) => profile.handle === handle);
-    if (!user) {
-      console.error('User not found for handle:', handle);
-    }
-    return user;
+    
   }
 
   setUser(newUser: any): void {
@@ -347,7 +399,7 @@ export class UserService {
   }
 
   createUser(user: any): Observable<any> {
-    profiles.push(user);
+    
 
     return of({success: true});
   }
@@ -357,22 +409,46 @@ export class UserService {
     return this.isLoggedIn;
   }
 
-  toggleFollow(userId: string, followerId: string): void {
-    const user = this.getUserById(userId);
-    const follower = this.getUserById(followerId);
-    if (user && follower) {
-      if (user.followers.includes(followerId)) {
-        user.followers = user.followers.filter((id: string) => id !== followerId);
-        follower.following = follower.following.filter((id: string) => id !== userId);
-        console.log(`User ${followerId} unfollowed ${user.username}`);
+  async toggleFollow(userId: string, followerId: string): Promise<void> {
+    const userCollection = collection(this.firestore, 'Users');
+    const userDocRef = doc(userCollection, userId);
+    const followerDocRef = doc(userCollection, followerId);
+    const userSnapshot = getDoc(userDocRef);
+    const followerSnapshot = getDoc(followerDocRef);
+    if ((await userSnapshot).exists() && (await followerSnapshot).exists()) {
+      const userData = (await userSnapshot).data();
+      const followerData = (await followerSnapshot).data();
+      const followers = userData ? userData['followers'] || [] : [];
+      const following = followerData ? followerData['following'] || [] : [];
+
+      if (followers.includes(followerId)) {
+        // Unfollow
+        const updatedFollowers = followers.filter((id: string) => id !== followerId);
+        await updateDoc(userDocRef, { followers: updatedFollowers });
+        const updatedFollowing = following.filter((id: string) => id !== userId);
+        await updateDoc(followerDocRef, { following: updatedFollowing });
+
+        //this.deleteChatByParticipants([userDocRef, followerDocRef]).then(() => {
+        //  console.log('Chat deleted');
+        //})
+        
+        console.log(`User ${followerId} unfollowed ${userId}`);
       } else {
-        user.followers.push(followerId);
-        follower.following.push(userId);
-        console.log(`User ${followerId} followed ${user.username}`);
+        // Follow
+        followers.push(followerId);
+        following.push(userId);
+        await updateDoc(userDocRef, { followers: [...followers] });
+        await updateDoc(followerDocRef, { following: [...following] });
+
+        
+        this.createChat([userDocRef, followerDocRef]).then((chat) => {
+          console.log('Chat created:', chat);
+        })
+        
+
+
+        console.log(`User ${followerId} followed ${userId}`);
       }
-    
-    } else {
-      console.error('User not found for ID:', userId);
     }
   }
 
@@ -541,6 +617,220 @@ export class UserService {
     } else {
       console.error('User not found');
     }
+  }
+
+
+  updateUserProfile(userId: string, updatedData: Partial<Profile>): Promise<void> {
+    const userDocRef = doc(this.firestore, 'Users', userId);
+    return setDoc(userDocRef, updatedData, { merge: true });
+  }
+
+  async deleteUser(userId: string): Promise<void> {
+    const userDocRef = doc(this.firestore, 'Users', userId);
+    const userSnapshot = await getDoc(userDocRef);
+    if (userSnapshot.exists()) {
+      const chatsRef = collection(this.firestore, 'Chats');
+      this.deleteChatByParticipants([userDocRef]).then(() => {
+        console.log('Chat deleted');
+      }
+      ).catch((error) => {
+        console.error('Error deleting chat:', error);
+      });
+      await this.authService.deleteUser(userId);
+      await deleteDoc(userDocRef);
+      console.log(`User ${userId} deleted successfully`);
+    } else {
+      console.error(`User ${userId} not found`);
+    }
+  }
+
+  //CHAT---
+
+  async getChatById(chatId: string): Promise<any> {
+    const chatRef = doc(this.firestore, 'Chats', chatId);
+    const chatDoc = await getDoc(chatRef);
+    if (chatDoc.exists()) {
+      const chatData = chatDoc.data();
+      const participants = await Promise.all(
+        chatData['participants'].map(async (participantRef: DocumentReference) => {
+          const participantDoc = await getDoc(participantRef);
+          return participantDoc.exists() ? { id: participantDoc.id, ...participantDoc.data() } : null;
+        })
+      );
+      return { id: chatDoc.id, ...chatData, participants: participants.filter((p) => p !== null) };
+    } else {
+      return null;
+    }
+  }
+
+
+  async getMessagesByChatId(chatId: string): Promise<any[]> {
+    const chatRef = doc(this.firestore, 'Chats', chatId);
+    const chatSnapshot = await getDoc(chatRef);
+
+    if (!chatSnapshot.exists()) {
+      console.error('Chat not found:', chatId);
+      return [];
+    }
+
+    const chatData = chatSnapshot.data();
+    const messageRefs = chatData['messages'] || [];
+
+    const messages = await Promise.all(
+      messageRefs.map(async (messageRef: DocumentReference) => {
+      const messageDoc = await getDoc(messageRef);
+      return messageDoc.exists() ? { id: messageDoc.id, ...messageDoc.data() } : null;
+      })
+    );
+
+    return messages.filter((message) => message !== null);
+    
+  }
+
+  getMessagesByChatIdRealTime(chatId: string, callback: (messages: Message[]) => void): void {
+    const messagesCollection = collection(this.firestore, 'Messages');
+    const messagesQuery = query(
+      messagesCollection,
+      where('chatId', '==', chatId),
+      orderBy('timestamp', 'asc') 
+    );
+
+    onSnapshot(messagesQuery, (querySnapshot) => {
+      const messages: Message[] = querySnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return new Message(
+          data['id'],
+          data['senderId'],
+          data['timestamp'],
+          data['content']
+        );
+      });
+      callback(messages);
+    });
+  }
+
+
+
+  async getChatsByUserId(userId: string): Promise<any> {
+    const userDocRef = doc(this.firestore, 'Users', userId);
+    const chatsRef = collection(this.firestore, 'Chats');
+    const q = query(chatsRef, where('participants', 'array-contains', userDocRef), orderBy('lastMessageTime', 'desc'));
+    const chatDocs = getDocs(q);
+    const chatsSnapshot = await chatDocs;
+    const chats = await Promise.all(
+      chatsSnapshot.docs.map(async (chatDoc) => {
+        const chatData = chatDoc.data();
+        const participants = await Promise.all(
+          chatData['participants'].map(async (participantRef: DocumentReference) => {
+            const participantDoc = await getDoc(participantRef);
+            return participantDoc.exists() ? { id: participantDoc.id, ...participantDoc.data() } : null;
+          })
+        );
+        return { id: chatDoc.id, ...chatData, participants: participants.filter((p) => p !== null) };
+      })
+    );
+    return chats;
+    
+  }
+
+  async createChat(participants: DocumentReference[]): Promise<any> {
+    const chatsRef = collection(this.firestore, 'Chats');
+    const chatData = {
+      participants: participants,
+      messages: [],
+      createdAt: Timestamp.now(),
+      lastMessage: null,
+      lastMessageSender: null,
+      lastMessageTime: Timestamp.now(),
+    };
+    console.log('Creating chat with data:', chatData);
+    
+    const docRef = await addDoc(chatsRef, chatData);
+    const chat = await getDoc(docRef);
+    return chat.exists() ? { id: chat.id, ...chat.data() } : null;
+  }
+
+  async deleteChat(chatId: string): Promise<void> {
+    const chatRef = doc(this.firestore, 'Chats', chatId);
+    const messagesRef = collection(chatRef, 'Messages');
+    const messagesSnapshot = await getDocs(messagesRef);
+    const deletePromises = messagesSnapshot.docs.map(async (chatDoc) => {
+      const chatRef = chatDoc.ref;
+      
+      
+      const messagesRef = collection(this.firestore, 'Messages');
+      const messagesQuery = query(messagesRef, where('chatId', '==', chatRef.id));
+      const messagesSnapshot = await getDocs(messagesQuery);
+      
+      const messageDeletePromises = messagesSnapshot.docs.map((msgDoc) => deleteDoc(msgDoc.ref));
+      await Promise.all(messageDeletePromises);
+      
+
+      return deleteDoc(chatRef);
+    });
+    await Promise.all(deletePromises);
+  }
+
+  async deleteChatByParticipants(participants: DocumentReference[]): Promise<void> {
+    const chatsRef = collection(this.firestore, 'Chats');
+    const q = query(chatsRef, where('participants', 'array-contains-any', participants));
+    const querySnapshot = await getDocs(q);
+
+    const deletePromises = querySnapshot.docs.map(async (chatDoc) => {
+      const chatRef = chatDoc.ref;
+
+      
+      const messagesRef = collection(this.firestore, 'Messages');
+      const messagesQuery = query(messagesRef, where('chatId', '==', chatRef.id));
+      const messagesSnapshot = await getDocs(messagesQuery);
+
+      const messageDeletePromises = messagesSnapshot.docs.map((msgDoc) => deleteDoc(msgDoc.ref));
+      await Promise.all(messageDeletePromises);
+
+      // Delete the chat document
+      return deleteDoc(chatRef);
+    });
+
+  await Promise.all(deletePromises);
+  }
+
+
+  /*
+    this.id = id;
+    this.senderId = senderId;
+    this.timestamp = timestamp;
+    this.content = content;
+  */
+
+
+
+  async addMessageToChat(chatId: string, message: any): Promise<any> {
+    console.log('addMessageToChat called:', chatId, message);
+    
+    const chatRef = doc(this.firestore, 'Chats', chatId);
+    console.log('Chat reference:', chatRef);
+    const messagesRef = collection(this.firestore, 'Messages');
+
+    const messageData = {
+      senderId: message.senderId,
+      timestamp: message.timestamp,
+      content: message.content,
+      chatId: chatRef.id,
+    };
+
+    const docRef = await addDoc(messagesRef, messageData);
+    
+    await updateDoc(docRef, {
+      id: docRef.id,
+    })
+    
+    await updateDoc(chatRef, {
+      lastMessage: message.content,
+      lastMessageSender: message.senderId,
+      lastMessageTime: Timestamp.now(),
+      messages: arrayUnion(docRef),
+    });
+    return docRef;
   }
 
 }

@@ -58,6 +58,10 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/tweet/tweet.component').then(m => m.TweetComponent)
     },
 
+    {path: 'edit-profile',
+        loadComponent: () => import('./pages/edit-profile/edit-profile.component').then(m => m.EditProfileComponent),
+        canActivate: [authGuard]
+    },
 
     {path: '', redirectTo: '/home', pathMatch: 'full'},
     {path: '**', component: PageNotFoundComponent}

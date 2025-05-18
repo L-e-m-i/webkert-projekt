@@ -1,4 +1,4 @@
-<ng-container *ngFor="let tweet of bookmarks.slice().reverse()">
+<ng-container *ngFor="let tweet of bookmarks.slice().reverse(); trackBy: trackById">
     <app-tweet-shared 
         [tweet]="tweet" 
         (bookmarkChange)="loadUserData()"

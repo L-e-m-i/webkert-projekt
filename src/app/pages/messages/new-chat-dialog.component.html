@@ -1,0 +1,17 @@
+<div class="wrapper">
+    <h2>Start a New Chat</h2>
+    <div mat-dialog-content>
+      <mat-form-field appearance="outline" style="width: 100%;">
+        <mat-label>Search for a user</mat-label>
+        <input matInput [(ngModel)]="searchQuery" (input)="onSearch()" placeholder="Enter username">
+      </mat-form-field>
+      <div *ngIf="searchQuery">
+        <p *ngFor="let user of data.users" (click)="onSelectUser(user)">
+          {{ user.username }}
+        </p>
+      </div>
+    </div>
+    <div mat-dialog-actions>
+      <button mat-button (click)="onClose()">Cancel</button>
+    </div>
+</div>

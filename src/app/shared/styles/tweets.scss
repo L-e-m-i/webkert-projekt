@@ -34,12 +34,23 @@ $secondary-color: #3AA8F2;
   font-size: 12px;
   color: #777;
 }
+
+
+.tweet-in-reply-to{
+
+  font-size: 12px;
+  color: $secondary-color;
+  margin-left: 5px;
+  text-align: center;
+}
+
 .tweet-date{
   font-size: 12px;
   color: #ffffff;
   flex: 2;
   text-align: right;
 }
+
 .tweet-content {
   font-size: 16px;
   color: #ffffff;
@@ -70,10 +81,10 @@ $secondary-color: #3AA8F2;
   color: red; 
 }
 .tweet-footer mat-icon.bookmarked {
-  color: $secondary-color; /* Change to your desired color */
+  color: $secondary-color; 
 }
 .tweet-footer mat-icon.retweeted {
-  color: rgb(23, 191, 99); /* Change to your desired color */
+  color: rgb(23, 191, 99); 
 }
 
 .tweet-container:hover  {

@@ -9,12 +9,16 @@ import { UserService } from '../../shared/services/user.service';
 import { DateFormatterPipe } from '../../shared/pipes/date.pipe';
 import { Subscription } from 'rxjs';
 
+import { DocumentReference, Firestore,collection, doc, getDoc } from '@angular/fire/firestore';
+import { HandleifyPipe } from '../pipes/handlify.pipe';
+
 
 @Component({
   selector: 'app-tweet-shared',
   imports: [
     MatIcon,
     DateFormatterPipe,
+    HandleifyPipe,
     CommonModule,
   ],
   templateUrl: './tweet.component.html',
@@ -26,25 +30,31 @@ export class TweetComponentShared {
   @Output() likeChange = new EventEmitter<void>();
   @Output() bookmarkChange = new EventEmitter<void>();
   @Output() retweetChange = new EventEmitter<void>();
+  @Output() deleteTweetEvent = new EventEmitter<tweetItem>();
 
 
   static openedTweetId: string | null = null;
-
+  parent!: tweetItem;
   constructor(
     private tweetService: TweetService,
     private userService: UserService,
     private router: Router,
     private cdr: ChangeDetectorRef,
+    private firestore: Firestore,
   ) {}
 
   likes: string[] = [];
   bookmarks: string[] = [];
   replies: tweetItem[] = [];
-  user: any;
   hasReplies: boolean = false;
-
   isLiked: boolean = false;
   isBookmarked: boolean = false;
+
+  user: any;
+  
+  isLoading: boolean = true;  
+
+  
 
   tweetSub: Subscription | null = null;
   userSub: Subscription | null = null;
@@ -53,16 +63,45 @@ export class TweetComponentShared {
   ngOnInit(): void {
     this.userSub = this.userService.getUserProfile().pipe(take(1)).subscribe((user) => {
       this.user = user;
+      
       this.likes = this.user.likes ? this.user.likes.map((like: any) => like.id) : [];
+ 
       this.bookmarks = this.user.bookmarks ? this.user.bookmarks.map((bookmark: any) => bookmark.id) : [];
+
+      this.isBookmarked = this.bookmarks.includes(this.tweet.id);
       this.isLiked = this.likes.includes(this.tweet.id);
+      
+      this.getReplies(this.tweet.id);
+      if (this.tweet.inReplyTo) {
+        const inReplyTo = this.tweet.inReplyTo as unknown as DocumentReference | undefined;
+        if (!inReplyTo) {
+          console.error('No inReplyTo field found for tweet:', this.tweet);
+          return;
+        }
+      
+
+      
+      if (typeof inReplyTo !== 'object' || typeof (inReplyTo as DocumentReference).id !== 'string') {
+        console.error('inReplyTo is not a valid DocumentReference:', inReplyTo);
+        return;
+      }
+
+
+        getDoc(inReplyTo).then((parentDocSnap) => {
+          
+          this.tweetService.getTweetById(parentDocSnap.id).then((tweet) => {
+            this.parent = tweet;
+
+          });
+        });
+      }
+      this.isLoading = false;
     });
     if (!this.tweet || typeof this.tweet.id !== 'string') {
       console.error('Invalid tweet object passed to TweetComponentShared:', this.tweet);
       return;
     }
-    console.log('tweetcomponens',this.tweet);
-    
+    //console.log('tweetcomponens',this.tweet);
     
   }
 
@@ -77,6 +116,7 @@ export class TweetComponentShared {
   getReplies(tweetId: string): void {
     this.tweetService.getReplies(tweetId).then((replies) => {
       this.replies = replies;
+      
       this.hasReplies = this.replies.length > 0;
     })
   }
@@ -87,9 +127,14 @@ export class TweetComponentShared {
       
       if(this.likes.includes(tweet.id)){
         this.likes = this.likes.filter((t) => t !== tweet.id);
-     
+        if (typeof tweet.likes === 'number') {
+          tweet.likes--;
+        }
       }else{
         this.likes.push(tweet.id);
+        if (typeof tweet.likes === 'number') {
+          tweet.likes++;
+        }
       }
 
       this.cdr.detectChanges()
@@ -98,21 +143,24 @@ export class TweetComponentShared {
     }).finally(() => {
       this.isLiked = !this.isLiked
     })
-    
-    
-
-    
+       
   }
 
 
 
-  bookmarkTweet(tweet: tweetItem): void {
+  async bookmarkTweet(tweet: tweetItem): Promise<void> {
 
     this.userService.toggleBookmark(tweet.id).then(() => {
       if(this.bookmarks.includes(tweet.id)){
         this.bookmarks = this.bookmarks.filter((t) => t !== tweet.id);
+        if (typeof tweet.bookmarks === 'number') {
+          tweet.bookmarks--;
+        }
       }else{
         this.bookmarks.push(tweet.id);
+        if (typeof tweet.bookmarks === 'number') {
+          tweet.bookmarks++;
+        }
       }
       this.cdr.detectChanges()
       this.bookmarkChange.emit();
@@ -122,8 +170,16 @@ export class TweetComponentShared {
     })
 
 
-    this.tweetService.toggleBookmark(tweet);
-    this.bookmarkChange.emit();
+    // this.tweetService.toggleBookmark(tweet);
+  }
+
+  async deleteTweet(tweet: tweetItem): Promise<void> {
+    this.tweetService.deleteTweet(tweet.id).then(() => {
+      this.deleteTweetEvent.emit(tweet); 
+      
+    }).catch((error) => {
+      console.error('Error deleting tweet:', error);
+    });
   }
 
   retweetTweet(tweet: tweetItem): void {

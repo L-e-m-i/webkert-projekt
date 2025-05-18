@@ -1,3 +1,4 @@
+@if(!isLoading){
 <div 
     class="tweet-container" 
     [ngClass]="{ 'opened': isOpened(tweet.id) }" 
@@ -8,9 +9,17 @@
         <div class="tweet-header-profile-wrapper" (click)="$event.stopPropagation(); navigateToProfile(tweet.handle)">
             <mat-icon>person</mat-icon>
             <p class="tweet-user-name">{{ tweet.username }}</p>
-            <p class="tweet-user-handle">{{ '@'+ tweet.handle }}</p>
+            <p class="tweet-user-handle">{{ tweet.handle | handleify }}</p>
         </div>
+        @if(tweet.inReplyTo && parent){
+            <p class="tweet-in-reply-to">In reply to {{ parent.handle | handleify }}</p>
+        }
         <p class="tweet-date">{{ tweet.timestamp.seconds * 1000 | dateFormatter }}</p>
+        @if(user.user && user.user.handle === tweet.handle){
+            <span class="tweet-user-actions">
+                <mat-icon (click)="$event.stopPropagation();deleteTweet(tweet)">delete</mat-icon>
+            </span>
+        }
     </div>
     <div class="tweet-content" [innerHTML]="tweet.content"></div>
     <div class="tweet-footer">
@@ -25,11 +34,14 @@
         <span (click)="$event.stopPropagation(); likeTweet(tweet)">
             <mat-icon [class.liked]="isLiked">favorite</mat-icon>
             {{ tweet.likes }}
+
         </span>
         <span (click)="$event.stopPropagation(); bookmarkTweet(tweet)">
             <mat-icon [class.bookmarked]="isBookmarked">bookmark</mat-icon>
             {{ tweet.bookmarks }}
+
+
         </span>
     </div>
 </div>
-
+}

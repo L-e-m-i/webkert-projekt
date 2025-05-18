@@ -5,6 +5,9 @@ import { tweetItem, tweetItems } from '../../shared/models/tweetItem';
 import { TweetComponentShared } from '../../shared/tweet/tweet.component';
 import { CommonModule } from '@angular/common';
 import { Title } from '@angular/platform-browser';
+import { TweetService } from '../../shared/services/tweet.service';
+import { Subscription } from 'rxjs';
+import { DocumentReference, getDoc } from '@angular/fire/firestore';
 
 @Component({
   selector: 'app-search',
@@ -23,6 +26,7 @@ export class SearchComponent {
     private router: Router,
     private route: ActivatedRoute,
     private titleService: Title,
+    private tweetService: TweetService,
   ) { }
   query: string | null = null;
   user: any;
@@ -30,6 +34,7 @@ export class SearchComponent {
   results: tweetItem[] = []; // Initialize results with an empty array
   title: string = 'Y / Search';
 
+  routeSub: Subscription | null = null;
 
   ngOnInit(): void {
     this.titleService.setTitle(this.title);
@@ -39,15 +44,7 @@ export class SearchComponent {
       this.results = [];
       return;
     }
-    this.route.paramMap.subscribe((params) => {
-      this.query = params.get('query');
-      this.results = this.tweets.filter((tweet) => {
-        const handle = tweet.handle.toLowerCase();
-        const content = tweet.content.toLowerCase();
-        const query = this.query?.toLowerCase() || '';
-        return handle.includes(query) || content.includes(query);
-      });
-    });
+    this.search();
     
   }
 
@@ -58,13 +55,79 @@ export class SearchComponent {
     }
   }
 
+  async search(): Promise<void> {
+      this.routeSub = this.route.paramMap.subscribe((params) => {
+      this.query = params.get('query');
+      if(!this.query) {
+        this.results = [];
+        return;
+      }
+      Promise.all([
+        this.tweetService.getTweetsByUserHandle(this.query),
+        this.tweetService.getTweetsByContent(this.query)
+      ]).then(([handleTweets, contentTweets]) => {
+        
+        const allTweets = [...handleTweets, ...contentTweets];
+        const uniqueTweets = allTweets.filter(
+          (tweet, index, self) =>
+        index === self.findIndex(t => t.id === tweet.id)
+        );
+        this.results = uniqueTweets;
+      });
+    });
+  }
+
   clearSearchInput(): void {
     if (this.searchInput) {
       this.searchInput.nativeElement.value = ''; 
     }
   }
 
+async navigateToReply(tweet: tweetItem): Promise<void> {  
+      //const tweetCollection = collection(this.firestore, 'Tweets');
+  
+      console.log('tweetData', tweet);
+  
+      // Check if inReplyTo is a DocumentReference
+      const inReplyTo = tweet.inReplyTo as DocumentReference | undefined;
+      if (!inReplyTo) {
+        console.error('No inReplyTo field found for tweet:', tweet);
+        return;
+      }
+  
+      // Type guard: check if inReplyTo is a DocumentReference
+      if (typeof inReplyTo !== 'object' || typeof (inReplyTo as DocumentReference).id !== 'string') {
+        console.error('inReplyTo is not a valid DocumentReference:', inReplyTo);
+        return;
+      }
+  
+      const parentDocSnap = await getDoc(inReplyTo as DocumentReference);
+      if (!parentDocSnap.exists()) {
+        console.error('Parent tweet not found:', inReplyTo);
+        return;
+      }
+      const parent = { id: parentDocSnap.id, ...parentDocSnap.data() } as tweetItem;
+
+  
+      if (parent) {
+        this.router.navigate([parent.handle, parent.id]);
+      } else {
+        console.error('Parent tweet not found:', tweet.inReplyTo);
+      }
+    }
+
   navigateToPost(tweet: tweetItem): void {
+    if(tweet.inReplyTo){
+      this.navigateToReply(tweet);
+      return;
+    }
     this.router.navigate([tweet.handle, tweet.id]);
   }
+
+  ngOnDestroy(): void{
+    if (this.routeSub) {
+      this.routeSub.unsubscribe();
+    }
+  }
 }
+

@@ -46,19 +46,20 @@ export class MenuComponent implements OnInit, AfterViewInit {
     }).catch((error) => {
       console.error('Error loading profile data:', error);
     });
+    this.updateSidenavDisableClose();
 
+    window.addEventListener('resize', () => {
+      this.updateSidenavDisableClose();
+    });
     //this.userHandle = localStorage.getItem('userHandle');
     this.routeSub = this.router.events.subscribe((event) => {
       if(event instanceof NavigationEnd) {
         this.loadProfileData();
         
         this.isLoggedIn = this.userService.checkLoginStatus();
+               
         
-        
-        
-        this.userHandle = this.user?.handle ?? null;
-        
-        
+        this.userHandle = this.user?.handle ?? null;        
       }
     });
     
@@ -66,6 +67,12 @@ export class MenuComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     
+  }
+
+  updateSidenavDisableClose(): void {
+    if (this.sidenav) {
+      this.sidenav.disableClose = !this.isSmallScreen;
+    }
   }
 
   async loadProfileData() {

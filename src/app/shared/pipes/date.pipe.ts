@@ -1,17 +1,19 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { Timestamp } from '@angular/fire/firestore';
 
 @Pipe({
   name: 'dateFormatter'
 })
 export class DateFormatterPipe implements PipeTransform {
 
-  transform(value: number): string {
+  transform(value: number | Timestamp): string {
     if (!value) {
       return '';
     }
 
     try {
-      const date = new Date(value);
+
+      const date = typeof value === 'number' ? new Date(value) : value.toDate();
       if (isNaN(date.getTime())) {
         return value.toString();
       }
@@ -46,5 +48,6 @@ export class DateFormatterPipe implements PipeTransform {
       return value.toString();
     }
   }
+
 
 }

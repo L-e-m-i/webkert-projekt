@@ -1,7 +1,13 @@
+$small-screen: 500px;
+$medium-screen: 1000px;
+.wrapper{
+    min-height: 100vh;
+    
+}
 .chat-wrapper{
     display: flex;
     flex-direction: column;
-
+    
     gap: 5 px;
     border: 1px solid #ccc;
     cursor: pointer;
@@ -10,10 +16,11 @@
 .chat-header{
     display: flex;
     flex-direction: row;
-    align-items: flex-end;
+    align-items:center;
     gap: 5px;
     margin-bottom: 5px;
     margin-top: 5px;
+    padding-left: 5px;
 }
 
 .chat-header p{
@@ -27,4 +34,72 @@
     
     padding-left: 10px;
     padding-right: 10px;
+}
+
+.menu-button{
+    min-width:0;
+    right: 0;
+    top: 0;
+    transform: translateY(-260%);
+    position: relative;
+    margin-left: auto;
+    margin-top: 5px;
+
+    mat-icon{
+        padding: 0;
+        margin: 0;
+    }
+}
+
+
+#new-chat-button{
+    min-width: 60px;
+    min-height: 60px;
+    width: 80px;
+    height: 80px;
+    bottom: 100px;
+    position: fixed;
+    margin-left: auto;
+    margin-top: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    mat-icon{
+        font-size: 36px; /* Ensure the icon size fits well */
+        line-height: 1; /* Prevents extra spacing */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: auto; /* Remove fixed width */
+        height: auto; /* Remove fixed height */
+        padding: 0;
+        margin: 0;
+    }
+
+
+    @media (min-width: $medium-screen) {
+        left: calc(50% + 220px);
+        bottom: 100px;
+    }
+    @media(max-width: $medium-screen) {
+        left: 620px;
+        bottom: 80px;
+    }
+
+    @media (max-width: 790px) {
+        right: 90px;
+        bottom: 80px;
+    }
+    @media (max-width: $small-screen) {
+        right: 10px;
+        bottom: 60px;
+    }
+    
+}
+
+.profile-picture{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ccc;
 }

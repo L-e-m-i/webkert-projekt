@@ -1,11 +1,17 @@
 import { Message } from './message'; // Adjust the path as needed
 import { UserService } from '../services/user.service';
+import { Time } from '@angular/common';
+import { Timestamp } from '@angular/fire/firestore';
 
 
 export class Chat{
     id: string;
-    participants: string[];
+    participants: any[];
     messages: Message[];
+    lastMessageTime: Timestamp | null = null;
+    lastMessage: Message | null = null;
+    lastMessageSender: string | null = null;
+    title?: string;
     private userService!: UserService; // Declare userService
     constructor(id: string, participants: string[]) {
         this.id = id;
@@ -58,18 +64,3 @@ export class Chat{
     }
 
 }
-export const chats: Chat[] = [
-    new Chat('1', ['1', '3']),
-    new Chat('2', ['1', '3']),
-    new Chat('3', ['2', '3']),
-];
-
-// Adding messages to the chats
-chats[0].addMessage({ id: 1, senderId: 1, content: 'Hello!', timestamp: new Date().toISOString() });
-chats[0].addMessage({ id: 2, senderId: 3, content: 'Hi there!', timestamp: new Date().toISOString() });
-
-chats[1].addMessage({ id: 3, senderId: 1, content: 'How are you?', timestamp: new Date().toISOString() });
-chats[1].addMessage({ id: 4, senderId: 3, content: 'I am good, thanks!', timestamp: new Date().toISOString() });
-
-chats[2].addMessage({ id: 5, senderId: 2, content: 'Hey!', timestamp: new Date().toISOString() });
-chats[2].addMessage({ id: 6, senderId: 3, content: 'Hello!', timestamp: new Date().toISOString() });

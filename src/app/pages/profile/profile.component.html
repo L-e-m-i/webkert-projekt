@@ -2,25 +2,24 @@
     <div class="loading-container">
       <p>Loading profile data...</p>
     </div>
-} @else if (user) {
+} @else if (user && currentUser) {
     <div class="profile-container">
         <div class="profile-header">
             <div class="profile-wrapper">
-                <img [src]="user.bannerPicture ? 
-                    '../../../assets/img/banner' + user.bannerPicture : 
+                <img [src]="user.bannerPicture ? user.bannerPicture : 
                     '../../../assets/img/banner/default.png'" 
                     alt="banner" class="profile-banner">
-                <img [src]="user.profilePicture ? '../../../assets/img/pfp/' + user.profilePicture : '../../../assets/img/pfp/default.png'" class="profile-picture">
+                <img [src]="user.profilePicture ? user.profilePicture : '../../../assets/img/pfp/default.png'" class="profile-picture">
 
             </div>
             <div class="profile-data-wrapper">
                 <h1>{{ user.username }}</h1>
-                <p class="profile-handle">{{ '@' + user.handle }}</p>
+                <p class="profile-handle">{{ user.handle | handleify}}</p>
                 <p class="profile-bio">{{ user.bio }}</p>
                 <div class="profile-stats">
-                    <span><strong>{{ user.tweets?.length }}</strong> Tweets</span>
-                    <span style="margin-left: 10px;"><strong>{{ user.followers?.length }}</strong> Followers</span>
-                    <span style="margin-left: 10px;"><strong>{{ user.following?.length }}</strong> Following</span>
+                    <span><strong>{{ items.length }}</strong> Tweets</span>
+                    <span style="margin-left: 10px; cursor: pointer" (click)="openFollowersDialog()"><strong>{{ user.followers?.length }}</strong> Followers</span>
+                    <span style="margin-left: 10px; cursor: pointer" (click)="openFollowingDialog()"><strong>{{ user.following?.length }}</strong> Following</span>
                 </div>
                 @if(user.handle !== currentUser.user.handle){
                     <button mat-button type="submit" class="follow-button" [ngClass]="{'following': isFollowing}" (click)="followAccount()">
@@ -41,6 +40,7 @@
                         [tweet]="tweet" 
                         (likeChange)="loadProfileData(user.handle)" 
                         (retweetChange)="loadProfileData(user.handle)"
+                        (deleteTweetEvent)="loadProfileData(user.handle)"
                         (click)="navigateToPost(tweet)" 
                     ></app-tweet-shared>
                 </ng-container>
@@ -86,6 +86,7 @@
                         [tweet]="tweet" 
                         (likeChange)="loadProfileData(user.handle)" 
                         (retweetChange)="loadProfileData(user.handle)"
+                        (deleteTweetEvent)="loadProfileData(user.handle)"
                         (click)="navigateToReply(tweet)" 
                     ></app-tweet-shared>
                 </ng-container>
@@ -95,6 +96,7 @@
                     <app-tweet-shared 
                         [tweet]="tweet" 
                         (likeChange)="loadProfileData(user.handle)"
+                        (deleteTweetEvent)="loadProfileData(user.handle)"
                         (click)="navigateToPost(tweet)"
                     ></app-tweet-shared>
                 </ng-container>
