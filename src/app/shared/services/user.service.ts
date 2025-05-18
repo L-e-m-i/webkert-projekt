@@ -45,7 +45,7 @@ export class UserService {
           next: (userProfile) => {
             this.userSubject.next(userProfile);
             this.user = userProfile; // Update the user state
-            // console.log('user from user service', this.user);
+            console.log('user from user service', this.user);
           },
           error: (error) => {
             console.error('Error fetching user data:', error);
@@ -389,11 +389,30 @@ export class UserService {
     const usersCollection = collection(this.firestore, 'Users');
     const q = query(
       usersCollection,
-      where('username', '>=', searchQuery.toLowerCase()),
-      where('username', '<=', searchQuery.toLowerCase() + '\uf8ff'),
-      where('handle', '>=', searchQuery.toLowerCase()),
-      where('handle', '<=', searchQuery.toLowerCase() + '\uf8ff')
+      where('username_lowercase', '>=', searchQuery.toLowerCase()),
+      where('username_lowercase', '<=', searchQuery.toLowerCase() + '\uf8ff')
     );
+
+    const handleQuery = query(
+      usersCollection,
+      where('handle_lowercase', '>=', searchQuery.toLowerCase()),
+      where('handle_lowercase', '<=', searchQuery.toLowerCase() + '\uf8ff')
+    );
+
+    const usernameSnapshot = await getDocs(q);
+    const handleSnapshot = await getDocs(handleQuery);
+
+    const combinedResults = new Map<string, any>();
+
+    usernameSnapshot.forEach((doc) => {
+      combinedResults.set(doc.id, { id: doc.id, ...doc.data() });
+    });
+
+    handleSnapshot.forEach((doc) => {
+      combinedResults.set(doc.id, { id: doc.id, ...doc.data() });
+    });
+
+    return Array.from(combinedResults.values());
     return getDocs(q).then((snapshot) => {
       const users: any[] = [];
       snapshot.forEach((doc) => {

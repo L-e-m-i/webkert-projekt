@@ -37,7 +37,7 @@ export class NewChatDialogComponent {
 
     this.userService.searchUsers(this.searchQuery).then((users) => {
       this.data.users = users;
-
+      console.log(users);
     });
   }
 
