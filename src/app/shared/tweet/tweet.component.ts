@@ -61,6 +61,18 @@ export class TweetComponentShared {
   routeSub: Subscription | null = null;
 
   ngOnInit(): void {
+
+    const tweetId = this.tweet.id;
+    this.tweetService.getTweetOwner(tweetId).then((owner) => {
+      this.tweet = { ...this.tweet, owner };
+      // console.log('tweet', this.tweet);
+    }).catch((error) => {
+      console.error('Error fetching tweet owner:', error);
+    });
+
+    
+    
+
     this.userSub = this.userService.getUserProfile().pipe(take(1)).subscribe((user) => {
       this.user = user;
       

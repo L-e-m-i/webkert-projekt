@@ -58,6 +58,7 @@ export class SignupComponent {
       const { email, handle, username, password, confirmPassword } = this.signupForm.value;
       if( password !== confirmPassword) {
         this.error.push('Passwords do not match');
+        console.error('passwords dont match')
         return;
       }
       const userData: Partial<Profile> = {

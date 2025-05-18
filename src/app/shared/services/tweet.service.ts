@@ -129,8 +129,8 @@ export class TweetService {
       const parentTweetData = parentTweetSnapshot.data();
 
       if (parentTweetData) {
-        console.log('tweetData', tweetData);
-        console.log('parentTweetData', parentTweetData);
+        // console.log('tweetData', tweetData);
+        // console.log('parentTweetData', parentTweetData);
         
         const updatedCommentCount = (parentTweetData['comments'] || 0) - 1;
         await updateDoc(parentTweetRef, { comments: updatedCommentCount });
@@ -153,6 +153,27 @@ export class TweetService {
     
     
     return replies;
+  }
+
+
+   async getTweetOwner(tweetId: string): Promise<any> {
+    const tweetDocRef = doc(this.firestore, 'Tweets', tweetId);
+    const tweetSnapshot = await getDoc(tweetDocRef);
+    if (tweetSnapshot.exists()) {
+      const tweetData = tweetSnapshot.data();
+      const userId = tweetData['userId'];
+      const userDocRef = doc(this.firestore, 'Users', userId);
+      const userSnapshot = await getDoc(userDocRef);
+      if (userSnapshot.exists()) {
+        return { id: userSnapshot.id, ...userSnapshot.data() };
+      } else {
+        console.error('User not found:', userId);
+        return null;
+      }
+    } else {
+      console.error('Tweet not found:', tweetId);
+      return null;
+    }
   }
 
 }

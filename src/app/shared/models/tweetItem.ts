@@ -1,4 +1,5 @@
 import { Timestamp } from "@angular/fire/firestore";
+import { Profile } from "./profiles";
 
 export class tweetItem{
     id: string;
@@ -11,6 +12,7 @@ export class tweetItem{
     comments?: number = 0;
     likes?: number = 0;
     bookmarks?: number = 0;
+    owner?: Profile | null = null;
     //children?: tweetItem[] = [];
     constructor(id: string, tweet: string, images: string[] , handle: string, timestamp: Timestamp, username: string, inReplyTo: string | null = null){
         this.username = username;

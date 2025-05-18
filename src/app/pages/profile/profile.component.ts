@@ -67,8 +67,7 @@ export class ProfileComponent {
       this.loadProfileData(handle); // Reload profile data when handle changes
       
     });
-    this.title = `Y / `;
-    this.titleService.setTitle(this.title);
+    
   
   }
 
@@ -77,7 +76,7 @@ export class ProfileComponent {
   loadProfileData(handle: string | null): void {
     this.currentUserSub = this.userService.getUserProfile().pipe(take(1)).subscribe((user) => {
       this.currentUser = user;
-
+      
       
     })
     if(!handle){
@@ -95,7 +94,8 @@ export class ProfileComponent {
           this.handle = data.user ? data.user.handle : null;
           this.likes = (data.likes ?? [])
           
-          
+          this.title = `Y / ` + this.user.username;
+          this.titleService.setTitle(this.title);
           
           this.items = data.tweets as tweetItem[];
           this.items.sort((a, b) => new Timestamp(Number(a.timestamp), 0).toMillis() - new Timestamp(Number(b.timestamp), 0).toMillis());
