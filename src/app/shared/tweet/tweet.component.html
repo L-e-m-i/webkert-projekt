@@ -8,8 +8,8 @@
     <div class="tweet-header">
         <div class="tweet-header-profile-wrapper" (click)="$event.stopPropagation(); navigateToProfile(tweet.handle)">
             <img [src]="tweet.owner?.profilePicture ? tweet.owner?.profilePicture : '../../../assets/img/pfp/default.png'" class="profile-picture">
-            <p class="tweet-user-name">{{ tweet.username }}</p>
-            <p class="tweet-user-handle">{{ tweet.handle | handleify }}</p>
+            <p class="tweet-user-name">{{ tweet.owner?.username }}</p>
+            <p class="tweet-user-handle">{{ tweet.owner?.handle | handleify }}</p>
         </div>
         @if(tweet.inReplyTo && parent){
             <p class="tweet-in-reply-to">In reply to {{ parent.handle | handleify }}</p>

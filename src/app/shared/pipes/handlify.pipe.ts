@@ -5,7 +5,10 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class HandleifyPipe implements PipeTransform {
 
-  transform(value: string, ...args: unknown[]): unknown {
+  transform(value: string | undefined, ...args: unknown[]): unknown {
+    if (!value) {
+      return null;
+    }
     return '@' + value;
   }
 
