@@ -483,9 +483,9 @@ export class UserService {
         await updateDoc(followerDocRef, { following: [...following] });
 
         
-        this.createChat([userDocRef, followerDocRef]).then((chat) => {
+        //this.createChat([userDocRef, followerDocRef]).then((chat) => {
 
-        })
+        //})
         
 
 
@@ -819,24 +819,25 @@ export class UserService {
   }
 
   async deleteChat(chatId: string): Promise<void> {
-    const chatRef = doc(this.firestore, 'Chats', chatId);
-    const messagesRef = collection(chatRef, 'Messages');
-    const messagesSnapshot = await getDocs(messagesRef);
-    const deletePromises = messagesSnapshot.docs.map(async (chatDoc) => {
-      const chatRef = chatDoc.ref;
-      
-      
-      const messagesRef = collection(this.firestore, 'Messages');
-      const messagesQuery = query(messagesRef, where('chatId', '==', chatRef.id));
-      const messagesSnapshot = await getDocs(messagesQuery);
-      
+      console.log('deleteChat called with chatId:', chatId);
+
+      // Reference to the chat document
+      const chatRef = doc(this.firestore, 'Chats', chatId);
+
+      // Reference to the Messages subcollection
+      const messagesRef = collection(chatRef, 'Messages');
+
+      // Fetch all messages in the chat
+      const messagesSnapshot = await getDocs(messagesRef);
+
+      // Delete all messages in the chat
       const messageDeletePromises = messagesSnapshot.docs.map((msgDoc) => deleteDoc(msgDoc.ref));
       await Promise.all(messageDeletePromises);
-      
 
-      return deleteDoc(chatRef);
-    });
-    await Promise.all(deletePromises);
+      // Delete the chat document itself
+      await deleteDoc(chatRef);
+
+      console.log(`Chat with ID ${chatId} and its messages have been deleted.`);
   }
 
   async deleteChatByParticipants(participants: DocumentReference[]): Promise<void> {

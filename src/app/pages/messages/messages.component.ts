@@ -129,8 +129,7 @@ export class MessagesComponent {
       return;
     }
     this.userService.deleteChat(chatId).then(() => {
-      // Optionally, you can refresh the chat list or show a success message
-
+      // Optionally, you can refresh the chat list or show a success message      
       this.chats = this.chats.filter(chat => chat.id !== chatId);
     }).catch((error) => {
       console.error('Error deleting chat:', error);

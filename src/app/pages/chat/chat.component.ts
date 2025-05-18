@@ -39,8 +39,10 @@ export class ChatComponent {
 
   send = new FormControl('');
   user: any;
-  participant: any | null = null;
+  participantName: any | null = null;
   participantHandle!: string;
+  participant: any | null = null;
+
   userChat: Chat | null = null; 
   chatId: string | null = null; 
   messages: Message[] = [];
@@ -84,11 +86,11 @@ export class ChatComponent {
           console.log(chat);
           
           const participantsExceptUser = chat.participants.filter((participant: any) => participant.id !== this.user.id);
-          this.participant = participantsExceptUser
+          this.participantName = participantsExceptUser
             .map((participant) => participant.username)
             .join(', ');
           this.participantHandle = participantsExceptUser[0].handle;
-          
+          this.participant = participantsExceptUser[0];
           
           this.userService.getMessagesByChatIdRealTime(this.chatId, (messages: Message[]) => {
             this.messages = messages;
