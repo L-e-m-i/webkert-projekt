@@ -641,6 +641,16 @@ export class UserService {
   }
 
   async toggleBookmark(tweetId: string): Promise<void>{
+    if(this.user.id === null){
+      this.getUserProfile().pipe(take(1)).subscribe({
+        next: (user) => {
+          this.user = user;
+        },
+        error: (error) => {
+          console.error('Error fetching user data:', error);
+        },
+      })
+    }
     const usersCollection = collection(this.firestore, 'Users');
     const tweetsCollection = collection(this.firestore, 'Tweets');
     if (this.user) {

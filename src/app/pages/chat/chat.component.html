@@ -5,7 +5,7 @@
 }@else{
 
     <div class="chat-header-wrapper"  >
-        <div class="chat-header" (click)="navigateToProfile(participant)">
+        <div class="chat-header" (click)="navigateToProfile(participantHandle)">
             <img [src]="participant.profilePicture ? 
             participant.profilePicture : 
             '../../../assets/img/pfp/default.png'" alt="Profile Picture" class="profile-picture">
