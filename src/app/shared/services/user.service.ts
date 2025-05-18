@@ -585,7 +585,7 @@ export class UserService {
       const userSnapshot = await getDoc(userDocRef);
 
       if (userSnapshot.exists()) {
-        ('tweetRef removed', tweetRef);
+        // console.log('tweetRef removed', tweetRef);
         
         const userData = userSnapshot.data();
         const likes = userData['likes'] || [];
