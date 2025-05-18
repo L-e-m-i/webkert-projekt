@@ -7,7 +7,7 @@
 >
     <div class="tweet-header">
         <div class="tweet-header-profile-wrapper" (click)="$event.stopPropagation(); navigateToProfile(tweet.handle)">
-            <mat-icon>person</mat-icon>
+            <img [src]="user.user.profilePicture ? user.user.profilePicture : '../../../assets/img/pfp/default.png'" class="profile-picture">
             <p class="tweet-user-name">{{ tweet.username }}</p>
             <p class="tweet-user-handle">{{ tweet.handle | handleify }}</p>
         </div>

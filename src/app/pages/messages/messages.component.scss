@@ -87,10 +87,12 @@ $medium-screen: 1000px;
     }
 
     @media (max-width: 790px) {
-        right: 90px;
+        left: auto;
+        right: 100px;
         bottom: 80px;
     }
     @media (max-width: $small-screen) {
+        left: auto;
         right: 10px;
         bottom: 60px;
     }

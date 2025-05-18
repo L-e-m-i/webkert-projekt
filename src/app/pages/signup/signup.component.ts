@@ -46,7 +46,7 @@ export class SignupComponent {
   initializeForm() {
     this.signupForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      handle: ['', [Validators.required, Validators.minLength(3)]],
+      handle: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^\S+$/)]],
       username: ['', [Validators.required, Validators.minLength(3)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', [Validators.required, Validators.minLength(8)]],
@@ -64,7 +64,7 @@ export class SignupComponent {
         email: email || '',
         handle: handle || '',
         username: username || '',
-        password: password || '',
+        //password: password || '',
         username_lowercase: username.toLowerCase(),
         handle_lowercase: handle.toLowerCase(),
       }

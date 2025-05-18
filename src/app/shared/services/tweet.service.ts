@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { tweetItem, tweetItems } from '../models/tweetItem';
 import { UserService } from './user.service';
-import { Firestore, getDocs, getDoc, where, collection, query, doc, deleteDoc  } from '@angular/fire/firestore';
+import { Firestore, getDocs, getDoc, where, collection, query, doc, deleteDoc, updateDoc } from '@angular/fire/firestore';
 import { collectionData } from 'rxfire/firestore';
 import { filter, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -120,6 +120,23 @@ export class TweetService {
   async deleteTweet(tweetId: string): Promise<void> {
     const tweetCollection = collection(this.firestore, 'Tweets');
     const tweetRef = doc(tweetCollection, tweetId);
+    const tweetSnapshot = await getDoc(tweetRef);
+    const tweetData = tweetSnapshot.data();
+
+    if (tweetData?.['inReplyTo']) {
+      const parentTweetRef = doc(this.firestore, 'Tweets', tweetData?.['inReplyTo'].id);
+      const parentTweetSnapshot = await getDoc(parentTweetRef);
+      const parentTweetData = parentTweetSnapshot.data();
+
+      if (parentTweetData) {
+        console.log('tweetData', tweetData);
+        console.log('parentTweetData', parentTweetData);
+        
+        const updatedCommentCount = (parentTweetData['comments'] || 0) - 1;
+        await updateDoc(parentTweetRef, { comments: updatedCommentCount });
+      }
+    }
+    
 
     
     await deleteDoc(tweetRef);

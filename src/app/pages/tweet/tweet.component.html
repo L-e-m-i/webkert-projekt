@@ -7,6 +7,7 @@
       *ngIf="tweet.handle === handle && tweet.id === id" 
       [tweet]="tweet"
       (click)="isReply(tweet) ? navigateToPost(tweet) : null"
+      (deleteTweetEvent)="deleteTweet(tweet)"
       class="opened"
   >
   </app-tweet-shared>
@@ -41,6 +42,7 @@
             class="reply"
             [tweet]="reply"
             (click)="navigateToPost(reply)"
+            (deleteTweetEvent)="deleteReply(reply)"
         ></app-tweet-shared>
       </ng-container>
   }

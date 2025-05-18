@@ -36,6 +36,8 @@ export class HomeComponent {
 
   user: any; 
   items: tweetItem[] = []
+  nonReplyTweets: tweetItem[] = [];
+
   private tweetSub!: Subscription;
   private userSub!: Subscription;
 
@@ -50,17 +52,20 @@ export class HomeComponent {
     this.tweetSub = this.tweetService.getTweets().subscribe((tweets: tweetItem[]) => {
       this.items = tweets;
       this.items.sort((a, b) => new Timestamp(Number(b.timestamp), 0).toMillis() - new Timestamp(Number(a.timestamp), 0).toMillis());
+      this.nonReplyTweets = this.items.filter(tweet => !tweet.inReplyTo);
       this.loadMoreTweets();
     });
     
   }
 
   loadMoreTweets(): void {
+    
+    
     const startIndex = (this.currentPage - 1) * this.tweetsPerPage;
     const endIndex = startIndex + this.tweetsPerPage;
 
     if (this.items && this.items.length > startIndex) {
-      const newTweets = this.items.slice(startIndex, endIndex);
+      const newTweets = this.nonReplyTweets.slice(startIndex, endIndex);
       this.visibleTweets = [...this.visibleTweets, ...newTweets]; 
       this.currentPage++;
       this.cdr.detectChanges(); 

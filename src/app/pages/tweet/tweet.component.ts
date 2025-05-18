@@ -161,6 +161,14 @@ export class TweetComponent {
   }
 
 
+  deleteReply(tweet: tweetItem): void {
+    this.replies = this.replies.filter(item => item.id !== tweet.id);
+  }
+
+  deleteTweet(tweet: tweetItem): void {
+    this.router.navigate(['/home']);
+  }
+
   ngOnDestroy(): void {
     if (this.tweetSub) {
       this.tweetSub.unsubscribe();
