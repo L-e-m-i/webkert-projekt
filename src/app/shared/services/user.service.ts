@@ -413,13 +413,7 @@ export class UserService {
     });
 
     return Array.from(combinedResults.values());
-    return getDocs(q).then((snapshot) => {
-      const users: any[] = [];
-      snapshot.forEach((doc) => {
-        users.push({ id: doc.id, ...doc.data() });
-      });
-      return users;
-    });
+    
   }
 
   async getUser(): Promise<any> {
