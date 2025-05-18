@@ -10,7 +10,7 @@ import {
   createUserWithEmailAndPassword,
 } from '@angular/fire/auth';
 
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { collection, doc, Firestore, setDoc } from '@angular/fire/firestore';
 import { Profile as User } from '../models/profiles';
 
@@ -21,6 +21,8 @@ import { Profile as User } from '../models/profiles';
 export class AuthService {
 
   currentUser: Observable<FirebaseUser | null>;
+  private userSubject = new BehaviorSubject<FirebaseUser | null>(null);
+  user$ = this.userSubject.asObservable();
   constructor(
     private auth: Auth,
     private router: Router,
@@ -29,19 +31,31 @@ export class AuthService {
     this.currentUser = authState(this.auth);
   }
 
-  signIn(email: string, password: string): Promise<UserCredential> {
-    return signInWithEmailAndPassword(this.auth, email, password);
+  async signIn(email: string, password: string): Promise<UserCredential> {
+    try {
+      const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+      const userId = userCredential.user.uid;
+
+      // Emit the authenticated user
+      this.userSubject.next(userCredential.user);
+
+      // Navigate to home after successful login
+      this.router.navigate(['/home']);
+      return userCredential;
+    } catch (error) {
+      console.error('Error signing in:', error);
+      throw error;
+    }
   }
 
   async signUp(email: string, password: string, userData: Partial<User>): Promise<UserCredential> {
     try {
-      // Use createUserWithEmailAndPassword for signing up a new user
       const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
-  
+      
       // Create user data in Firestore
       await this.createUserData(userCredential.user.uid, {
         ...userData,
-        id: userCredential.user.uid, // Ensure the ID is set correctly
+        id: userCredential.user.uid,
         email: email,
         bannerPicture: '',
         profilePicture: '',
@@ -53,9 +67,13 @@ export class AuthService {
         retweets: [],
         replies: [],
         bookmarks: [],
-
       });
-  
+    
+      // Emit the authenticated user
+      this.userSubject.next(userCredential.user);
+    
+      // Navigate to home after successful signup
+      this.router.navigate(['/home']);
       return userCredential;
     } catch (error) {
       console.error('Error signing up:', error);
@@ -70,9 +88,18 @@ export class AuthService {
   }
 
   async signOut() : Promise<void>{
-    localStorage.setItem('isLoggedIn', 'false');
-    await signOut(this.auth);
-    this.router.navigate(['/login']);
+    try {
+      await signOut(this.auth);
+
+      // Emit null to indicate the user has signed out
+      this.userSubject.next(null);
+
+      // Navigate to login page
+      this.router.navigate(['/login']);
+    } catch (error) {
+      console.error('Error signing out:', error);
+      throw error;
+    }
   }
 
   isLoggedIn(): Observable<FirebaseUser | null> {

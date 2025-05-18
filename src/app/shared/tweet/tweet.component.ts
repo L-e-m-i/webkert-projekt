@@ -134,8 +134,16 @@ export class TweetComponentShared {
   }
 
   async likeTweet(tweet: tweetItem): Promise<void> {
+    // console.log('user', this.user);
+    
+    if(this.user.id === null){
+      this.router.navigate(['login']);
+      return;
+    }
+    // console.log('tweet', tweet);
     
     this.userService.toggleLike(tweet.id).then(() => {
+      // console.log('likes', this.likes);
       
       if(this.likes.includes(tweet.id)){
         this.likes = this.likes.filter((t) => t !== tweet.id);
@@ -161,7 +169,10 @@ export class TweetComponentShared {
 
 
   async bookmarkTweet(tweet: tweetItem): Promise<void> {
-
+    if(this.user.id === null){
+      this.router.navigate(['login']);
+      return;
+    }
     this.userService.toggleBookmark(tweet.id).then(() => {
       if(this.bookmarks.includes(tweet.id)){
         this.bookmarks = this.bookmarks.filter((t) => t !== tweet.id);

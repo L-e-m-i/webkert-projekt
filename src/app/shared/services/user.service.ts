@@ -38,18 +38,44 @@ export class UserService {
     private authService: AuthService,
     private firestore: Firestore,
   ) {
-    // this.loadUserFromLocalStorage();
-    this.getUserProfile().pipe(take(1)).subscribe({
-      next: (user) => {
-        this.user = user;
-        this.userSubject.next(user); 
+
+    this.authService.user$.subscribe(async (firebaseUser) => {
+      if (firebaseUser) {
+        this.getUserProfileById(firebaseUser.uid).subscribe({
+          next: (userProfile) => {
+            this.userSubject.next(userProfile);
+            this.user = userProfile; // Update the user state
+            // console.log('user from user service', this.user);
+          },
+          error: (error) => {
+            console.error('Error fetching user data:', error);
+          },
+        })
+        
+        
+       
+
         
 
-      },
-      error: (error) => {
-        console.error('Error fetching user data:', error);
-      },
-    })
+        
+      } else {
+        this.userSubject.next(null); // Clear the user state on sign-out
+      }
+    });
+    // this.loadUserFromLocalStorage();
+    // this.getUserProfile().pipe(take(1)).subscribe({
+    //   next: (user) => {
+    //     this.user = user;
+    //     console.log('user from user service', this.user);
+        
+    //     this.userSubject.next(user); 
+        
+
+    //   },
+    //   error: (error) => {
+    //     console.error('Error fetching user data:', error);
+    //   },
+    // })
   }
 
   getUserProfile(): Observable<{
@@ -539,6 +565,18 @@ export class UserService {
 
 
   async toggleLike(tweetId: string): Promise<void>{
+    // console.log(this.user);
+    if(this.user.id === null){
+      this.getUserProfile().pipe(take(1)).subscribe({
+        next: (user) => {
+          this.user = user;
+        },
+        error: (error) => {
+          console.error('Error fetching user data:', error);
+        },
+      })
+    }
+    
     const usersCollection = collection(this.firestore, 'Users');
     const tweetsCollection = collection(this.firestore, 'Tweets');
     if (this.user) {
@@ -547,6 +585,8 @@ export class UserService {
       const userSnapshot = await getDoc(userDocRef);
 
       if (userSnapshot.exists()) {
+        ('tweetRef removed', tweetRef);
+        
         const userData = userSnapshot.data();
         const likes = userData['likes'] || [];
         const tweetData = (await getDoc(tweetRef)).data();
@@ -561,6 +601,8 @@ export class UserService {
            });
 
         } else {
+          // console.log('tweetRef added ', tweetRef);
+          
           // Add the tweet reference to likes
           likes.push(tweetRef);
           await updateDoc(userDocRef, { likes });

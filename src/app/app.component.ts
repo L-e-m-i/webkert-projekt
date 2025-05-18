@@ -120,7 +120,9 @@ export class AppComponent implements OnInit {
     }
     if (index === 3) { // Profile tab
       const currentHandle = this.router.url.split('/profile/')[1]; // Extract the current profile handle from the URL
-      const handle = currentHandle || localStorage.getItem('userHandle'); // Use the current handle if available, otherwise fallback to logged-in user's handle
+      const handle = this.user.user.handle ; // Use the current handle if available, otherwise fallback to logged-in user's handle
+
+      
       this.userService.checkLoginStatus() ? 
         this.router.navigate([`${routes[index]}/${handle}`]) : 
         this.router.navigate(['/login']);
